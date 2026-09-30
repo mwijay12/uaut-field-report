@@ -1,0 +1,15 @@
+flowchart TD
+    subgraph Study["📖 Mon–Tue foundations"]
+        LX["🐧 Linux CLI — Cobbaut PDF<br/>ls · pwd · chmod · bash"]
+        ORC["📚 Oracle 11g SQL — McGraw-Hill<br/>SELECT · JOIN concepts"]
+        EX["🔍 phpMyAdmin EXPLAIN<br/>slow-query hunt"]
+    end
+    U["👤 Logged-in user"] --> MAP["map.php — Leaflet"]
+    MAP --> AUTH["includes/auth.php<br/>RBAC role gate"]
+    AUTH -- "role not allowed" --> E403["403.php"]
+    AUTH -- ok --> API["api/get_farms_geojson.php"]
+    API --> SQL["SELECT farms<br/>JOIN wards · districts<br/>WHERE status = active"]
+    SQL --> DB[("MariaDB<br/>idx_farms_status · idx_farms_variety")]
+    API -- "FeatureCollection" --> L["🗺️ Leaflet render + popups"]
+    L -- "farm name · variety · size" --> U
+    EX --> DB

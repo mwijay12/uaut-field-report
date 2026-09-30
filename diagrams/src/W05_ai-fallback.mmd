@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Task: vhost + TLS + DNS<br/>deployment configs"] --> G{"Antigravity IDE ok?"}
+    G -- yes --> D["🤖 Draft: vhost snippet,<br/>cert steps, stress script"]
+    G -- no --> C{"Cline + Claude ok?"}
+    C -- yes --> D
+    C -- no --> W{"Web LLM ok?"}
+    W -- yes --> D
+    W -- no --> OFF["📚 Offline: Apache httpd docs,<br/>MySQL reference manual"]
+    D --> V{"Verified?<br/>site resolves on LAN · https padlock<br/>· backup restores cleanly"}
+    V -- no --> T
+    V -- yes --> P["💾 Deployment checklist committed"]

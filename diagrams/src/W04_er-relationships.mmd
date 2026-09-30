@@ -1,0 +1,42 @@
+erDiagram
+    users ||--o| buyers : "profile"
+    buyers ||--o{ market_requests : "places"
+    farmers ||--o{ farms : "owns"
+    farms ||--o{ market_requests : "ordered as"
+    farmers ||--o{ market_requests : "receives"
+    users ||--o{ market_requests : "buyer account"
+
+    users {
+        int id PK
+        varchar email UK
+        varchar role "incl buyer"
+    }
+    buyers {
+        int id PK
+        int user_id FK
+        varchar buyer_name
+        varchar company_name
+        decimal target_volume_kg
+    }
+    farmers {
+        int id PK
+        int user_id FK
+        varchar national_id UK
+    }
+    farms {
+        int id PK
+        int farmer_id FK
+        varchar harvest_status
+        decimal actual_harvest_kg
+        decimal min_price_per_kg
+    }
+    market_requests {
+        int id PK
+        varchar order_code UK
+        int farm_id FK
+        int farmer_id FK
+        int buyer_user_id FK
+        decimal quantity_kg
+        decimal offered_price_per_kg
+        varchar status "pending/accepted/rejected/completed/cancelled"
+    }

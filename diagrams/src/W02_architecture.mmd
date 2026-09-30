@@ -1,0 +1,24 @@
+flowchart TD
+    subgraph Client["👤 Browser (demo build of Tue 01/09)"]
+        FORM["POST forms — login · register · upload"]
+    end
+    subgraph Conf["⚙️ Config layer — refactored Thu 03/09"]
+        ENVF[".env<br/>DB_HOST · DB_USER · DB_PASS"]
+        CRED["config/credentials.php"]
+        DBC["config/db.php<br/>mysqli utf8mb4"]
+        ENVF --> CRED --> DBC
+    end
+    subgraph Sec["🛡️ Hardened request flow"]
+        AUTH["includes/auth.php<br/>session timeout 900s"]
+        CSRF["csrf_verify()<br/>hash_equals 64-char token"]
+        PS["mysqli_prepare() across 60+ files"]
+    end
+    subgraph Err["🚨 Error strategy"]
+        LOG["logs/php_errors.log"]
+        C5["500.php friendly page<br/>no server/root leak"]
+    end
+    INV["📦 Fri 04/09 — inventory module<br/>farmer/upload_process.php<br/>stock + photo pipeline"]
+
+    FORM --> AUTH --> CSRF --> PS --> DBC --> DB[("MariaDB avocado_db")]
+    INV --> PS
+    PS -- "on failure" --> LOG --> C5

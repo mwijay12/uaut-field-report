@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Dev task<br/>(refactor · diagram · security · docs)"] --> G{"Antigravity IDE<br/>agent available?"}
+    G -- no --> C{"Cline + Claude<br/>VS Code available?"}
+    C -- no --> W{"Web LLM<br/>available?"}
+    W -- no --> OFF["📚 Offline fallback<br/>Cobbaut Linux PDF · Oracle 11g SQL PDF<br/>PHP manual · handwritten logbook"]
+    G -- yes --> D["🤖 Draft solution"]
+    C -- yes --> D
+    W -- yes --> D
+    D --> V{"Verified?<br/>run it · test in browser · cross-check source"}
+    V -- no --> T
+    V -- yes --> P["💾 Persist<br/>commit to avocado_farmers<br/>+ update logbook and docs"]

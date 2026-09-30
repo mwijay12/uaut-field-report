@@ -17,6 +17,8 @@
 
 📦 **Live project repo:** [mwijay12/avocado-farmers-](https://github.com/mwijay12/avocado-farmers-) · 🎨 **Diagram style sibling:** [mwijay12/hype-alarm](https://github.com/mwijay12/hype-alarm)
 
+📚 **This documentation repo:** [mwijay12/uaut-field-report](https://github.com/mwijay12/uaut-field-report) · 📄 **Diagrams as PDFs:** [FIELD_REPORT_DIAGRAMS.pdf](pdf/FIELD_REPORT_DIAGRAMS.pdf) (master) + [pdf/weeks/](pdf/weeks/) (one per week)
+
 ---
 
 ## 📑 Table of Contents
@@ -250,6 +252,17 @@ Field Reports/
 ├── README.md                                  ← you are here (3 global diagrams)
 ├── weeks/
 │   ├── WEEK-01.md … WEEK-06.md                ← 6 weekly pages × 3 diagrams each
+├── diagrams/
+│   ├── src/  (21 .mmd sources)
+│   ├── svg/  (21 vector renders — Mermaid 11)
+│   └── png/  (21 raster twins)
+├── pdf/
+│   ├── FIELD_REPORT_DIAGRAMS.pdf              ← master compendium: cover + all 21 diagrams
+│   └── weeks/WEEK-0N_diagrams.pdf             ← one print-ready PDF per week
+├── tools/
+│   ├── extract_diagrams.py                    ← markdown → diagrams/src/*.mmd
+│   ├── render_diagrams.ps1                    ← .mmd → svg/png (kroki/Mermaid 11)
+│   └── build_pdfs.py                          ← svg → styled A4 PDFs (Edge headless)
 ├── FIELD_PRACTICAL_TRAINING_LOGBOOK_GUIDE.md  ← full Swahili/English logbook guide
 ├── PRACTICAL_TRAINING_LOGBOOK_MASTER.docx     ← printable master logbook
 ├── PRACTICAL_TRAINING_LOGBOOK_MASTER.pdf      ← PDF version
@@ -275,6 +288,9 @@ Field Reports/
 | [PRACTICAL_TRAINING_LOGBOOK_MASTER.pdf](PRACTICAL_TRAINING_LOGBOOK_MASTER.pdf) | Same, print-ready |
 | [build_full_field_documents.py](build_full_field_documents.py) | Generator script — edit weekly data in one place, rebuild the docx |
 | [avocado-farmers-](https://github.com/mwijay12/avocado-farmers-) | The field system itself (pure PHP 8 + MariaDB + Leaflet) |
+| [pdf/FIELD_REPORT_DIAGRAMS.pdf](pdf/FIELD_REPORT_DIAGRAMS.pdf) | **Master compendium PDF** — all 21 diagrams rendered to vector, cover + one section per week |
+| [pdf/weeks/](pdf/weeks/) | Six weekly PDFs (`WEEK-0N_diagrams.pdf`) — print-ready annexes for the logbook |
+| [diagrams/svg/](diagrams/svg/) | The 21 rendered diagrams as standalone vector SVGs (+ `png/` raster twins) |
 | [hype-alarm](https://github.com/mwijay12/hype-alarm) | Style reference for these diagram pages |
 
 ---

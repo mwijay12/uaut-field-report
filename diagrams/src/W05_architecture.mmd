@@ -1,0 +1,23 @@
+flowchart TD
+    subgraph LAN["🏢 TTCL LAN"]
+        STAFF["🧑‍💼 Staff clients"]
+        SUP["👨‍🏫 Supervisor devices"]
+    end
+    DNS["🧭 Local DNS — Thu 24/09<br/>avocado.ttcl.local → server IP"]
+    subgraph SRV["🐧 Apache 2.4 virtual host — Tue 22/09"]
+        VH["VirtualHost *:80<br/>ServerName avocado.ttcl.local<br/>DocumentRoot avocado_farmers"]
+        TLS["🔐 SSL/TLS :443 — Wed 23/09<br/>certificate binding"]
+        VH --> TLS
+    end
+    DNS --> VH
+    TLS --> PHP["PHP 8"] --> DB[("MariaDB avocado_db")]
+    STAFF --> DNS
+    SUP --> DNS
+    STRESS["🧪 DB stress test — Thu 24/09<br/>seeded load loops · EXPLAIN hot queries"] --> DB
+    subgraph OPS["🧰 Fri 25/09 ops hardening"]
+        CRON["cron — nightly mysqldump"]
+        FW["Firewall — only 80/443 inbound"]
+        RST["restore drill on dump file"]
+    end
+    CRON --> DB
+    RST --> DB

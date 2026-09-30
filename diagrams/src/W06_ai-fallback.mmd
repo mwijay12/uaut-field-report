@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Task: UAT matrix · migration ·<br/>user manual · defense prep"] --> G{"Antigravity IDE ok?"}
+    G -- yes --> D["🤖 Draft: test matrix, migration<br/>script, manual chapters"]
+    G -- no --> C{"Cline + Claude ok?"}
+    C -- yes --> D
+    C -- no --> W{"Web LLM ok?"}
+    W -- yes --> D
+    W -- no --> OFF["📚 Offline: defense guide,<br/>printed UAT sheets"]
+    D --> V{"Verified?<br/>each role passes UAT · import counts<br/>match CSV · manual matches UI"}
+    V -- no --> T
+    V -- yes --> P["💾 Defense-ready repo + report"]

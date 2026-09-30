@@ -1,0 +1,28 @@
+flowchart TD
+    subgraph SRC["📥 Source"]
+        CSV["CSV exports<br/>farmers · farms · wards"]
+    end
+    subgraph ETL["🐍 Python staging — Wed 30/09"]
+        P["parse + validate<br/>phone format · ward exists · unique NIDA"]
+        ST["staging tables<br/>temporary — outside final schema"]
+        P --> ST
+    end
+    subgraph DBI["🗄️ Import"]
+        INS["INSERT ... ON DUPLICATE KEY<br/>users → farmers → farms"]
+        VQ["verification queries<br/>row counts vs CSV"]
+    end
+    CSV --> P
+    ST --> INS --> DB[("avocado_db")] --> VQ
+    subgraph UAT["✅ UAT — Mon–Tue 28–29/09"]
+        MT["role test matrix"]
+        BUG["bug log → patches"]
+        MT --> BUG
+    end
+    VQ --> MT
+    BUG -- "fixes" --> INS
+    subgraph OUT["📦 Fri 02/10 wrap-up"]
+        MAN["end-user manual"]
+        RPT["final report + defense slides"]
+        MAN --> RPT
+    end
+    VQ --> MAN

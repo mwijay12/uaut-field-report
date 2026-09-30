@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Task: transaction locking +<br/>CSRF/XSS audit"] --> G{"Antigravity IDE ok?"}
+    G -- yes --> D["🤖 Draft: BEGIN..COMMIT block,<br/>token verification patch"]
+    G -- no --> C{"Cline + Claude ok?"}
+    C -- yes --> D
+    C -- no --> W{"Web LLM ok?"}
+    W -- yes --> D
+    W -- no --> OFF["📚 Offline: MySQL manual,<br/>OWASP cheat sheets"]
+    D --> V{"Verified?<br/>double-order blocked · token = 64 chars<br/>· DevTools shows escaped output"}
+    V -- no --> T
+    V -- yes --> P["💾 Commit + Sprint 2 demo notes"]

@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Task: architecture diagram +<br/>Linux/SQL study guides"] --> G{"architecture-diagram<br/>skill ok?"}
+    G -- yes --> D["🖼️ system_architecture.html<br/>dark theme + inline SVG"]
+    G -- no --> C{"Cline + Claude ok?"}
+    C -- yes --> D
+    C -- no --> W{"Web LLM ok?"}
+    W -- yes --> D
+    W -- no --> OFF["📚 Offline: Cobbaut PDF,<br/>Oracle 11g PDF, whiteboard"]
+    D --> V{"Opens in browser?<br/>columns match schema.sql?"}
+    V -- no --> T
+    V -- yes --> P["💾 Save to field_report/<br/>+ logbook entry"]

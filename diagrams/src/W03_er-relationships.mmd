@@ -1,0 +1,60 @@
+erDiagram
+    districts ||--o{ wards : "contains"
+    districts ||--o{ officers : "covers"
+    districts ||--o{ farmers : "home district"
+    districts ||--o{ farms : "farm location"
+    wards ||--o{ farmers : "home ward"
+    wards ||--o{ farms : "farm ward"
+    users ||--o| officers : "staff profile"
+    users ||--o| farmers : "farmer profile"
+    users ||--o| buyers : "buyer profile"
+    farmers ||--o{ farms : "owns"
+    farms ||--o{ farm_photos : "evidence"
+    users ||--o{ farms : "reviews status"
+
+    users {
+        int id PK
+        varchar email UK
+        varchar role "6 roles"
+        varchar status
+    }
+    officers {
+        int id PK
+        int user_id FK
+        varchar title
+        int district_id FK
+    }
+    buyers {
+        int id PK
+        int user_id FK
+        varchar buyer_name
+        decimal target_volume_kg
+    }
+    farmers {
+        int id PK
+        int user_id FK
+        varchar national_id UK
+        int ward_id FK
+    }
+    farms {
+        int id PK
+        int farmer_id FK
+        decimal gps_latitude "Leaflet marker"
+        decimal gps_longitude "Leaflet marker"
+        varchar harvest_status
+        int ward_id FK
+    }
+    farm_photos {
+        int id PK
+        int farm_id FK
+        int is_verified
+    }
+    districts {
+        int id PK
+        varchar name UK
+    }
+    wards {
+        int id PK
+        int district_id FK
+        varchar name
+    }

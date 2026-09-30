@@ -1,0 +1,92 @@
+erDiagram
+    districts ||--o{ wards : "contains"
+    districts ||--o{ officers : "covers"
+    districts ||--o{ farmers : "home district"
+    districts ||--o{ farms : "farm location"
+    wards ||--o{ farmers : "home ward"
+    wards ||--o{ farms : "farm ward"
+    users ||--o| officers : "staff profile"
+    users ||--o| farmers : "farmer profile"
+    users ||--o| buyers : "buyer profile"
+    users ||--o{ farm_photos : "verifies"
+    users ||--o{ farms : "reviews status"
+    users ||--o{ market_requests : "places"
+    farmers ||--o{ farms : "owns"
+    farms ||--o{ farm_photos : "evidence"
+    farms ||--o{ market_requests : "ordered"
+    farmers ||--o{ market_requests : "receives"
+
+    users {
+        int id PK
+        varchar email UK
+        varchar password "bcrypt hash"
+        varchar role "super_admin/admin/officer/accountant/farmer/buyer"
+        varchar status "pending/active/suspended"
+        timestamp last_login
+    }
+    districts {
+        int id PK
+        varchar name UK
+        varchar region "default Njombe"
+    }
+    wards {
+        int id PK
+        int district_id FK
+        varchar name "unique per district"
+    }
+    officers {
+        int id PK
+        int user_id FK
+        varchar full_name
+        varchar title
+        int district_id FK
+    }
+    farmers {
+        int id PK
+        int user_id FK
+        varchar national_id UK
+        varchar phone
+        int ward_id FK
+        int registered_by FK
+    }
+    buyers {
+        int id PK
+        int user_id FK
+        varchar buyer_name
+        varchar company_name
+        decimal target_volume_kg
+    }
+    farms {
+        int id PK
+        int farmer_id FK
+        varchar avocado_variety "Hass/Fuerte/Pinkerton/Reed/Local/Mixed"
+        decimal gps_latitude "Leaflet marker"
+        decimal gps_longitude "Leaflet marker"
+        varchar harvest_status "growing/flowering/harvest_ready/harvested"
+        int district_id FK
+        int ward_id FK
+    }
+    farm_photos {
+        int id PK
+        int farm_id FK
+        varchar filename
+        int is_verified
+        int verified_by FK
+    }
+    market_requests {
+        int id PK
+        varchar order_code UK
+        int farm_id FK
+        int farmer_id FK
+        int buyer_user_id FK
+        decimal quantity_kg
+        decimal offered_price_per_kg
+        varchar status "pending/accepted/rejected/completed/cancelled"
+    }
+    login_attempts {
+        int id PK
+        varchar email
+        varchar ip_address
+        int was_success
+        timestamp attempted_at "audit only - no FK"
+    }

@@ -1,0 +1,16 @@
+flowchart TD
+    subgraph Async["⚡ Tue 15/09 — async REST"]
+        FE["fetch('api/get_wards.php')"] --> JS["JSON ward list<br/>dropdown without reload"]
+    end
+    B["🛒 Buyer orders a farm<br/>marketplace.php POST"] --> CS{"csrf_verify()<br/>hash_equals?"}
+    CS -- invalid --> E["403 + attempt logged"]
+    CS -- valid --> TX["mysqli_begin_transaction"]
+    TX --> LK["SELECT ... FOR UPDATE<br/>lock the farm row"]
+    LK --> CHK{"Harvest still<br/>available?"}
+    CHK -- no --> RB["ROLLBACK<br/>'already booked' message"]
+    CHK -- yes --> INS["INSERT market_requests<br/>order_code UNIQUE"]
+    INS --> CM["COMMIT"]
+    CM --> RC["receipt.php — printable receipt"]
+    PY["🐍 Mon 14/09 — Python backup<br/>mysql-connector dump + row audit"] --> DB[("MariaDB")]
+    TX --> DB
+    INS --> DB

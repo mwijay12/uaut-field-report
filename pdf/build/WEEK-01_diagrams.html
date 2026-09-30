@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset='utf-8'><title>WEEK-01_diagrams</title><style>
+@page { size: A4; margin: 13mm 12mm 15mm 12mm; }
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; color: #1f2937; margin: 0; }
+.banner { background: linear-gradient(135deg, #064e3b, #16a34a); color: #fff;
+          padding: 9mm 10mm; border-radius: 4mm; }
+.banner h1 { font-size: 20pt; margin: 0 0 2mm; }
+.banner .sub { font-size: 10.5pt; opacity: .93; }
+.banner .dates { font-size: 10pt; opacity: .85; margin-top: 1.5mm; }
+.chips span { display: inline-block; background: #ecfdf5; border: 1px solid #16a34a;
+              color: #065f46; border-radius: 999px; padding: 1mm 4mm;
+              font-size: 8.5pt; margin: 0 2mm 2mm 0; }
+.section-start { page-break-before: always; }
+.kind-title { font-size: 13pt; font-weight: 700; color: #065f46;
+              border-left: 3mm solid #d4af37; padding-left: 4mm; margin: 2mm 0 2mm; }
+.diagram-page { page-break-before: always; text-align: center; }
+.diagram-page img { max-width: 178mm; max-height: 222mm; width: auto; height: auto; }
+.caption { font-size: 9pt; color: #6b7280; margin-top: 2.5mm; }
+.footer-line { margin-top: 5mm; font-size: 8.5pt; color: #9ca3af; text-align: center;
+               border-top: 1px solid #e5e7eb; padding-top: 2mm; }
+table.toc { border-collapse: collapse; width: 100%; margin-top: 4mm; }
+table.toc td { padding: 2mm 3mm; font-size: 10pt; border-bottom: 1px solid #e5e7eb; }
+.note { font-size: 9.5pt; color: #4b5563; margin-top: 5mm; }
+</style></head><body><div class="banner"><h1>WEEK 1 — Orientation, Network Layout & PHP Project Kickoff</h1><div class="sub">UAUT — College of ICT × TTCL · BSc ICT Practical Training · 24 Aug → 2 Oct 2026</div><div class="dates">Mon 24/08 → Fri 28/08/2026 · David Erick Mwijage (Mzee Mwijay) · Reg 250/13055</div></div><div class="chips" style="margin-top:4mm"><span>Week 1 of 6</span><span>Native PHP 8 + MariaDB</span><span>Leaflet GIS</span><span>CSRF · XSS · RBAC</span></div><div class="diagram-page section-start"><div class="kind-title">Diagram 1 — System Architecture</div><img src="../../diagrams/svg/W01_architecture.svg" alt="W01_architecture"/><div class="caption">How the pieces connect: entry points, hardened request pipeline, data layer and GIS layer.</div></div><div class="diagram-page section-start"><div class="kind-title">Diagram 2 — Database Relationships (ERD)</div><img src="../../diagrams/svg/W01_er-relationships.svg" alt="W01_er-relationships"/><div class="caption">Tables and foreign keys in play this week — drawn from database/schema.sql.</div></div><div class="diagram-page section-start"><div class="kind-title">Diagram 3 — AI-Assisted Fallback Chain</div><img src="../../diagrams/svg/W01_ai-fallback.svg" alt="W01_ai-fallback"/><div class="caption">Escalation chain used to complete the week's task: smartest tool first, offline fallback last, nothing unverified ships.</div></div><div class="footer-line">Generated from weeks/WEEK-01.md · diagrams rendered with Mermaid 11 · github.com/mwijay12/uaut-field-report</div></body></html>

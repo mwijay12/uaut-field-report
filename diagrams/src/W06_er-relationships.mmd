@@ -1,0 +1,51 @@
+erDiagram
+    districts ||--o{ wards : "contains"
+    districts ||--o{ farmers : "home district"
+    districts ||--o{ farms : "farm location"
+    wards ||--o{ farmers : "home ward"
+    wards ||--o{ farms : "farm ward"
+    users ||--o| farmers : "farmer profile"
+    users ||--o| buyers : "buyer profile"
+    users ||--o| officers : "staff profile"
+    farmers ||--o{ farms : "owns"
+    farms ||--o{ farm_photos : "evidence"
+    farms ||--o{ market_requests : "ordered"
+    users ||--o{ market_requests : "places"
+    users ||--o{ farm_photos : "verifies"
+    users ||--o{ farms : "reviews status"
+
+    users {
+        int id PK
+        varchar email UK
+        varchar password "bcrypt"
+        varchar role
+        varchar status
+    }
+    farmers {
+        int id PK
+        int user_id FK
+        varchar national_id UK "dedupe key for import"
+        varchar phone
+        int ward_id FK
+    }
+    farms {
+        int id PK
+        int farmer_id FK
+        varchar avocado_variety
+        decimal gps_latitude
+        decimal gps_longitude
+        varchar harvest_status
+        int ward_id FK
+    }
+    market_requests {
+        int id PK
+        varchar order_code UK
+        int farm_id FK
+        varchar status
+    }
+    login_attempts {
+        int id PK
+        varchar email
+        varchar ip_address
+        int was_success
+    }

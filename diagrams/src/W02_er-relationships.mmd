@@ -1,0 +1,40 @@
+erDiagram
+    users ||--o| farmers : "profile"
+    farmers ||--o{ farms : "owns"
+    farms ||--o{ farm_photos : "evidence"
+    users ||--o{ farm_photos : "verifies"
+
+    users {
+        int id PK
+        varchar email UK
+        varchar password "bcrypt"
+        varchar role
+        varchar status
+    }
+    login_attempts {
+        int id PK
+        varchar email
+        varchar ip_address
+        int was_success
+        timestamp attempted_at "brute-force audit - no FK"
+    }
+    farmers {
+        int id PK
+        int user_id FK
+        varchar national_id UK
+        varchar phone
+    }
+    farms {
+        int id PK
+        int farmer_id FK
+        varchar avocado_variety
+        varchar harvest_status
+        decimal expected_yield_kg
+    }
+    farm_photos {
+        int id PK
+        int farm_id FK
+        varchar filename
+        int is_verified
+        int verified_by FK
+    }

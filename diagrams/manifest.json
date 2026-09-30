@@ -1,0 +1,128 @@
+[
+  {
+    "name": "GLOBAL_architecture",
+    "title": "System Architecture — Full Production Topology",
+    "week": 0,
+    "kind": "architecture"
+  },
+  {
+    "name": "GLOBAL_er-relationships",
+    "title": "Database Relationships — Full Schema (10 tables)",
+    "week": 0,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "GLOBAL_ai-fallback",
+    "title": "AI-Assisted Development Fallback Chain",
+    "week": 0,
+    "kind": "ai-fallback"
+  },
+  {
+    "name": "W01_architecture",
+    "title": "Week 1 Architecture — Orientation, Network Layout & PHP Project Kickoff",
+    "week": 1,
+    "kind": "architecture"
+  },
+  {
+    "name": "W01_er-relationships",
+    "title": "Week 1 Database Relationships",
+    "week": 1,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "W01_ai-fallback",
+    "title": "Week 1 AI-Assisted Fallback Chain",
+    "week": 1,
+    "kind": "ai-fallback"
+  },
+  {
+    "name": "W02_architecture",
+    "title": "Week 2 Architecture — Maintenance, Presentation 1, Backend Refactor & Inventory",
+    "week": 2,
+    "kind": "architecture"
+  },
+  {
+    "name": "W02_er-relationships",
+    "title": "Week 2 Database Relationships",
+    "week": 2,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "W02_ai-fallback",
+    "title": "Week 2 AI-Assisted Fallback Chain",
+    "week": 2,
+    "kind": "ai-fallback"
+  },
+  {
+    "name": "W03_architecture",
+    "title": "Week 3 Architecture — Linux CLI, RBAC, DB Indexing & GIS Mapping",
+    "week": 3,
+    "kind": "architecture"
+  },
+  {
+    "name": "W03_er-relationships",
+    "title": "Week 3 Database Relationships",
+    "week": 3,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "W03_ai-fallback",
+    "title": "Week 3 AI-Assisted Fallback Chain",
+    "week": 3,
+    "kind": "ai-fallback"
+  },
+  {
+    "name": "W04_architecture",
+    "title": "Week 4 Architecture — Python Automation, Async APIs, Security & Market Concurrency",
+    "week": 4,
+    "kind": "architecture"
+  },
+  {
+    "name": "W04_er-relationships",
+    "title": "Week 4 Database Relationships",
+    "week": 4,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "W04_ai-fallback",
+    "title": "Week 4 AI-Assisted Fallback Chain",
+    "week": 4,
+    "kind": "ai-fallback"
+  },
+  {
+    "name": "W05_architecture",
+    "title": "Week 5 Architecture — Sprint Review & Enterprise Web Server Deployment",
+    "week": 5,
+    "kind": "architecture"
+  },
+  {
+    "name": "W05_er-relationships",
+    "title": "Week 5 Database Relationships",
+    "week": 5,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "W05_ai-fallback",
+    "title": "Week 5 AI-Assisted Fallback Chain",
+    "week": 5,
+    "kind": "ai-fallback"
+  },
+  {
+    "name": "W06_architecture",
+    "title": "Week 6 Architecture — UAT, Data Migration, User Manual & Defense Prep",
+    "week": 6,
+    "kind": "architecture"
+  },
+  {
+    "name": "W06_er-relationships",
+    "title": "Week 6 Database Relationships",
+    "week": 6,
+    "kind": "er-relationships"
+  },
+  {
+    "name": "W06_ai-fallback",
+    "title": "Week 6 AI-Assisted Fallback Chain",
+    "week": 6,
+    "kind": "ai-fallback"
+  }
+]

@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Task: bootstrap PHP project<br/>+ understand TTCL network"] --> G{"Antigravity IDE<br/>agent ok?"}
+    G -- yes --> D["🤖 Draft: folder tree,<br/>schema.sql, login page"]
+    G -- no --> C{"Cline + Claude ok?"}
+    C -- yes --> D
+    C -- no --> W{"Web LLM ok?"}
+    W -- yes --> D
+    W -- no --> OFF["📚 Offline: HTML/CSS book,<br/>handwritten notes"]
+    D --> V{"Apache serves the<br/>login page?"}
+    V -- no --> T
+    V -- yes --> P["💾 First commit + logbook 28/08"]

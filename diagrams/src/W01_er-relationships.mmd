@@ -1,0 +1,19 @@
+erDiagram
+    districts ||--o{ wards : "contains"
+    users {
+        int id PK
+        varchar email UK
+        varchar password
+        varchar role "farmer/buyer/officer/admin"
+        varchar status "pending/active/suspended"
+    }
+    districts {
+        int id PK
+        varchar name UK
+        varchar region "default Njombe"
+    }
+    wards {
+        int id PK
+        int district_id FK
+        varchar name "unique per district"
+    }

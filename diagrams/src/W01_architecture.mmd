@@ -1,0 +1,16 @@
+flowchart TD
+    subgraph TTCL["🏢 TTCL building — studied Wed 26/08"]
+        IN["🌐 ISP uplink"] --> CS["🔁 Core switch"]
+        CS --> FS["📶 Floor distribution switch"]
+        FS --> PP["🧵 Patch panel — structured Cat6"]
+        PP --> AP["🖥️ Access PCs — IT dept"]
+        FS --> PRN["🖨️ Network printers"]
+    end
+    subgraph DEV["🥑 Project kickoff — Fri 28/08"]
+        HT["htdocs/avocado_farmers"] --> AP2["Apache :80"]
+        AP2 --> PHP["PHP 8"]
+        PHP --> MY[("MariaDB — draft schema")]
+        IDX["index.php · login.php"] --> AP2
+        SK["database/schema.sql draft"] --> MY
+    end
+    AP -- "becomes the dev workstation" --> HT

@@ -1,0 +1,40 @@
+flowchart TD
+    subgraph Clients["👤 Clients"]
+        PC["💻 TTCL LAN workstation"]
+        PH["📱 Smartphone live demo"]
+    end
+    subgraph Edge["☁️ Entry points"]
+        DNS["🧭 Local TTCL DNS<br/>avocado.ttcl.local — Week 5"]
+        CF["Cloudflare Tunnel<br/>npx cloudflared --url localhost:80"]
+    end
+    subgraph Web["🕷️ Apache 2 — XAMPP :80 / :443"]
+        VHOST["VirtualHost + SSL/TLS binding"]
+        PHP["PHP 8 runtime"]
+    end
+    subgraph Core["🧩 Application core"]
+        AUTH["includes/auth.php<br/>login + RBAC role gate + session timeout 900s"]
+        SEC["includes/functions.php<br/>csrf_verify() + htmlspecialchars()"]
+        BIZ["register.php · login.php · farmer/* · buyer/*<br/>marketplace.php · receipt.php"]
+        API["api/*<br/>get_wards.php · get_farms_geojson.php"]
+    end
+    subgraph Data["🗄️ Data layer"]
+        DB[("MariaDB<br/>avocado_db · InnoDB · utf8mb4<br/>10 tables")]
+        ENV[".env → config/db.php"]
+        LOGS["logs/php_errors.log"]
+    end
+    subgraph GIS["🗺️ GIS layer"]
+        LEAF["Leaflet.js map.php"]
+        OSM["OpenStreetMap tiles"]
+    end
+
+    PC --> DNS --> VHOST
+    PH --> CF --> VHOST
+    VHOST --> AUTH --> SEC --> BIZ
+    BIZ --> API
+    BIZ --> DB
+    AUTH --> DB
+    API --> DB
+    ENV --> PHP --> BIZ
+    API -- "GeoJSON FeatureCollection<br/>farms + GPS" --> LEAF
+    OSM --> LEAF
+    PHP -- "trigger_error()" --> LOGS

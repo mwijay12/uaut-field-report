@@ -1,0 +1,11 @@
+flowchart LR
+    T["🧠 Task: decouple config +<br/>harden DB connection"] --> G{"Antigravity IDE<br/>refactor agent ok?"}
+    G -- yes --> D["🤖 Draft: .env split,<br/>db.php rewrite, 500.php"]
+    G -- no --> C{"Cline + Claude ok?"}
+    C -- yes --> D
+    C -- no --> W{"Web LLM ok?"}
+    W -- yes --> D
+    W -- no --> OFF["📚 Offline: PHP manual<br/>+ own refactoring notes"]
+    D --> V{"Verified?<br/>app boots · bad creds → 500.php<br/>· hash_equals passes"}
+    V -- no --> T
+    V -- yes --> P["💾 Commit + backend_refactor_notes.md"]
