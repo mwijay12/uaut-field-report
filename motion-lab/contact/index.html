@@ -12,14 +12,14 @@
         <h1 class="page-hero__title display-xl" data-enter-split>Tell us what you need. <em>Get a written quote.</em></h1>
 
         <div class="page-hero__foot">
-          <p class="lede" data-enter>Fixed packages, defined timelines and written agreements. Pick a starting point and send it to us on WhatsApp.</p>
+          <p class="lede" data-enter>Fixed packages, defined timelines and written agreements. Pick a starting point, or <a class="link" href="/pricing/#estimator">build an estimate</a> first, and send it to us on WhatsApp.</p>
           <p class="label" data-enter>Monday to Saturday · 8:00 to 18:00 EAT</p>
         </div>
       </section>
 
       <section class="brief section" data-theme="day" data-stage="contact-brief">
         <form class="brief__form" data-brief novalidate>
-          <fieldset class="packages">
+          <fieldset class="packages glass">
             <legend class="label"><span class="label__key">01</span> — Choose a starting point</legend>
 
             <label class="package" data-reveal>
@@ -77,7 +77,14 @@
             </label>
           </fieldset>
 
-          <div class="brief__side">
+          <div class="brief__side glass">
+            <div class="attached" data-brief-estimate hidden>
+              <p class="label"><span class="label__key">Estimate attached</span></p>
+              <p class="attached__range" data-brief-estimate-range></p>
+              <p class="attached__text" data-brief-estimate-text></p>
+              <button class="link" type="button" data-brief-estimate-remove>Remove it</button>
+            </div>
+
             <div class="fields">
               <p class="label brief__step"><span class="label__key">02</span> — About you</p>
               <label class="field">
@@ -102,17 +109,17 @@ I would like to start a project.</pre>
             </div>
 
             <div class="brief__actions">
-              <a class="btn" href="https://wa.me/255792867427" target="_blank" rel="noopener" data-brief-whatsapp>Send on WhatsApp <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              <a class="btn" href="https://wa.me/255792867427" target="_blank" rel="noopener" data-brief-whatsapp data-magnetic>Send on WhatsApp <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
               <a class="link" href="mailto:altrawaretechnology@gmail.com" data-brief-email>Send by email instead</a>
             </div>
-            <p class="brief__note">Nothing is stored on this site. The button opens WhatsApp with this message ready to send.</p>
+            <p class="brief__note">Nothing is sent to a server. What you type stays in this tab, and the button opens WhatsApp with the message ready to send.</p>
           </div>
         </form>
       </section>
 
       <section class="reach section" data-theme="night" data-stage="contact-reach">
         <header class="section-head">
-          <p class="label" data-reveal><span class="label__key" lang="sw">Mawasiliano</span> — Contact</p>
+          <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Mawasiliano</span> — Contact</p>
           <h2 class="display-l" data-split>Or reach us <em>directly.</em></h2>
         </header>
 

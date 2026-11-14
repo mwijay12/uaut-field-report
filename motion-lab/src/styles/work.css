@@ -1,40 +1,5 @@
 /* Work page: one chapter per platform. */
 
-.index-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 var(--gap);
-}
-
-.index-list a {
-  display: grid;
-  grid-template-columns: 2.25rem 1fr auto;
-  align-items: baseline;
-  gap: 0.5rem;
-  padding-block: 0.85rem;
-  border-top: 1px solid var(--rule);
-  font-weight: 500;
-  transition: color var(--dur-fast) var(--ease-out);
-}
-
-.index-list a span:last-child {
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 400;
-}
-
-@media (hover: hover) {
-  .index-list a:hover {
-    color: var(--accent);
-  }
-}
-
-@media (max-width: 560px) {
-  .index-list {
-    grid-template-columns: 1fr;
-  }
-}
-
 .product {
   padding: var(--space-section) var(--gutter) calc(var(--space-section) * 0.75);
   border-top: 1px solid var(--rule);
@@ -128,5 +93,119 @@
 @media (max-width: 480px) {
   .spec li {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Screenshots in a chapter ---------- */
+
+.product__shots {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+}
+
+.product__shots .media__screen {
+  max-height: 72svh;
+}
+
+.product__shots--pair {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: var(--gap);
+  align-items: start;
+}
+
+.product__shots--pair > :last-child {
+  margin-top: clamp(2rem, 8vw, 7rem);
+}
+
+.spec.glass {
+  padding: 0.25rem clamp(1.1rem, 2vw, 1.75rem);
+  border-radius: var(--radius-m);
+}
+
+.spec.glass li:first-child {
+  border-top: 0;
+}
+
+.spec.glass li:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .product__shots--pair {
+    grid-template-columns: 1fr;
+  }
+
+  .product__shots--pair > :last-child {
+    margin-top: 0;
+  }
+}
+
+/* ---------- More work ---------- */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+}
+
+/* The right-hand column starts lower, so the two columns do not line up. */
+.gallery > :nth-child(even) {
+  margin-top: clamp(3rem, 9vw, 9rem);
+}
+
+.project__link {
+  display: grid;
+  gap: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.project__text {
+  display: grid;
+  gap: 0.8rem;
+  justify-items: start;
+}
+
+.project__name {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.project__name .icon {
+  width: 0.5em;
+  height: 0.5em;
+  color: var(--accent);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.project__text > p:not(.label) {
+  max-width: 46ch;
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .project__link:hover .project__name .icon {
+    transform: translate(3px, -3px);
+  }
+}
+
+.project--next {
+  display: grid;
+  align-content: center;
+  gap: 1.5rem;
+  justify-items: start;
+  min-height: 18rem;
+  padding: clamp(1.5rem, 3vw, 3rem);
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius-l);
+}
+
+@media (max-width: 800px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery > :nth-child(even) {
+    margin-top: 0;
   }
 }

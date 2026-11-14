@@ -10,8 +10,11 @@ import { DEFAULT_PRESET, preset } from './presets.js';
 
 const UNIFORMS = [
   'uRes', 'uPx', 'uTime', 'uPointer', 'uPress', 'uScroll', 'uDay',
-  'uDensity', 'uWarp', 'uAccent', 'uInk', 'uSurge', 'uScale', 'uSeed',
+  'uDensity', 'uWarp', 'uAccent', 'uInk', 'uSurge', 'uScale', 'uSeed', 'uRush',
 ];
+
+// Scrolling this fast (pixels per millisecond) counts as full speed for the shader.
+const FULL_RUSH = 3.2;
 
 // Device pixel ratio is capped: the field is smooth, so extra pixels cost a lot and add little.
 const MAX_RATIO_FINE = 1.75;
@@ -108,6 +111,8 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
   const pointer = { x: 0.7, y: 0.45, targetX: 0.7, targetY: 0.45, press: 0, targetPress: 0 };
 
   let uniforms = null; // null until the program is ready
+  let lastScroll = window.scrollY;
+  let rush = 0; // 0..1, eased scroll speed
   let ratio = 1;
   let cssHeight = 1;
   let dirty = true;
@@ -237,6 +242,7 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
     gl.uniform1f(uniforms.uSurge, state.surge);
     gl.uniform1f(uniforms.uScale, state.scale);
     gl.uniform2f(uniforms.uSeed, state.seedX, state.seedY);
+    gl.uniform1f(uniforms.uRush, still ? 0 : rush);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     // The canvas starts transparent in CSS and fades up once it has a picture.
@@ -293,6 +299,15 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
       }
 
       measure(delta);
+
+      // The chart stretches a little while the page moves fast.
+      // A jump of more than a screen is a page change or an anchor, not scrolling.
+      const scrolled = window.scrollY;
+      const moved = Math.abs(scrolled - lastScroll);
+      const speed = moved > cssHeight ? 0 : Math.min(1, moved / Math.max(1, delta) / FULL_RUSH);
+      lastScroll = scrolled;
+      rush += (speed - rush) * (speed > rush ? 0.18 : 0.07);
+
       pointer.x += (pointer.targetX - pointer.x) * 0.08;
       pointer.y += (pointer.targetY - pointer.y) * 0.08;
       pointer.press += (pointer.targetPress - pointer.press) * 0.05;

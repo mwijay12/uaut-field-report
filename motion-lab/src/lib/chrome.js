@@ -17,7 +17,9 @@ export function createChrome({ scroll }) {
   const toggle = document.querySelector('[data-menu-toggle]');
   const toggleLabel = document.querySelector('[data-menu-label]');
   const menu = document.querySelector('[data-menu]');
-  const wide = window.matchMedia('(min-width: 821px)');
+  const meterValue = document.querySelector('[data-meter-value]');
+  const meterBar = document.querySelector('[data-meter-bar]');
+  const wide = window.matchMedia('(min-width: 1021px)');
 
   let menuOpen = false;
 
@@ -43,6 +45,9 @@ export function createChrome({ scroll }) {
   setInterval(updateStatus, 20_000);
 
   // ---------- Header: hides on the way down, returns on the way up ----------
+  // The same trigger feeds the meter in the corner: how far down the page you are.
+
+  let shownPercent = -1;
 
   ScrollTrigger.create({
     start: 0,
@@ -51,6 +56,12 @@ export function createChrome({ scroll }) {
       const y = self.scroll();
       header.classList.toggle('is-stuck', y > 40);
       header.classList.toggle('is-hidden', !menuOpen && self.direction === 1 && y > 240);
+
+      const percent = Math.round(self.progress * 100);
+      if (percent === shownPercent) return;
+      shownPercent = percent;
+      meterValue.textContent = String(percent).padStart(3, '0');
+      meterBar.style.transform = `scaleY(${self.progress})`;
     },
   });
 

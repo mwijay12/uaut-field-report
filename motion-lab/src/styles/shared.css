@@ -1,6 +1,6 @@
 /* Sections used on more than one page. */
 
-/* ---------- Opening section of Work, Contact and the 404 page ---------- */
+/* ---------- Opening section of every page but Home ---------- */
 
 .page-hero {
   display: grid;
@@ -43,7 +43,46 @@
   }
 }
 
-/* ---------- Closing call to action (Home, Work) ---------- */
+/* ---------- List of jump links in an opening section ---------- */
+
+/* Two columns when each has room for a name and its note, otherwise one.
+   A list with long notes asks for more room with the --roomy modifier. */
+.index-list {
+  --index-min: 13rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--index-min)), 1fr));
+  gap: 0 var(--gap);
+}
+
+.index-list--roomy {
+  --index-min: 19rem;
+}
+
+.index-list a {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--rule);
+  font-weight: 500;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.index-list a span:last-child {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .index-list a:hover {
+    color: var(--accent);
+  }
+}
+
+/* ---------- Closing call to action (every page) ---------- */
 
 .cta {
   display: grid;
@@ -57,4 +96,23 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 1.25rem 2rem;
+}
+
+/* ---------- A section heading with a link on the right ---------- */
+
+.section-head--row {
+  grid-template-columns: 1fr auto;
+  align-items: end;
+}
+
+.section-head--row > div {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (max-width: 700px) {
+  .section-head--row {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
 }

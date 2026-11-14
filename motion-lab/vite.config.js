@@ -97,6 +97,9 @@ export default defineConfig({
       input: {
         home: resolve(root, 'index.html'),
         work: resolve(root, 'work/index.html'),
+        services: resolve(root, 'services/index.html'),
+        pricing: resolve(root, 'pricing/index.html'),
+        studio: resolve(root, 'studio/index.html'),
         contact: resolve(root, 'contact/index.html'),
         notFound: resolve(root, '404.html'),
       },

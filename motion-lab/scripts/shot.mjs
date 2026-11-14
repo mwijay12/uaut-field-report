@@ -21,13 +21,16 @@
 //   --expect <status>    the page itself should answer with this status (use 404 for the not-found page)
 //   --out <dir>          default ./shots
 //   --full               also save one full-page image
+//   --sheet <columns>    also tile every shot of this run into one image, <name>-sheet.png,
+//                        so several stops can be looked at in one go
+//   --sheet-width <px>   width of one tile on the sheet (default 480)
 //
 // Exit code 1 when the page logged an error, so it can gate a commit.
 //
 // WebGL runs on the CPU here (SwiftShader). Use it to judge layout and looks,
 // not frame rate.
 
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 process.env.AWS_EXECUTION_ENV ??= 'AWS_Lambda_nodejs22.x';
@@ -109,6 +112,8 @@ async function scrollTo(target) {
   }
 }
 
+const taken = [];
+
 for (const [index, stop] of stops.entries()) {
   const max = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
   const target = stop.endsWith('px') ? Number.parseFloat(stop) : Number(stop) * max;
@@ -121,12 +126,33 @@ for (const [index, stop] of stops.entries()) {
   const y = await page.evaluate(() => Math.round(window.scrollY));
   const file = `${out}/${name}-${width}x${height}-${String(index).padStart(2, '0')}.png`;
   await page.screenshot({ path: file });
+  taken.push(file);
   console.log(`${file}  scrollY=${y}/${max}`);
 }
 
 if (flag('full')) {
   const file = `${out}/${name}-${width}x${height}-full.png`;
   await page.screenshot({ path: file, fullPage: true });
+  console.log(file);
+}
+
+// A contact sheet: the shots of this run side by side in one picture.
+const columns = Number(option('sheet', 0));
+if (columns && taken.length) {
+  const tile = Number(option('sheet-width', 480));
+  const images = await Promise.all(taken.map(async (file) => `data:image/png;base64,${(await readFile(file)).toString('base64')}`));
+  const sheet = await browser.newPage();
+  const rows = Math.ceil(taken.length / columns);
+  const tileHeight = Math.round((tile * height) / width);
+  await sheet.setViewport({ width: columns * tile + (columns - 1) * 8, height: rows * tileHeight + (rows - 1) * 8, deviceScaleFactor: 1 });
+  await sheet.setContent(
+    `<body style="margin:0;background:#808080;display:grid;gap:8px;grid-template-columns:repeat(${columns},${tile}px)">` +
+      images.map((source) => `<img src="${source}" style="display:block;width:${tile}px">`).join('') +
+      '</body>',
+  );
+  const file = `${out}/${name}-sheet.png`;
+  await sheet.screenshot({ path: file });
+  await sheet.close();
   console.log(file);
 }
 

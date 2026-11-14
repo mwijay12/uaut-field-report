@@ -35,6 +35,17 @@ export function createScroll() {
       window.scrollTo(0, 0);
     },
 
+    /** Go to a position or an element at once, with no animation. */
+    jump(target) {
+      // After a page change Lenis still holds the height of the page before.
+      // Without a fresh measure it would stop short of a place further down.
+      lenis?.resize();
+      if (lenis) lenis.scrollTo(target, { immediate: true, force: true });
+      else if (typeof target === 'number') window.scrollTo(0, target);
+      else target.scrollIntoView();
+      ScrollTrigger.update();
+    },
+
     /** Scroll to a position, selector or element. */
     to(target, options) {
       if (lenis) {

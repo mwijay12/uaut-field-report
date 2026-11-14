@@ -2,26 +2,50 @@
 // Everything GSAP creates is collected in one context so a single revert()
 // removes it when the page leaves.
 
+import { mountMarquee } from './marquee.js';
+import { mountMedia } from './media.js';
 import { ScrollTrigger, gsap } from './motion.js';
+import { mountNumbers } from './numbers.js';
 import { mountReveals } from './reveal.js';
 import { mountScenes } from './scenes.js';
+import { mountText } from './text.js';
 import { mountContact } from '../pages/contact.js';
 import { mountHome } from '../pages/home.js';
+import { mountPricing } from '../pages/pricing.js';
+import { mountServices } from '../pages/services.js';
 import { mountWork } from '../pages/work.js';
 
 // Keyed by data-barba-namespace. A page with nothing special needs no entry.
-const PAGES = { home: mountHome, work: mountWork, contact: mountContact };
+const PAGES = {
+  home: mountHome,
+  work: mountWork,
+  services: mountServices,
+  pricing: mountPricing,
+  contact: mountContact,
+};
 
-export function mountPage(container, deps) {
+/**
+ * @param {HTMLElement} container  the Barba container
+ * @param {object} deps            stage, scroll, setTheme
+ * @param {{ returning?: boolean }} [arrival]  returning: reached with Back or Forward
+ */
+export function mountPage(container, deps, arrival = {}) {
   const media = gsap.matchMedia();
+  const cleanups = [];
   let scenes;
   let reveals;
-  let unmount;
 
   const context = gsap.context(() => {
     // Page code first: it holds the pinned scenes, and anything that pins has
     // to exist before the triggers below it are measured.
-    unmount = PAGES[container.dataset.barbaNamespace]?.(container, { ...deps, media });
+    cleanups.push(PAGES[container.dataset.barbaNamespace]?.(container, { ...deps, ...arrival, media }));
+
+    // Then the effects any page can ask for through data attributes.
+    cleanups.push(mountMarquee(container));
+    mountMedia(container, { media });
+    mountNumbers(container);
+    mountText(container);
+
     scenes = mountScenes(container, deps);
     reveals = mountReveals(container);
   }, container);
@@ -33,7 +57,7 @@ export function mountPage(container, deps) {
     scenes,
     enter: () => reveals.enter(),
     destroy() {
-      unmount?.();
+      cleanups.forEach((cleanup) => cleanup?.());
       media.revert();
       context.revert();
     },

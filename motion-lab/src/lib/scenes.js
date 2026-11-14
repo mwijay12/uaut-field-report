@@ -7,6 +7,9 @@
 
 import { ScrollTrigger, gsap } from './motion.js';
 
+// How far down the screen a scene's top must be before it takes over.
+const LINE = 0.55;
+
 export function mountScenes(root, { stage, setTheme }) {
   // Not ':scope >': a pinned section is wrapped in a spacer and stops being a direct child.
   const scenes = gsap.utils.toArray('[data-theme]', root);
@@ -25,11 +28,24 @@ export function mountScenes(root, { stage, setTheme }) {
     if (index === 0) return; // the first scene is applied by the page transition
     ScrollTrigger.create({
       trigger: scene,
-      start: 'top 55%',
+      start: `top ${LINE * 100}%`,
       onEnter: () => apply(scene),
       onLeaveBack: () => apply(scenes[index - 1]),
     });
   });
 
-  return { first: scenes[0], apply };
+  return {
+    first: scenes[0],
+    apply,
+
+    /** Apply whichever scene the reader is looking at now (after a jump to an anchor or a remembered place). */
+    sync(options) {
+      const line = window.innerHeight * LINE;
+      let chosen = scenes[0];
+      for (const scene of scenes) {
+        if (scene.getBoundingClientRect().top <= line) chosen = scene;
+      }
+      apply(chosen, options);
+    },
+  };
 }

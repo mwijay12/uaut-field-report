@@ -10,6 +10,12 @@
   <symbol id="i-down" viewBox="0 0 20 20">
     <path d="M10 3v13M5 11l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" />
   </symbol>
+  <symbol id="i-check" viewBox="0 0 20 20">
+    <path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 20 20">
+    <path d="M10 4v12M4 10h12" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </symbol>
 </svg>
 
 <!-- Everything from here to <main> stays in place while Barba swaps pages. -->
@@ -29,8 +35,11 @@
   </p>
 
   <nav class="nav" aria-label="Primary">
-    <a class="nav__link" href="/work/" data-nav="work"{{aria-work}}>Work</a>
-    <a class="nav__link" href="/contact/" data-nav="contact"{{aria-contact}}>Start a project</a>
+    <a class="nav__link" href="/work/" data-nav="work"{{aria-work}}><span class="roll"><span class="roll__text" data-text="Work">Work</span></span></a>
+    <a class="nav__link" href="/services/" data-nav="services"{{aria-services}}><span class="roll"><span class="roll__text" data-text="Services">Services</span></span></a>
+    <a class="nav__link" href="/pricing/" data-nav="pricing"{{aria-pricing}}><span class="roll"><span class="roll__text" data-text="Pricing">Pricing</span></span></a>
+    <a class="nav__link" href="/studio/" data-nav="studio"{{aria-studio}}><span class="roll"><span class="roll__text" data-text="Studio">Studio</span></span></a>
+    <a class="nav__cta" href="/contact/" data-nav="contact"{{aria-contact}}><span class="roll"><span class="roll__text" data-text="Start a project">Start a project</span></span></a>
   </nav>
 
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
@@ -51,10 +60,25 @@
       <span class="menu__word">Work</span>
       <span class="menu__sw" lang="sw">Kazi</span>
     </a>
-    <a class="menu__link" href="/contact/" data-nav="contact"{{aria-contact}}>
+    <a class="menu__link" href="/services/" data-nav="services"{{aria-services}}>
       <span class="menu__index">03</span>
+      <span class="menu__word">Services</span>
+      <span class="menu__sw" lang="sw">Huduma</span>
+    </a>
+    <a class="menu__link" href="/pricing/" data-nav="pricing"{{aria-pricing}}>
+      <span class="menu__index">04</span>
+      <span class="menu__word">Pricing</span>
+      <span class="menu__sw" lang="sw">Bei</span>
+    </a>
+    <a class="menu__link" href="/studio/" data-nav="studio"{{aria-studio}}>
+      <span class="menu__index">05</span>
+      <span class="menu__word">Studio</span>
+      <span class="menu__sw" lang="sw">Sisi</span>
+    </a>
+    <a class="menu__link" href="/contact/" data-nav="contact"{{aria-contact}}>
+      <span class="menu__index">06</span>
       <span class="menu__word">Start a project</span>
-      <span class="menu__sw" lang="sw">Anza mradi</span>
+      <span class="menu__sw" lang="sw">Tuongee</span>
     </a>
   </nav>
   <div class="menu__foot">
@@ -63,9 +87,23 @@
   </div>
 </div>
 
-<div class="titlecard" data-titlecard aria-hidden="true">
-  <div class="titlecard__mask"><span class="titlecard__word" data-titlecard-word lang="sw"></span></div>
-  <span class="label" data-titlecard-sub></span>
+<!-- How far down the page the reader is. -->
+<p class="meter" aria-hidden="true">
+  <span data-meter-value>000</span>
+  <span class="meter__track"><span class="meter__bar" data-meter-bar></span></span>
+</p>
+
+<!-- The curtain that crosses the screen between two pages. -->
+<div class="curtain" data-curtain aria-hidden="true">
+  <svg class="curtain__cloth" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+    <path class="curtain__back" data-curtain-back d="" />
+    <path class="curtain__front" data-curtain-front d="" />
+  </svg>
+  <div class="curtain__body">
+    <span class="label" data-curtain-count></span>
+    <div class="curtain__mask"><span class="curtain__word" data-curtain-word lang="sw"></span></div>
+    <span class="label" data-curtain-label></span>
+  </div>
 </div>
 
 <div class="intro" data-intro aria-hidden="true">

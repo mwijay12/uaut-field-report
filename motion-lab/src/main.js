@@ -1,44 +1,43 @@
-// Entry point. Builds the things that outlive a page (stage, scroll, header)
-// and hands page changes to Barba.
+// Entry point. Builds the things that outlive a page (stage, scroll, header,
+// curtain) and hands page changes to Barba.
 //
 // Who does what:
-//   raw WebGL + GLSL   the chart behind everything          src/gl
-//   tween.js           the chart's values, between looks    src/gl/stage.js
-//   GSAP               scroll reveals, pinning, transitions src/lib, src/pages
-//   Lenis              smooth scrolling                     src/lib/scroll.js
-//   Barba              page changes without a reload        this file
-//   Anime.js           intro, menu and small flourishes     src/lib/intro.js, chrome.js
+//   raw WebGL + GLSL   the chart behind everything              src/gl
+//   tween.js           the chart's values, between looks        src/gl/stage.js
+//   GSAP               scroll effects, text, numbers, curtain   src/lib, src/pages
+//   Lenis              smooth scrolling                         src/lib/scroll.js
+//   Barba              page changes without a reload            this file
+//   Anime.js           intro, menu and small flourishes         src/lib/intro.js, chrome.js
 
 import barba from '@barba/core';
 import { Easing, createNullStage, createStage } from './gl/stage.js';
 import { preset } from './gl/presets.js';
 import { createChrome } from './lib/chrome.js';
+import { createCurtain } from './lib/curtain.js';
 import { playIntro } from './lib/intro.js';
-import { DURATION, EASE, gsap, reducedMotion } from './lib/motion.js';
+import { EASE, gsap, reducedMotion } from './lib/motion.js';
 import { mountPage } from './lib/page.js';
+import { ROUTES, routeOf } from './lib/routes.js';
 import { createScroll } from './lib/scroll.js';
 
 const root = document.documentElement;
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const announcer = document.querySelector('[data-announcer]');
-const card = document.querySelector('[data-titlecard]');
-const cardWord = document.querySelector('[data-titlecard-word]');
-const cardSub = document.querySelector('[data-titlecard-sub]');
-
-// The word shown between two pages: Swahili first, English under it.
-const CARDS = {
-  home: ['Nyumbani', 'Home'],
-  work: ['Kazi', 'Work'],
-  contact: ['Tuongee', 'Start a project'],
-};
 
 const THEME_COLORS = { night: '#071022', day: '#f7f6f2' };
 
 // ---------- Things that live for the whole visit ----------
 
 // For testing: ?gl=live forces animation on any machine, ?gl=still draws only
-// on change, ?gl=off behaves as if WebGL 2 were missing.
-const glMode = new URLSearchParams(window.location.search).get('gl');
+// on change, ?gl=off behaves as if WebGL 2 were missing. ?slow=6 plays every
+// animation six times slower, to look at a transition frame by frame.
+const query = new URLSearchParams(window.location.search);
+const glMode = query.get('gl');
+const slow = Number(query.get('slow'));
+if (slow > 1) {
+  gsap.globalTimeline.timeScale(1 / Math.min(slow, 20));
+  window.altraMotion = gsap; // a handle for pausing on a frame from a test script
+}
 const withoutWebgl = () => root.classList.add('no-webgl');
 const canvas = document.querySelector('[data-stage-canvas]');
 const webgl =
@@ -55,6 +54,7 @@ if (glMode) window.altraStage = stage; // a handle for poking at the chart from 
 
 const scroll = createScroll();
 const chrome = createChrome({ scroll });
+const curtain = createCurtain();
 
 // One loop for everything: GSAP's ticker drives Lenis and the WebGL draw.
 gsap.ticker.lagSmoothing(0);
@@ -73,12 +73,6 @@ function setTheme(theme, options) {
 let page = null;
 const deps = { stage, scroll, setTheme };
 
-function pageOf(path) {
-  if (path.startsWith('/work')) return 'work';
-  if (path.startsWith('/contact')) return 'contact';
-  return 'home';
-}
-
 function fontsReady() {
   const wanted = ['330 1em Fraunces', 'italic 300 1em Fraunces', '400 1em Inter'];
   const loading = Promise.all(wanted.map((font) => document.fonts.load(font))).catch(() => {});
@@ -86,14 +80,44 @@ function fontsReady() {
   return Promise.race([loading, giveUp]);
 }
 
+// ---------- Where the reader was ----------
+// Back and Forward return to the place the reader left, like a normal browser.
+
+const places = new Map();
+const placeKey = (url) => url.href.split('#')[0];
+const viaHistory = (trigger) => trigger === 'back' || trigger === 'forward' || trigger === 'popstate';
+const anchorOf = (hash) => (hash ? document.getElementById(hash.replace(/^#/, '')) : null);
+
+/**
+ * Put the new page where it should open: a remembered place after Back or
+ * Forward, the anchor if the link had one, otherwise the top.
+ * Returns true when that is somewhere other than the top.
+ */
+function openAt(next, trigger) {
+  const remembered = viaHistory(trigger) ? places.get(placeKey(next.url)) : 0;
+  // Barba drops the #anchor from the address, so it is read from the link that was clicked.
+  const hash = trigger instanceof HTMLAnchorElement ? trigger.hash : '';
+  const anchor = anchorOf(hash);
+
+  if (remembered) {
+    scroll.jump(remembered);
+  } else if (anchor) {
+    history.replaceState(history.state, '', window.location.pathname + window.location.search + hash);
+    scroll.jump(anchor);
+  }
+  return Boolean(remembered || anchor);
+}
+
 // ---------- Page changes ----------
+
+let direction = 1; // 1: the curtain rises. -1: it falls.
 
 barba.init({
   timeout: 10000,
   preventRunning: true,
   transitions: [
     {
-      name: 'travel',
+      name: 'curtain',
 
       // First load. The chart fades up from nothing while the intro plays.
       async once({ next }) {
@@ -106,40 +130,43 @@ barba.init({
         await Promise.all([fontsReady(), playIntro()]);
 
         page = mountPage(next.container, deps);
-        page.scenes.apply(page.scenes.first, { duration: 1200, easing: Easing.Quartic.Out });
+        const anchor = anchorOf(window.location.hash);
+        if (anchor) scroll.jump(anchor);
+        page.scenes.sync({ duration: 1200, easing: Easing.Quartic.Out });
         root.classList.add('is-ready');
         page.enter();
       },
 
-      before() {
-        chrome.closeMenu();
+      before({ current }) {
+        places.set(placeKey(current.url), window.scrollY);
       },
 
-      // The page lifts away, the chart surges, and the name of the next page rises.
-      async leave({ current, next }) {
+      // The curtain crosses the screen with the name of the next page on it,
+      // while the chart surges underneath.
+      async leave({ current, next, trigger }) {
         scroll.stop();
+
+        const from = ROUTES.indexOf(routeOf(current.url.path));
+        const to = routeOf(next.url.path);
+        if (trigger === 'back') direction = -1;
+        else if (trigger === 'forward') direction = 1;
+        else direction = ROUTES.indexOf(to) >= from ? 1 : -1;
 
         if (reducedMotion) {
           await gsap.to(current.container, { autoAlpha: 0, duration: 0.15, ease: 'none' });
           return;
         }
 
-        const [word, sub] = CARDS[pageOf(next.url.path)];
-        cardWord.textContent = word;
-        cardSub.textContent = sub;
-        stage.surge(1, { duration: 700, easing: Easing.Quartic.In });
-
-        await gsap
-          .timeline()
-          .to(current.container, { autoAlpha: 0, y: -48, duration: 0.5, ease: EASE.inOut }, 0)
-          .set(card, { autoAlpha: 1 }, 0.3)
-          .fromTo(cardWord, { yPercent: 115 }, { yPercent: 0, duration: 0.7, ease: EASE.out }, 0.3)
-          .fromTo(cardSub, { autoAlpha: 0 }, { autoAlpha: 1, duration: DURATION.fast, ease: 'none' }, 0.55);
+        stage.surge(1, { duration: 800, easing: Easing.Quartic.In });
+        await curtain.cover({ direction, route: to });
       },
 
       // Barba keeps the old container until the end. Remove it now so the new
       // page is measured on its own.
       beforeEnter({ current, next }) {
+        // An open menu stays open until the curtain has covered it.
+        chrome.closeMenu();
+        scroll.stop();
         page?.destroy();
         page = null;
         current.container.remove();
@@ -148,24 +175,31 @@ barba.init({
         chrome.setCurrent(next.namespace);
       },
 
-      // The chart travels to the new page's place on the map, then the page arrives.
-      async enter({ next }) {
-        page = mountPage(next.container, deps);
-        page.scenes.apply(page.scenes.first, { duration: 1500 });
-        stage.surge(0, { duration: 1100, easing: Easing.Quartic.Out });
+      // Behind the curtain the chart travels to the new page's place on the
+      // map. Then the curtain lifts and the page arrives.
+      async enter({ next, trigger }) {
+        page = mountPage(next.container, deps, { returning: viaHistory(trigger) });
+        const moved = openAt(next, trigger);
+        page.scenes.sync({ duration: 1500 });
+        stage.surge(0, { duration: 1200, easing: Easing.Quartic.Out });
 
         if (reducedMotion) {
           gsap.from(next.container, { autoAlpha: 0, duration: 0.15, ease: 'none' });
           return;
         }
 
-        await gsap
-          .timeline()
-          .to(cardWord, { yPercent: -115, duration: 0.55, ease: EASE.inOut }, 0.25)
-          .to(cardSub, { autoAlpha: 0, duration: DURATION.fast, ease: 'none' }, 0.25)
-          .set(card, { autoAlpha: 0 });
-
-        page.enter();
+        // The page slides in under the curtain, but only when it opens at the
+        // top: further down a pinned section may be in play, and a moving
+        // parent would drag it along.
+        if (!moved) {
+          gsap.fromTo(
+            next.container,
+            { y: 110 * direction },
+            { y: 0, duration: 1.1, ease: EASE.out, delay: 0.16, clearProps: 'transform' },
+          );
+        }
+        gsap.delayedCall(0.5, () => page?.enter());
+        await curtain.reveal({ direction });
       },
 
       after({ next }) {
@@ -190,7 +224,8 @@ document.addEventListener(
 
     const url = new URL(link.href, window.location.href);
     const samePage = url.origin === window.location.origin && url.pathname === window.location.pathname;
-    const toTop = link.hasAttribute('data-to-top') || (samePage && url.search === window.location.search && !url.hash);
+    const sameQuery = !url.search || url.search === window.location.search;
+    const toTop = link.hasAttribute('data-to-top') || (samePage && sameQuery && !url.hash);
     if (!samePage || !toTop) return;
 
     event.preventDefault();

@@ -15,8 +15,18 @@ Read `README.md` first. It has the layout, the data attributes and the steps for
 - Colours, type sizes and spacing come from `src/styles/tokens.css`. The only colour values outside
   it are the shader palette and the browser theme colour (`THEME_COLORS` in `src/main.js` and
   `theme-color` in each page's head include). Keep those in step with the tokens.
-- A section declares its theme and chart look in HTML (`data-theme`, `data-stage`). Prefer that to
-  new JavaScript.
+- A section declares its theme and chart look in HTML (`data-theme`, `data-stage`). Effects are
+  declared the same way (`data-count`, `data-type-words`, `data-scramble`, `data-scrub`,
+  `data-media`, `data-parallax`, `data-magnetic`, `data-marquee`). Prefer an attribute to new
+  JavaScript.
+- The HTML holds the finished text and the final number. An effect starts from that and returns to
+  it. Never ship text that only exists after a script has run.
+- Text that has to be read closely goes on a `.glass` panel. Do not lay long text straight on the
+  chart, and do not write a new translucent background per component.
+- Pictures are WebP files made with `scripts/images.mjs`, with `width`, `height` and a real `alt`.
+  Keep originals out of git. Do not use stock photos, and do not show a third party's brand.
+- The pages and their order live in `src/lib/routes.js`. The pricing rules live in
+  `src/lib/estimate.js` and nowhere else.
 - Move things with `transform` and fade them with `opacity`. Colour transitions are fine. Never
   animate layout properties such as `width`, `height`, `top`, `left` or `margin`.
 - Everything must still work with reduced motion on, without WebGL 2, and at 390 px wide.
@@ -28,10 +38,18 @@ Read `README.md` first. It has the layout, the data attributes and the steps for
 ```bash
 npm run build
 npm run preview &
-npm run shot -- http://localhost:4173/ --name home --at 0,0.25,0.5,0.75,1
-npm run shot -- http://localhost:4173/ --name m-home --viewport 390x844 --dpr 2 --touch --at 0,0.5,1
+npm run shot -- http://localhost:4173/ --name home --at 0,0.2,0.4,0.6,0.8,1 --sheet 3
+npm run shot -- http://localhost:4173/ --name m-home --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
 ```
 
-Then open the images in `shots/` and look at them. The script exits with an error on any console
-error, console warning or failed request, and prints `overflowX`, which must be 0. Shoot every page
-you touched, at both sizes. A clean build is not proof that the page looks right.
+Then open the `-sheet.png` images in `shots/` and look at them. The script exits with an error on
+any console error, console warning or failed request, and prints `overflowX`, which must be 0. Shoot
+every page you touched, at both sizes. A clean build is not proof that the page looks right.
+
+Some things a still picture cannot show. Check these by driving the page from a script:
+
+- A page change. Open the page with `?slow=6`, click a link, then pause with
+  `altraMotion.globalTimeline.pause()` before each picture. Check both directions and the menu on a
+  phone.
+- Back and Forward. The reader must return to the place and the choices they left.
+- A number that counts. Wait three seconds after scrolling to it before reading the value.

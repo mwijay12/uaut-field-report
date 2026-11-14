@@ -18,6 +18,7 @@ uniform float uInk;     // line strength
 uniform float uSurge;   // 0..1, raised during page transitions
 uniform float uScale;   // zoom
 uniform vec2 uSeed;     // where on the chart we are
+uniform float uRush;    // 0..1, how fast the page is scrolling
 
 out vec4 fragColor;
 
@@ -126,7 +127,9 @@ void main() {
 
   // Zoom about the middle of the screen, then move to our place on the chart.
   // The chart drifts up more slowly than the page, which gives it depth.
-  vec2 q = screen * uScale + uSeed;
+  // Fast scrolling pulls the terrain out along the direction of travel.
+  vec2 stretched = screen * vec2(1.0 + uRush * 0.10, 1.0 - uRush * 0.30);
+  vec2 q = stretched * uScale + uSeed;
   q.y -= uScroll * 0.22;
   float t = uTime * 0.03;
 
@@ -167,7 +170,7 @@ void main() {
 
   float minorAlpha = mix(0.20, 0.13, uDay) + high * mix(0.26, 0.20, uDay);
   float majorAlpha = mix(0.26, 0.17, uDay) + high * mix(0.30, 0.22, uDay);
-  float alpha = (minor * minorAlpha + major * majorAlpha) * uInk * (1.0 + uSurge * 0.9);
+  float alpha = (minor * minorAlpha + major * majorAlpha) * uInk * (1.0 + uSurge * 0.9 + uRush * 0.35);
 
   vec3 color = mix(ground, ink, clamp(alpha, 0.0, 1.0));
 
