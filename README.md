@@ -19,6 +19,8 @@
 
 📚 **This documentation repo:** [mwijay12/uaut-field-report](https://github.com/mwijay12/uaut-field-report) · 📄 **Diagrams as PDFs:** [FIELD_REPORT_DIAGRAMS.pdf](pdf/FIELD_REPORT_DIAGRAMS.pdf) (master) + [pdf/weeks/](pdf/weeks/) (one per week)
 
+🧪 **Also in this repo:** [motion-lab/](motion-lab/) · Altraware landing site built with WebGL, GLSL, GSAP, Barba.js, Anime.js and tween.js · **Live:** [altra-motion-lab.vercel.app](https://altra-motion-lab.vercel.app)
+
 ---
 
 ## 📑 Table of Contents
@@ -266,7 +268,8 @@ Field Reports/
 ├── FIELD_PRACTICAL_TRAINING_LOGBOOK_GUIDE.md  ← full Swahili/English logbook guide
 ├── PRACTICAL_TRAINING_LOGBOOK_MASTER.docx     ← printable master logbook
 ├── PRACTICAL_TRAINING_LOGBOOK_MASTER.pdf      ← PDF version
-└── build_full_field_documents.py              ← docx generator (python-docx)
+├── build_full_field_documents.py              ← docx generator (python-docx)
+└── motion-lab/                                ← separate project: Altraware landing site (own README)
 ```
 
 ---

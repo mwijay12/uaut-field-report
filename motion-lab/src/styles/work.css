@@ -1,0 +1,132 @@
+/* Work page: one chapter per platform. */
+
+.index-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--gap);
+}
+
+.index-list a {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--rule);
+  font-weight: 500;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.index-list a span:last-child {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+@media (hover: hover) {
+  .index-list a:hover {
+    color: var(--accent);
+  }
+}
+
+@media (max-width: 560px) {
+  .index-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product {
+  padding: var(--space-section) var(--gutter) calc(var(--space-section) * 0.75);
+  border-top: 1px solid var(--rule);
+  /* The header hides on the way down, so anchors only need a little air. */
+  scroll-margin-top: 1rem;
+}
+
+.product__head {
+  display: grid;
+  gap: clamp(1.25rem, 2.4vw, 2rem);
+}
+
+.product__name {
+  font-family: var(--font-display);
+  font-size: clamp(3.1rem, 0.4rem + 11.6vw, 12.5rem);
+  font-weight: 320;
+  font-variation-settings: 'opsz' 144;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+}
+
+.product__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 3rem var(--gap);
+  margin-top: clamp(3rem, 7vw, 6.5rem);
+}
+
+.product__aside {
+  position: sticky;
+  top: calc(var(--header-h) + 2rem);
+  display: grid;
+  align-self: start;
+  gap: 2rem;
+  grid-column: 1 / span 5;
+  justify-items: start;
+}
+
+.product__tagline {
+  max-width: 14ch;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.product__body {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  grid-column: 7 / -1;
+}
+
+.product__body .lede {
+  max-width: 40ch;
+}
+
+.spec li {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 1fr) 3fr;
+  gap: 0.5rem var(--gap);
+  align-items: baseline;
+  padding-block: 1.2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.spec li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.spec .label {
+  color: var(--fg);
+}
+
+.spec p {
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .product__aside {
+    position: static;
+    grid-column: 1 / -1;
+  }
+
+  .product__body {
+    grid-column: 1 / -1;
+  }
+
+  .product__tagline {
+    max-width: 18ch;
+  }
+}
+
+@media (max-width: 480px) {
+  .spec li {
+    grid-template-columns: 1fr;
+  }
+}

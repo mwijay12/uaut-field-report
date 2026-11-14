@@ -1,0 +1,254 @@
+/* Contact page: packages, the brief builder, and how to reach the studio. */
+
+.brief {
+  padding-top: clamp(3rem, 6vw, 5rem);
+}
+
+.brief__form {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 4rem var(--gap);
+  align-items: start;
+}
+
+.packages {
+  grid-column: 1 / span 7;
+}
+
+.packages legend,
+.brief__step {
+  margin-bottom: 1.75rem;
+}
+
+.package {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  gap: 0.4rem 1.25rem;
+  align-items: baseline;
+  padding-block: clamp(1.25rem, 2.2vw, 1.9rem);
+  border-top: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+.package:last-of-type {
+  border-bottom: 1px solid var(--rule);
+}
+
+.package input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.package__dot {
+  position: relative;
+  top: 0.15em;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1.5px solid var(--muted);
+  border-radius: 50%;
+  align-self: center;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.package__dot::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: scale(0);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.package input:checked ~ .package__dot {
+  border-color: var(--accent);
+}
+
+.package input:checked ~ .package__dot::after {
+  transform: none;
+}
+
+.package input:focus-visible ~ .package__dot {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.package__name {
+  transition: transform var(--dur-base) var(--ease), color var(--dur-fast) var(--ease-out);
+}
+
+.package input:checked ~ .package__name {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.package__price {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.package__text {
+  grid-column: 2;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 0.975rem;
+}
+
+.package__time {
+  grid-column: 3;
+  justify-self: end;
+}
+
+@media (hover: hover) {
+  .package:hover .package__dot {
+    border-color: var(--accent);
+  }
+
+  .package:hover .package__name {
+    transform: translateX(0.5rem);
+  }
+}
+
+.brief__side {
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem);
+  display: grid;
+  gap: 2.5rem;
+  grid-column: 9 / -1;
+}
+
+.fields {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field__label {
+  font-size: var(--text-s);
+  font-weight: 500;
+}
+
+.field__label small {
+  color: var(--muted);
+  font-size: inherit;
+  font-weight: 400;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.6rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--muted);
+  border-radius: 0;
+  background: transparent;
+  font-size: 1.05rem;
+  resize: vertical;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--accent);
+  box-shadow: 0 1px 0 var(--accent);
+}
+
+.ticket {
+  padding: 1.25rem 1.25rem 1.4rem;
+  border: 1px dashed var(--muted);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.brief__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+}
+
+.brief__note {
+  color: var(--muted);
+  font-size: var(--text-s);
+}
+
+@media (max-width: 1000px) {
+  .packages,
+  .brief__side {
+    grid-column: 1 / -1;
+  }
+
+  .brief__side {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .package {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+  }
+
+  .package__price {
+    grid-column: 2;
+  }
+
+  .package__time {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+/* ---------- Reach ---------- */
+
+/* The email address is the longest value, so its column is the widest. */
+.reach__list {
+  display: grid;
+  grid-template-columns: 3fr 5fr 4fr;
+  gap: 0 var(--gap);
+}
+
+.reach__item {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  justify-items: start;
+  padding-block: 1.5rem clamp(2.5rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--rule);
+}
+
+.reach__value {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem);
+  font-weight: 340;
+  font-variation-settings: 'opsz' 96;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.reach__item p:not(.label, .reach__value) {
+  max-width: 32ch;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .reach__list {
+    grid-template-columns: 1fr;
+  }
+}

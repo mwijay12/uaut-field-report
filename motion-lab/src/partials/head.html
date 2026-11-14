@@ -1,0 +1,27 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{{title}}</title>
+<meta name="description" content="{{description}}" />
+<meta name="theme-color" content="{{theme-color}}" />
+<!-- This is a lab build. The main site is altra.tanzaniareach.com, so search engines are asked to skip this one. -->
+<meta name="robots" content="noindex, follow" />
+<meta property="og:site_name" content="Altraware Technology" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{title}}" />
+<meta property="og:description" content="{{description}}" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="preload" href="/src/fonts/fraunces-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/src/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<script>
+  // Runs before first paint. Marks that scripting works and whether the
+  // visitor asked for less motion. If the main script never arrives, the
+  // timer shows the content anyway.
+  (function (root) {
+    root.classList.add('js');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced-motion');
+    setTimeout(function () { root.classList.add('is-ready'); }, 6000);
+  })(document.documentElement);
+</script>
+<link rel="stylesheet" href="/src/styles/index.css" />
+<script type="module" src="/src/main.js"></script>

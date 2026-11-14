@@ -1,0 +1,79 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 20 20">
+    <path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </symbol>
+  <symbol id="i-out" viewBox="0 0 20 20">
+    <path d="M6 14l8-8M7 6h7v7" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </symbol>
+  <symbol id="i-down" viewBox="0 0 20 20">
+    <path d="M10 3v13M5 11l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5" />
+  </symbol>
+</svg>
+
+<!-- Everything from here to <main> stays in place while Barba swaps pages. -->
+<div class="stage" aria-hidden="true">
+  <canvas class="stage__canvas" data-stage-canvas></canvas>
+</div>
+
+<header class="site-header" data-header>
+  <a class="brand" href="/" aria-label="Altraware Technology, home">
+    <img class="brand__mark" src="/logo.png" width="34" height="34" alt="" />
+    <span class="brand__name">Altraware</span>
+  </a>
+
+  <p class="status" data-status>
+    <span class="status__dot"></span>
+    <span data-status-text>Dar es Salaam</span>
+  </p>
+
+  <nav class="nav" aria-label="Primary">
+    <a class="nav__link" href="/work/" data-nav="work"{{aria-work}}>Work</a>
+    <a class="nav__link" href="/contact/" data-nav="contact"{{aria-contact}}>Start a project</a>
+  </nav>
+
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+    <span class="menu-toggle__bars" aria-hidden="true"></span>
+    <span data-menu-label>Menu</span>
+  </button>
+</header>
+
+<div class="menu" id="menu" data-menu hidden>
+  <nav aria-label="Menu">
+    <a class="menu__link" href="/" data-nav="home"{{aria-home}}>
+      <span class="menu__index">01</span>
+      <span class="menu__word">Home</span>
+      <span class="menu__sw" lang="sw">Nyumbani</span>
+    </a>
+    <a class="menu__link" href="/work/" data-nav="work"{{aria-work}}>
+      <span class="menu__index">02</span>
+      <span class="menu__word">Work</span>
+      <span class="menu__sw" lang="sw">Kazi</span>
+    </a>
+    <a class="menu__link" href="/contact/" data-nav="contact"{{aria-contact}}>
+      <span class="menu__index">03</span>
+      <span class="menu__word">Start a project</span>
+      <span class="menu__sw" lang="sw">Anza mradi</span>
+    </a>
+  </nav>
+  <div class="menu__foot">
+    <a class="link" href="https://wa.me/255792867427" target="_blank" rel="noopener">WhatsApp +255 792 867 427 <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+    <a class="link" href="mailto:altrawaretechnology@gmail.com">altrawaretechnology@gmail.com</a>
+  </div>
+</div>
+
+<div class="titlecard" data-titlecard aria-hidden="true">
+  <div class="titlecard__mask"><span class="titlecard__word" data-titlecard-word lang="sw"></span></div>
+  <span class="label" data-titlecard-sub></span>
+</div>
+
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__seal">
+    <svg class="intro__ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="none" stroke="currentColor" stroke-width="1" /></svg>
+    <img class="intro__mark" src="/logo.png" width="56" height="56" alt="" />
+  </div>
+  <p class="label intro__coords" data-intro-coords>6.7924° S, 39.2083° E</p>
+</div>
+
+<p class="sr-only" aria-live="polite" data-announcer></p>
