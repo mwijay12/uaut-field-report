@@ -4,6 +4,7 @@ A landing site for [Altraware Technology](https://altra.tanzaniareach.com), and 
 building a premium site with raw WebGL and GLSL, GSAP, Barba.js, Anime.js and tween.js, with an AI
 agent doing most of the typing.
 
+- Live: https://altra-motion-lab.vercel.app
 - Where to find more sites like this to learn from: [docs/premium-web-sources.md](docs/premium-web-sources.md)
 - Rules for an agent working in this folder: [AGENTS.md](AGENTS.md)
 
@@ -147,8 +148,11 @@ something changes, `?gl=off` behaves as if WebGL 2 were missing.
 ## Deploy
 
 `vercel.json` is set for Vercel: framework Vite, output `dist`, trailing slashes, long cache for
-hashed assets. In the Vercel project, set **Root Directory** to `motion-lab`. Vercel serves
-`404.html` for unknown paths, and the local servers do the same.
+hashed assets. The Vercel project is `altra-motion-lab`, with **Root Directory** set to
+`motion-lab`. Vercel serves `404.html` for unknown paths, and the local servers do the same.
+
+Pushing does not deploy: automatic Git deployments are off for this project. Either turn them on
+in the Vercel dashboard (Project, Settings, Git) or create each deployment by hand.
 
 Pages carry `noindex` while this is a lab. Remove the robots line in `src/partials/head.html` before
 pointing a real domain at it.

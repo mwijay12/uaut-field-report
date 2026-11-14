@@ -19,7 +19,7 @@
 
 📚 **This documentation repo:** [mwijay12/uaut-field-report](https://github.com/mwijay12/uaut-field-report) · 📄 **Diagrams as PDFs:** [FIELD_REPORT_DIAGRAMS.pdf](pdf/FIELD_REPORT_DIAGRAMS.pdf) (master) + [pdf/weeks/](pdf/weeks/) (one per week)
 
-🧪 **Also in this repo:** [motion-lab/](motion-lab/) · Altraware landing site built with WebGL, GLSL, GSAP, Barba.js, Anime.js and tween.js
+🧪 **Also in this repo:** [motion-lab/](motion-lab/) · Altraware landing site built with WebGL, GLSL, GSAP, Barba.js, Anime.js and tween.js · **Live:** [altra-motion-lab.vercel.app](https://altra-motion-lab.vercel.app)
 
 ---
 
