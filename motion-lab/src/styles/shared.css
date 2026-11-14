@@ -1,0 +1,60 @@
+/* Sections used on more than one page. */
+
+/* ---------- Opening section of Work, Contact and the 404 page ---------- */
+
+.page-hero {
+  display: grid;
+  align-content: end;
+  gap: clamp(1.75rem, 3.5vw, 3rem);
+  min-height: 88svh;
+  padding: calc(var(--header-h) + 4rem) var(--gutter) clamp(3rem, 6vw, 5rem);
+}
+
+.page-hero__title {
+  max-width: 13ch;
+  font-size: clamp(2.9rem, 0.6rem + 9.4vw, 10rem);
+}
+
+.page-hero__title--wide {
+  max-width: 15ch;
+}
+
+.page-hero__foot {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2rem var(--gap);
+  align-items: end;
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--rule);
+}
+
+.page-hero__foot .lede {
+  grid-column: 1 / span 5;
+}
+
+.page-hero__foot > :last-child {
+  grid-column: 7 / -1;
+}
+
+@media (max-width: 900px) {
+  .page-hero__foot .lede,
+  .page-hero__foot > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Closing call to action (Home, Work) ---------- */
+
+.cta {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  justify-items: start;
+  padding-bottom: clamp(5rem, 9vw, 9rem);
+}
+
+.cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2rem;
+}

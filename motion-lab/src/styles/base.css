@@ -1,0 +1,365 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  overflow-x: clip;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, p, ul, ol, dl, dd, figure, fieldset, pre {
+  margin: 0;
+}
+
+ul, ol {
+  padding: 0;
+  list-style: none;
+}
+
+fieldset {
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+em {
+  font-style: italic;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Until the script has set the starting state, keep animated content out of
+   sight so it does not flash. Without JavaScript nothing is hidden. */
+html.js:not(.is-ready) :is([data-enter], [data-enter-split], [data-split], [data-reveal]) {
+  visibility: hidden;
+}
+
+/* ---------- Utilities ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.icon {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* ---------- Type ---------- */
+
+.display-xl,
+.display-l,
+.display-m {
+  font-family: var(--font-display);
+  font-weight: 330;
+  font-variation-settings: 'opsz' 144;
+  word-spacing: 0.06em;
+  text-wrap: balance;
+}
+
+.display-xl {
+  font-size: var(--display-xl);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.display-l {
+  font-size: var(--display-l);
+  line-height: 0.98;
+  letter-spacing: -0.032em;
+}
+
+.display-m {
+  font-size: var(--display-m);
+  line-height: 1.05;
+  letter-spacing: -0.022em;
+  font-weight: 360;
+}
+
+.display-xl em,
+.display-l em,
+.display-m em {
+  font-weight: 300;
+  letter-spacing: -0.045em;
+}
+
+.lede {
+  max-width: 34ch;
+  font-size: var(--text-l);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Small mono caption, like an annotation on a chart. The Swahili word leads. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 450;
+  line-height: 1.5;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .label {
+    letter-spacing: 0.07em;
+  }
+}
+
+.label__key {
+  color: var(--fg);
+}
+
+.label__key::before {
+  content: '';
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.7rem;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.08em;
+}
+
+/* SplitText line masks clip tight display type. Give descenders and italics room. */
+.line-mask {
+  padding: 0.08em 0.08em 0.16em;
+  margin: -0.08em -0.08em -0.16em;
+}
+
+/* ---------- Links and buttons ---------- */
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-block: 0.25rem;
+  font-weight: 500;
+}
+
+.link::before,
+.link::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: currentColor;
+}
+
+.link::before {
+  opacity: 0.3;
+}
+
+.link::after {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.link .icon {
+  transition: transform var(--dur-base) var(--ease);
+}
+
+@media (hover: hover) {
+  .link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .link:hover .icon {
+    transform: translate(2px, -2px);
+  }
+}
+
+.btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  min-height: 3.5rem;
+  padding: 0 1.6rem 0 1.8rem;
+  overflow: hidden;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.975rem;
+  font-weight: 560;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--fg);
+  transform: translateY(102%);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.btn .icon {
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.btn--ghost {
+  border-color: var(--rule);
+  background: transparent;
+  color: var(--fg);
+}
+
+@media (hover: hover) {
+  .btn:hover {
+    border-color: var(--fg);
+    color: var(--bg);
+  }
+
+  .btn:hover::before {
+    transform: none;
+  }
+
+  .btn:hover .icon {
+    transform: translateX(4px);
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chips li {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Layout ---------- */
+
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+.page:focus {
+  outline: none;
+}
+
+.section {
+  padding: var(--space-section) var(--gutter);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+}
+
+.section-head {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: clamp(3rem, 7vw, 6.5rem);
+}
+
+.section-head__text {
+  max-width: 44ch;
+  color: var(--muted);
+}
