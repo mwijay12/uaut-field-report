@@ -151,8 +151,9 @@ something changes, `?gl=off` behaves as if WebGL 2 were missing.
 hashed assets. The Vercel project is `altra-motion-lab`, with **Root Directory** set to
 `motion-lab`. Vercel serves `404.html` for unknown paths, and the local servers do the same.
 
-Pushing does not deploy: automatic Git deployments are off for this project. Either turn them on
-in the Vercel dashboard (Project, Settings, Git) or create each deployment by hand.
+The project is linked to this repository and its production branch is `main`. A push to any other
+branch builds a preview deployment, which needs a Vercel login to open. The public address shows
+the latest production deployment only.
 
 Pages carry `noindex` while this is a lab. Remove the robots line in `src/partials/head.html` before
 pointing a real domain at it.
