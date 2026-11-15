@@ -94,6 +94,11 @@ Facts:
 - There are two WhatsApp lines. A brief or an estimate goes to `site.person`, never to
   `site.chatbot`. Every link to the chatbot must say "chatbot", so nobody expects a person there.
 - Copy states facts Altraware has published. Do not invent clients, numbers or testimonials.
+- Words for another agent, or for an image model, live in `docs/agent-prompt-pack.md`, and
+  `scripts/prompts.mjs` fills them for one named project. A prompt that asks for art must ask
+  for one sticker per image: a model asked for a sheet of six returns a sheet of none. Whatever
+  an image model draws is decoration; the sticker on the site is the SVG that
+  `scripts/stickers.mjs` writes, and a picture is never pasted in as a sticker.
 
 The admin (`admin/index.html`, `src/admin/`):
 
@@ -119,6 +124,9 @@ npm run shot -- "http://localhost:4173/?theme=mix" --name home --at 0,0.2,0.4,0.
 npm run shot -- "http://localhost:4173/?theme=dark" --name m-home --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
 npm run shot -- "http://localhost:4173/?theme=light" --name home-light --walk --sheet 2 --sheet-width 720
 ```
+
+If you worked from a prompt in `docs/agent-prompt-pack.md`, name which one in your report, and
+answer its "verify then report" step before you touch anything else.
 
 Then open the `-sheet.png` images in `shots/` and look at them. The script exits with an error on
 any console error, console warning or failed request, and prints `overflowX`, which must be 0. Shoot

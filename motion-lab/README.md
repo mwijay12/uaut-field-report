@@ -110,7 +110,8 @@ src/styles/          tokens.css first, then one file per area
 src/images/          WebP pictures, made with scripts/images.mjs
 src/fonts/           self-hosted fonts (SIL OFL 1.1)
 public/og.jpg        the picture a shared link shows, made with scripts/og.mjs
-scripts/             shot.mjs, images.mjs, og.mjs, stickers.mjs, and the checks (see "Look before you ship")
+scripts/             shot.mjs, images.mjs, og.mjs, stickers.mjs, prompts.mjs, and the checks
+                     (see "Look before you ship" and "Briefing another agent")
 ```
 
 Pages share markup through a small step in `vite.config.js`:
@@ -612,6 +613,33 @@ Test switches, on any page:
 - `?slow=6` plays every animation six times slower. It also puts GSAP on `window.altraMotion`, so a
   script can call `altraMotion.globalTimeline.pause()`, take a picture and resume. That is how to
   look at the curtain, or a drawing, frame by frame.
+
+## Briefing another agent
+
+Not every job here is done by the same agent, and the words that get good work out of one are worth
+keeping. [docs/agent-prompt-pack.md](docs/agent-prompt-pack.md) holds them as prompts you can paste:
+the master build prompt, the sticker art prompt (one sticker per call, flat fills, navy ink, a soft
+blob backing), the screen that holds them, the motion, the share card, the admin that signs in with
+a fine-grained GitHub token, the Firebase-to-Cloudinary picture pipeline, and the review pass.
+
+`scripts/prompts.mjs` writes that pack for one named project, with the brief, six sticker subjects,
+the trade's own words and the colours already in it:
+
+```bash
+npm run prompts -- --list
+npm run prompts -- --preset shule --out docs/prompts/shule-direct-pro.md
+npm run prompts -- --preset food --project "Bongo Foodie" --subjects "a bowl of ugali, a delivery box, a boda, a fork and spoon, a paper bag, three sparkles"
+npm run prompts -- --preset shule --have "Cloudinary uploads already work|the share card is next/og" --out docs/prompts/shule-direct-pro.md
+```
+
+`--have` lists what the project already has, separated by `|`: an agent that is told the uploads
+work will not build a second upload path.
+
+A preset is a starting point, not a template: it carries the six slots (the product, the money, the
+place, the win, a tool, sparkles), the words that trade uses and what would make the result look
+wrong. Override any of it on the command line. The pack says the same thing this README says, in the
+second person, and it is the one place where "one sticker per image" is spelled out for a model that
+has not read `AGENTS.md`.
 
 ## When things are missing
 
