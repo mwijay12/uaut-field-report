@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { derive } from './content/derive.js';
 import { compact, createEstimator, shillings } from './content/estimator.js';
+import { MODE_KEY, THEME_COLORS, pickMode } from './content/mode.js';
 import { BACKGROUNDS, PAGES, PRICES, SECTIONS, check, expand, tidy } from './content/schema.js';
 import { PRESETS } from './src/gl/presets.js';
 
@@ -69,6 +70,17 @@ const flags = { leads: site.leads.on, index: content.seo.index };
 
 const escapeHtml = (text) =>
   String(text).replace(/[&<>"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[character]);
+
+// {{mode-pick}} and its companions in src/partials/head.html read from here:
+// what the <head> needs to settle dark, mix or light before the first paint.
+// The function is written once, in content/mode.js, and its source goes into
+// the page as it stands.
+const modeSlots = {
+  'mode-key': MODE_KEY,
+  'mode-pick': pickMode.toString(),
+  'mode-night': THEME_COLORS.night,
+  'mode-day': THEME_COLORS.day,
+};
 
 // ---------- Search engines and link previews ----------
 
@@ -245,8 +257,13 @@ function searchFiles() {
  *
  * Gets data-bg="plain" data-calm="1" (or "soft") beside it when the content
  * file asks for that. A name with no look in src/gl/presets.js fails the build.
- * A day section whose chart is showing also gets data-panes: there the small
- * text stands on glass, so the chart's lines do not cross it (src/styles/glass.css).
+ *
+ *   data-theme="night"
+ *
+ * A section (anything with data-theme but <html>) whose chart is showing also
+ * gets data-panes: there the small text stands on glass, so the chart's lines
+ * do not cross it (src/styles/glass.css). By night and by day alike, because
+ * a visitor can ask for either all the way down the page (content/mode.js).
  */
 function htmlIncludes() {
   const include = /<!--\s*@include\s+([\w-]+(?:\/[\w-]+)*)((?:\s+[\w-]+="[^"]*")*)\s*-->/g;
@@ -254,13 +271,15 @@ function htmlIncludes() {
   const slot = /\{\{\s*([\w-]+)\s*\}\}/g;
   const fact = /\{\{\s*site\.([\w.]+)\s*\}\}/g;
   const branch = /<!--\s*@if\s+(!?)([\w-]+)\s*-->([\s\S]*?)(?:<!--\s*@else\s*-->([\s\S]*?))?<!--\s*@endif\s*-->/g;
-  // The whole opening tag, because what a section gets depends on its theme too.
-  const staged = /<[a-z][\w-]*\s[^<>]*?\bdata-stage="([^"]*)"[^<>]*>/g;
+  // The whole opening tag of anything that sets a look for the chart or a theme.
+  const staged = /<(?!html\b)[a-z][\w-]*\s[^<>]*?\bdata-(?:stage|theme)="[^"]*"[^<>]*>/g;
+  const stageOf = /\sdata-stage="([^"]*)"/;
+  const themed = /\sdata-theme="(?:night|day)"/;
 
   const fill = (html, depth = 0) =>
     html.replace(include, (_, name, attrs) => {
       const given = Object.fromEntries([...attrs.matchAll(attribute)].map((m) => [m[1], m[2]]));
-      const vars = given.page ? { ...given, ...headOf(given.page, given) } : given;
+      const vars = { ...modeSlots, ...given, ...(given.page ? headOf(given.page, given) : {}) };
       const part = readFileSync(resolve(partials, `${name}.html`), 'utf8').replace(slot, (__, key) => vars[key] ?? '');
       return depth < 3 ? fill(part, depth + 1) : part;
     });
@@ -289,14 +308,15 @@ function htmlIncludes() {
     });
 
   const dress = (html, file) =>
-    html.replace(staged, (tag, name) => {
-      if (!PRESETS[name]) throw new Error(`data-stage="${name}" in ${file} has no look in src/gl/presets.js.`);
-      const background = BACKGROUNDS.find((item) => item.key === (content.backgrounds[name] ?? 'effect'));
+    html.replace(staged, (tag) => {
+      const name = stageOf.exec(tag)?.[1];
+      if (name !== undefined && !PRESETS[name]) throw new Error(`data-stage="${name}" in ${file} has no look in src/gl/presets.js.`);
+      // A section with no look of its own (the pinned row of work) always has the chart behind it.
+      const background = BACKGROUNDS.find((item) => item.key === ((name && content.backgrounds[name]) ?? 'effect'));
       const more = [];
       if (background.calm) more.push(`data-bg="${background.key}"`, `data-calm="${background.calm}"`);
-      if (background.calm < 1 && /\sdata-theme="day"/.test(tag)) more.push('data-panes');
-      const attr = `data-stage="${name}"`;
-      return more.length ? tag.replace(attr, `${attr} ${more.join(' ')}`) : tag;
+      if (background.calm < 1 && themed.test(tag)) more.push('data-panes');
+      return more.length ? tag.replace(/\s*\/?>$/, (end) => ` ${more.join(' ')}${end.trim() === '/>' ? ' />' : '>'}`) : tag;
     });
 
   return {

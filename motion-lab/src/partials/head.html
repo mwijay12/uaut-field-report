@@ -25,10 +25,25 @@
   // Runs before first paint. Marks that scripting works and whether the
   // visitor asked for less motion. If the main script never arrives, the
   // timer shows the content anyway.
+  //
+  // It also settles which mode the site is in: dark, mix or light. The rule is
+  // pickMode() in content/mode.js, and the build writes its source in here, so
+  // the page is never painted in one mode and then changed to another.
+  // src/lib/mode.js takes over from the two attributes this leaves on the root.
   (function (root) {
     root.classList.add('js');
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('reduced-motion');
     setTimeout(function () { root.classList.add('is-ready'); }, 6000);
+
+    var stored = null;
+    try { stored = localStorage.getItem('{{mode-key}}'); } catch (error) { /* Storage can be blocked. Then the clock decides. */ }
+    var picked = ({{mode-pick}})(stored, location.search, new Date().getHours());
+    root.setAttribute('data-mode', picked.mode);
+    root.setAttribute('data-mode-choice', picked.choice);
+    if (picked.mode === 'mix') return;
+    var day = picked.mode === 'light';
+    root.setAttribute('data-theme', day ? 'day' : 'night');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', day ? '{{mode-day}}' : '{{mode-night}}');
   })(document.documentElement);
 </script>
 <link rel="stylesheet" href="/src/styles/index.css" />

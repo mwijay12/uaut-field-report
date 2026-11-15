@@ -21,7 +21,7 @@
         </h1>
 
         <div class="hero__aside">
-          <p class="lede" data-enter>A software studio in Dar es Salaam. We build fast, mobile-first websites, apps and business systems, in Kiswahili and English, with <span class="nowrap">M-Pesa</span> at the core.</p>
+          <p class="lede pane" data-enter>A software studio in Dar es Salaam. We build fast, mobile-first websites, apps and business systems, in Kiswahili and English, with <span class="nowrap">M-Pesa</span> at the core.</p>
           <div class="hero__actions" data-enter>
             <a class="btn" href="/contact/" data-magnetic>Start your project <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
             <a class="link" href="/work/">See the work</a>
@@ -86,22 +86,22 @@
           <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Namba</span> — In numbers</p>
         </header>
         <ul class="figures">
-          <li class="figure" data-reveal>
+          <li class="figure glass" data-reveal>
             <p class="figure__value"><span data-count="4">4</span></p>
             <p class="label">Platforms in use</p>
             <p class="figure__text">Faida POS, CareTrack, UAUT Connect and Shule Altra.</p>
           </li>
-          <li class="figure" data-reveal>
+          <li class="figure glass" data-reveal>
             <p class="figure__value"><span data-count="5">5</span></p>
             <p class="label">Kinds of work</p>
             <p class="figure__text">Websites, apps, business systems, payment integrations and local search.</p>
           </li>
-          <li class="figure" data-reveal>
+          <li class="figure glass" data-reveal>
             <p class="figure__value"><span class="figure__mark"><span data-count="0.8" data-count-decimals="1">0.8</span><span class="figure__unit">s</span><!-- @include scribble name="burst" place="figure-burst" draw="scrub" --></span></p>
             <p class="label">Average checkout</p>
             <p class="figure__text">A sale on Faida POS takes under 0.8 seconds on average, barcode to receipt.</p>
           </li>
-          <li class="figure" data-reveal>
+          <li class="figure glass" data-reveal>
             <p class="figure__value"><span class="figure__mark"><span data-count="30">30</span><span class="figure__unit">days</span><!-- @include scribble name="underline" place="figure-line" draw="scrub" --></span></p>
             <p class="label">Close support after launch</p>
             <p class="figure__text">Every project gets 30 days of close support before a support plan begins.</p>
@@ -175,13 +175,14 @@
 
       <section class="plates" data-theme="night" data-plates aria-labelledby="plates-title">
         <div class="plates__head">
-          <h2 class="label" id="plates-title"><span class="label__key" lang="sw">Kazi</span> — Selected work</h2>
-          <p class="label" aria-hidden="true"><span data-plates-current>01</span> / 06</p>
+          <h2 class="label pane pane--pill" id="plates-title"><span class="label__key" lang="sw">Kazi</span> — Selected work</h2>
+          <p class="label pane pane--pill" aria-hidden="true"><span data-plates-current>01</span> / 06</p>
         </div>
 
         <div class="plates__viewport" data-plates-viewport tabindex="0" role="region" aria-label="Selected work, scroll sideways">
           <ul class="plates__track" data-plates-track>
             <li class="plate" data-stage="plate-faida">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <figure class="plate__shot media media--browser">
                 <div class="media__frame">
                   <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>faida-hq.vercel.app</span></div>
@@ -198,6 +199,7 @@
             </li>
 
             <li class="plate" data-stage="plate-uaut">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <figure class="plate__shot media media--browser">
                 <div class="media__frame">
                   <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>uautconnect.com</span></div>
@@ -214,6 +216,7 @@
             </li>
 
             <li class="plate" data-stage="plate-aymi">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <figure class="plate__shot media media--browser">
                 <div class="media__frame">
                   <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>aymiafrica.org</span></div>
@@ -230,6 +233,7 @@
             </li>
 
             <li class="plate" data-stage="plate-volta">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <figure class="plate__shot media media--browser">
                 <div class="media__frame">
                   <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>volta-rentals.vercel.app</span></div>
@@ -246,6 +250,7 @@
             </li>
 
             <li class="plate" data-stage="plate-bongo">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <figure class="plate__shot media media--browser">
                 <div class="media__frame">
                   <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>bongofoodie.vercel.app</span></div>
@@ -262,6 +267,7 @@
             </li>
 
             <li class="plate" data-stage="plate-audenic">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <figure class="plate__shot media media--browser">
                 <div class="media__frame">
                   <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>audenic.vercel.app</span></div>
@@ -278,13 +284,21 @@
             </li>
 
             <li class="plate plate--end" data-stage="plate-end">
+              <span class="plate__glass glass" aria-hidden="true"></span>
               <p class="display-l">All the work,<br /><em>in detail.</em></p>
               <a class="btn" href="/work/" data-magnetic>See the work <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
             </li>
           </ul>
         </div>
 
-        <div class="plates__progress" aria-hidden="true"><span data-plates-bar></span></div>
+        <div class="plates__foot">
+          <div class="plates__progress" aria-hidden="true"><span data-plates-bar></span></div>
+          <!-- Shown where the row is swiped (a phone, or reduced motion). On a wide screen the page's own scroll moves the row. -->
+          <div class="plates__nav">
+            <button class="round-btn round-btn--back" type="button" data-plates-step="-1" aria-label="Previous project"><svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+            <button class="round-btn" type="button" data-plates-step="1" aria-label="Next project"><svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+          </div>
+        </div>
       </section>
 
       <section class="route section" data-theme="day" data-stage="home-route">

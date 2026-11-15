@@ -39,6 +39,22 @@
 @property --rule { syntax: '<color>'; inherits: true; initial-value: rgba(247, 246, 242, 0.18); }
 @property --accent { syntax: '<color>'; inherits: true; initial-value: #eab308; }
 @property --accent-ink { syntax: '<color>'; inherits: true; initial-value: #071022; }
+@property --dim { syntax: '<number>'; inherits: true; initial-value: 0.4; }
+/* The colours of a glass panel, for the same reason: a panel on screen fades
+   from its night finish to its day finish with the page. */
+@property --glass-tint { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
+@property --glass-ground { syntax: '<color>'; inherits: true; initial-value: #0d1a40; }
+@property --glass-edge { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-border { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-shine { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-sheen { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-glow { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-dusk { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-contact { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-shadow { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-light { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-mid { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glass-shade { syntax: '<color>'; inherits: true; initial-value: transparent; }
 
 :root {
   /* Brand */
@@ -55,6 +71,10 @@
   --sticker-sun: #f4d774;
   --sticker-lilac: #dccfff;
   --sticker-shadow: rgba(3, 8, 22, 0.3);
+  /* The tone `night` is the page's opposite: a dark sticker on a light page,
+     and a light one when the same section is shown dark. */
+  --sticker-night-back: #f7f6f2;
+  --sticker-night-ink: #10265c;
 
   /* Night is the default theme. One accent per theme: gold by night, violet by day. */
   color-scheme: dark;
@@ -64,6 +84,9 @@
   --rule: rgba(247, 246, 242, 0.18);
   --accent: #eab308;
   --accent-ink: #071022;
+  /* How far text may be dimmed on purpose (words not lit yet) and still be
+     read: 3 to 1 against the page for large type. */
+  --dim: 0.4;
 
   /* Type */
   --font-display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
@@ -88,22 +111,26 @@
   --radius-m: 1.25rem;
   --radius-l: 1.75rem;
 
-  /* Glass: a panel that keeps text readable over the chart (glass.css).
-     By night it is frosted, with a hairline edge. */
-  --glass-tint: 58%; /* how much of the page colour is in the panel */
+  /* Glass: a panel that keeps text readable over the chart (glass.css). It is
+     the same sheet of glass by night and by day: the chart shows through it,
+     light falls on its top left corner, its rim is lit on two opposite corners
+     and it stands a little off the page. Only its colours change with the
+     theme, and all of them are here. */
+  --glass-tint: 50%; /* how much of the ground colour is in the panel */
+  --glass-ground: #0d1a40; /* that colour. By night a shade lighter than the page, so a panel reads as lit glass and not as a hole */
   --glass-blur: 18px;
-  --glass-filter: blur(var(--glass-blur)) saturate(1.3);
-  --glass-edge: rgba(247, 246, 242, 0.14);
-  --glass-border: var(--glass-edge);
-  --glass-shine: rgba(255, 255, 255, 0.07);
-  --glass-shadow: rgba(2, 6, 18, 0.6);
-  /* The parts that make it a sheet of clear glass. Off by night, on by day. */
-  --glass-sheen: transparent; /* the light that falls on its top left corner */
-  --glass-depth: 0 0 transparent; /* a glow under the top edge, a shade over the bottom one, a shadow where it meets the page */
-  --glass-ring: none; /* the lit rim: none, or '' to draw it */
-  --glass-light: transparent; /* the rim where it catches the light */
-  --glass-mid: transparent; /* the rim beside that */
-  --glass-shade: transparent; /* the rim away from the light */
+  --glass-filter: blur(var(--glass-blur)) saturate(1.5);
+  --glass-edge: rgba(247, 246, 242, 0.14); /* a rule inside a panel */
+  --glass-border: rgba(247, 246, 242, 0.07);
+  --glass-shine: rgba(255, 255, 255, 0.1); /* a hairline of light along the top */
+  --glass-sheen: rgba(163, 156, 245, 0.2); /* the light that falls on the top left corner */
+  --glass-glow: rgba(190, 184, 255, 0.2); /* under the top edge */
+  --glass-dusk: rgba(2, 6, 18, 0.5); /* over the bottom edge */
+  --glass-contact: rgba(2, 6, 18, 0.5); /* where it meets the page */
+  --glass-shadow: rgba(2, 6, 18, 0.6); /* the shadow it casts */
+  --glass-light: rgba(255, 255, 255, 0.55); /* the rim where it catches the light */
+  --glass-mid: rgba(163, 156, 245, 0.3); /* the rim beside that */
+  --glass-shade: rgba(255, 255, 255, 0.04); /* the rim away from the light */
 
   /* Motion: three durations and one easing family (GSAP power3). */
   --dur-fast: 0.3s;
@@ -118,7 +145,21 @@
     --muted var(--dur-base) linear,
     --rule var(--dur-base) linear,
     --accent var(--dur-base) linear,
-    --accent-ink var(--dur-base) linear;
+    --accent-ink var(--dur-base) linear,
+    --dim var(--dur-base) linear,
+    --glass-tint var(--dur-base) linear,
+    --glass-ground var(--dur-base) linear,
+    --glass-edge var(--dur-base) linear,
+    --glass-border var(--dur-base) linear,
+    --glass-shine var(--dur-base) linear,
+    --glass-sheen var(--dur-base) linear,
+    --glass-glow var(--dur-base) linear,
+    --glass-dusk var(--dur-base) linear,
+    --glass-contact var(--dur-base) linear,
+    --glass-shadow var(--dur-base) linear,
+    --glass-light var(--dur-base) linear,
+    --glass-mid var(--dur-base) linear,
+    --glass-shade var(--dur-base) linear;
 }
 
 :root[data-theme='day'] {
@@ -129,21 +170,23 @@
   --rule: rgba(10, 23, 53, 0.2);
   --accent: #7c3aed;
   --accent-ink: #ffffff;
+  --dim: 0.5;
 
   --sticker-shadow: rgba(10, 23, 53, 0.2);
+  --sticker-night-back: #10265c;
+  --sticker-night-ink: #eab308;
 
   --glass-tint: 58%;
+  --glass-ground: #f7f6f2;
   --glass-filter: blur(var(--glass-blur)) saturate(1.7);
   --glass-edge: rgba(10, 23, 53, 0.12);
   --glass-border: rgba(10, 23, 53, 0.09);
   --glass-shine: #ffffff;
-  --glass-shadow: rgba(10, 23, 53, 0.22);
   --glass-sheen: rgba(255, 255, 255, 0.8);
-  --glass-depth:
-    inset 0 12px 20px -16px #ffffff,
-    inset 0 -12px 18px -16px rgba(10, 23, 53, 0.1),
-    0 2px 5px -2px rgba(10, 23, 53, 0.18);
-  --glass-ring: '';
+  --glass-glow: #ffffff;
+  --glass-dusk: rgba(10, 23, 53, 0.1);
+  --glass-contact: rgba(10, 23, 53, 0.18);
+  --glass-shadow: rgba(10, 23, 53, 0.22);
   --glass-light: #ffffff;
   --glass-mid: rgba(255, 255, 255, 0.5);
   --glass-shade: rgba(255, 255, 255, 0.12);

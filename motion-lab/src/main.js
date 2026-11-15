@@ -16,15 +16,15 @@ import { createChrome } from './lib/chrome.js';
 import { createCurtain } from './lib/curtain.js';
 import { playIntro } from './lib/intro.js';
 import { EASE, gsap, reducedMotion } from './lib/motion.js';
+import { createMode } from './lib/mode.js';
 import { mountPage } from './lib/page.js';
 import { ROUTES, routeOf } from './lib/routes.js';
 import { createScroll } from './lib/scroll.js';
+import { THEME_COLORS } from '../content/mode.js';
 
 const root = document.documentElement;
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const announcer = document.querySelector('[data-announcer]');
-
-const THEME_COLORS = { night: '#071022', day: '#f7f6f2' };
 
 // ---------- Things that live for the whole visit ----------
 
@@ -63,11 +63,25 @@ gsap.ticker.add((time, delta) => {
   stage.tick(time, delta);
 });
 
+// A section says which theme it was written for. What is shown also depends on
+// the mode the visitor is in: dark and light show one theme all the way down the
+// page, and only the mix follows the sections (src/lib/mode.js).
+let written = root.dataset.theme;
+
+const mode = createMode({
+  onChange: () => setTheme(written, {}),
+  announce: (text) => {
+    announcer.textContent = text;
+  },
+});
+
 function setTheme(theme, options) {
-  if (root.dataset.theme === theme && !options) return;
-  root.dataset.theme = theme;
-  themeColor?.setAttribute('content', THEME_COLORS[theme] ?? THEME_COLORS.night);
-  stage.theme(theme === 'day', options);
+  written = theme;
+  const shown = mode.themeFor(theme);
+  if (root.dataset.theme === shown && !options) return;
+  root.dataset.theme = shown;
+  themeColor?.setAttribute('content', THEME_COLORS[shown] ?? THEME_COLORS.night);
+  stage.theme(shown === 'day', options);
 }
 
 let page = null;
@@ -184,6 +198,7 @@ barba.init({
         current.container.remove();
         scroll.reset();
         describe(next.html);
+        mode.refresh();
         root.dataset.page = next.namespace;
         chrome.setCurrent(next.namespace);
       },

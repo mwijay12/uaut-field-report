@@ -10,6 +10,11 @@
 //   node scripts/sticker-check.mjs --page /pricing/    one page
 //   node scripts/sticker-check.mjs --width 390         one width
 //   node scripts/sticker-check.mjs --width 820 --height 1180    a size that is not on the list
+//   node scripts/sticker-check.mjs --theme dark        in another mode (the default is mix)
+//
+// The site has three modes (content/mode.js) and picks one by the hour. The
+// layout is the same in all three, so one is checked, and it is named in the
+// address so that the result does not depend on the time of day.
 //
 // Prints one line per sticker and exits with an error if one of them touches
 // text, or if a page logs an error. Scribbles are not checked: a ring round a
@@ -27,6 +32,7 @@ const option = (name, fallback) => {
 };
 
 const base = option('base', 'http://localhost:4173');
+const theme = option('theme', 'mix');
 const PAGES = ['/', '/work/', '/services/', '/pricing/', '/studio/', '/contact/'];
 // The layout changes at 900 wide, so there is a size just above it and one just
 // below, both tall: a tall screen is where a sticker drifts furthest. The last
@@ -70,7 +76,7 @@ async function walk(screen) {
     page.on('console', (message) => ['error', 'warn'].includes(message.type()) && problems.push(`[console.${message.type()}] ${message.text()}`));
     page.on('pageerror', (error) => problems.push(`[pageerror] ${error.message}`));
 
-    await page.goto(base + path, { waitUntil: 'networkidle0', timeout: 60000 });
+    await page.goto(`${base}${path}?theme=${theme}`, { waitUntil: 'networkidle0', timeout: 60000 });
     await page.waitForFunction(() => document.documentElement.classList.contains('is-ready'), { timeout: 30000 });
     await sleep(3000);
 

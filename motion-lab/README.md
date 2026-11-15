@@ -33,6 +33,12 @@ One full-screen contour map (the "chart") sits behind every page. Sections chang
 you scroll, and a page change travels to another part of the map. Night sections are navy with
 violet lines and gold high ground. Day sections are paper with navy lines and violet high ground.
 
+The site has three modes. In the mix, each section is shown in the theme it was written for, so a
+page goes from night to day and back as you scroll. In the dark mode every section is shown by
+night, and in the light mode every section is shown by day. A visitor picks one with the switch in
+the header, or leaves it on Auto, which goes by their own clock: light by day, when a dark page is
+hard to read on a phone outdoors, and dark at night.
+
 Not every section shows the chart. A section can ask for a soft version of it, or for the plain page
 colour, and the chart fades to that as the section takes over. Lists, forms and price cards read
 better on a plain page, and the chart means more when it comes back.
@@ -72,6 +78,7 @@ content/             the facts, and the rules about them:
   schema.js            what site.json may hold, and what is wrong with a file that breaks that
   estimator.js         the pricing rules, with no DOM in it
   derive.js            turns site.json into what the pages use (links, formatted prices)
+  mode.js              dark, mix or light: which mode a visitor gets, and at which hours
 src/partials/        head, header and menu and curtain, footer (shared by every page)
   sticker.html, scribble.html   what wraps a sticker or a hand-drawn line
   art/                 the line drawings, one SVG per file. sticker-* and scribble-* are
@@ -85,6 +92,7 @@ src/lib/             shared behaviour, one file per job:
   curtain.js           the page transition
   page.js              mounts and removes everything inside a page
   scenes.js            data-theme, data-stage and how calm the chart is
+  mode.js              the theme switch: keeps the visitor's choice, follows the clock on Auto
   reveal.js            data-enter, data-split, data-reveal
   text.js              data-type-words, data-scramble, data-scrub, data-write
   stream.js            writes a text out, word by word or letter by letter
@@ -212,8 +220,8 @@ Most changes need HTML only. These attributes do the work:
 
 | Attribute | On | Effect |
 | --- | --- | --- |
-| `data-theme="night"` or `"day"` | a section | Page colours and chart palette while that section is on screen. |
-| `data-stage="name"` | the same section | The chart moves to that preset from `src/gl/presets.js`. The build adds `data-bg` and `data-calm` beside it when the content file asks for a soft or plain background, and `data-panes` on a day section whose chart is showing (see "Glass and panes"). |
+| `data-theme="night"` or `"day"` | a section | The theme the section was written for: page colours and chart palette while it is on screen. In the dark mode and the light mode every section is shown in one theme (see "Dark, mix and light"). |
+| `data-stage="name"` | the same section | The chart moves to that preset from `src/gl/presets.js`. The build adds `data-bg` and `data-calm` beside it when the content file asks for a soft or plain background, and `data-panes` on a section whose chart is showing (see "Glass and panes"). |
 | `data-enter-split` | a heading | Its lines rise when the page arrives. |
 | `data-enter` | any block | Fades up when the page arrives. |
 | `data-split` | a heading | Its lines rise when scrolled into view. |
@@ -236,39 +244,81 @@ the page reads correctly with reduced motion on, without JavaScript, and to a sc
 The header, menu, canvas, curtain and scroll meter sit outside the Barba container, so they survive
 a page change. Everything inside `<main data-barba="container">` is replaced.
 
+### Dark, mix and light
+
+The whole site can be shown in three modes. The rule is `pickMode()` in `content/mode.js`.
+
+| Mode | What a visitor sees |
+| --- | --- |
+| `dark` | Every section by night. |
+| `mix` | Each section in the theme it was written for (`data-theme`). |
+| `light` | Every section by day. |
+
+A visitor who has not chosen is on Auto, which goes by the hour on their own clock: light from
+07:00, the mix from 18:00, dark from 19:00 and the mix again from 06:00. It does not follow the
+device's dark mode on purpose: a phone that is set to dark is the one that is hard to read in the
+sun. The hours are four numbers at the top of `pickMode()`.
+
+The switch is in the header: Auto, light, mix, dark. Below 1021 px the header has one round button
+instead, which steps to the next mode, and the whole switch is in the menu. A choice is kept in
+`localStorage` under `altraware:theme` and from then on wins over the clock. Choosing Auto removes
+it. `?theme=dark` (or `light`, `mix`, `auto`) in the address wins over both for that visit and
+keeps nothing: use it to see one mode from a script, or to send someone a link to it.
+
+How it works:
+
+- The `<head>` of every page runs `pickMode()` before the first paint, so a page is never painted
+  in one mode and then changed to another. The build writes the function's source into
+  `src/partials/head.html`, which is why it has to stay one function that needs nothing from
+  outside itself. The script leaves `data-mode` (the mode in use) and `data-mode-choice` (what the
+  visitor chose) on `<html>`.
+- `src/lib/mode.js` runs the controls. On Auto it looks at the clock again when the visitor comes
+  back to the tab and at each page change. It also follows a choice made in another tab.
+- `src/main.js` remembers which theme the section on screen was written for and asks `themeFor()`
+  which one to show. That answer goes on `<html>` as `data-theme`, as it always did, and every
+  style keys off it there. No style but the switch's own looks at `data-mode`.
+
+So a section needs nothing new to work in all three modes, but it has to read well in both
+themes, because it will be shown in both. The layout is the same in all three: only colours
+change. Without JavaScript the pages are the mix and the switch is not shown.
+
 ### Glass and panes
 
 Add the class `glass` to any block that holds text someone has to read closely: a form, a price
 card, a list of facts. `glass--pad` adds the standard padding. Set `--glass-tint` higher on a
 component whose panels overlap, as the service cards do.
 
-By night the panel is frosted, with a hairline edge. By day the chart is pale lines on a pale page,
-so the panel is a sheet of clear glass instead: light falls on its top left corner, its rim is lit
-on two opposite corners, and it stands a little off the page. With a mouse, the light travels round
-the rim as the panel crosses the screen. The theme switches those parts on and off through the
-`--glass-*` tokens in `src/styles/tokens.css`. The rules are in `src/styles/glass.css`, which names
-no theme.
+The panel is a sheet of clear glass, the same by night and by day. The chart shows through it,
+blurred. Light falls on its top left corner, its rim is lit on two opposite corners, and it stands
+a little off the page. With a mouse, the light travels round the rim as the panel crosses the
+screen. Only the colours differ between the two themes: by night the glass is a shade lighter than
+the page, with a violet light on it, and by day it is paper with a white light. Those colours are
+the `--glass-*` tokens in `src/styles/tokens.css`. The rules are in `src/styles/glass.css`, which
+names no theme.
 
-Small text set straight on the day chart is crossed by its lines. So in a day section whose chart
-is showing, loose text stands on glass too. That is a pane. The build marks such a section with
-`data-panes`: a section with `data-theme="day"` whose background in the content file is the chart
-or its soft version. There, with no new markup:
+Small text set straight on the chart is crossed by its lines. So in a section whose chart is
+showing, loose text stands on glass too. That is a pane. The build marks such a section with
+`data-panes`: any section whose background in the content file is the chart or its soft version,
+whichever theme it was written for. There, with no new markup:
 
 - the label that opens the section becomes a capsule
-- what stands under a page's title (`.page-hero__foot`) gets a card each
+- what stands under a page's title (`.page-hero__foot`) gets a card each, except a row of buttons
+  (`.page-hero__actions`)
 - `.section-head__text`, the few lines under a heading, becomes a note
 - an outlined button gets the glass as its ground
-- the header fades the top of the chart into the page colour, until it has its own bar
 
 Give any other loose text the class `pane`, or `pane pane--pill` for one line. The class does
-nothing by night or on a plain section, so the same markup is loose text there and a pane over the
-chart, and the admin's Backgrounds page decides which. Large display type stays in the open: a
-heading reads well over the lines, and a slab behind it would hide the chart it was switched on for.
-A block that has to be fitted to its pane does that in its own stylesheet, under `[data-panes]`
-(see `.service-list` and `.waypoint` in `home.css`).
+nothing on a plain section, so the same markup is loose text there and a pane over the chart, and
+the admin's Backgrounds page decides which. Large display type stays in the open: a heading reads
+well over the lines, and a slab behind it would hide the chart it was switched on for. A block that
+has to be fitted to its pane does that in its own stylesheet, under `[data-panes]` (see
+`.service-list` and `.waypoint` in `home.css`, `.creed` in `studio.css`).
 
-Every day section is dressed this way, including those that are plain today. To look at them over
-the chart without publishing anything:
+By day the chart also runs behind the header's small type, so until the header has its own bar the
+top of the chart fades into the page colour behind it.
+
+Every section is dressed this way, including those that are plain today. To look at them over the
+chart without publishing anything:
 
 ```bash
 ALTRA_CHART=all npx vite build --outDir /tmp/chart
@@ -314,7 +364,7 @@ belongs to and include it there:
 | | |
 | --- | --- |
 | `name` | The drawing: `thumb`, `cursor`, `phone`, `chat`, `receipt`, `coins`, `cloud`, `pin`, or `spark` (three sparkles, no backing). |
-| `tone` | Its colours. `sun` is a yellow backing with a navy line, `lilac` pale violet with a deep violet line, `violet` violet with a paper line. `night` is navy with a gold line and is for day sections only. `gold` is for `spark`. |
+| `tone` | Its colours. `sun` is a yellow backing with a navy line, `lilac` pale violet with a deep violet line, `violet` violet with a paper line. `night` is for a section written for the day: navy with a gold line there, and paper with a navy line when the dark look shows that section by night. `gold` is for `spark`. |
 | `place` | Where it sits: the class `sticker--<place>` in `src/styles/stickers.css`, one rule per place. |
 | `depth` | How far it drifts while it crosses the screen, as a share of the screen's height. Above 0 it moves faster than the page and looks nearer. Below 0 it lags and looks further away. 0.2 if left out. Keep it at 0.1 next to a heading. |
 | `turn` | Degrees it turns while it crosses the screen. 10 if left out. |
@@ -373,14 +423,20 @@ section's name in `backgrounds` in `content/site.json` to `effect`, `soft` or `p
 
 **Add a section.** Copy a nearby `<section>`, set `data-theme` and `data-stage`, and put `data-split`
 on the heading and `data-reveal` on the blocks. No JavaScript needed. If it uses a new `data-stage`
-name and the admin should be able to restyle it, add it to `SECTIONS` in `content/schema.js`.
+name and the admin should be able to restyle it, add it to `SECTIONS` in `content/schema.js`. Then
+look at it with `?theme=dark` and with `?theme=light`: it will be shown in both.
+
+**Change the hours at which Auto goes light or dark.** Edit the four numbers at the top of
+`pickMode()` in `content/mode.js`, and run `npm run check:theme`.
 
 **Add a look for the chart.** Add an entry to `PRESETS` in `src/gl/presets.js` and name it in
 `data-stage`. `density`, `warp`, `accent`, `ink` and `scale` are explained at the top of that file.
 Keep `ink` at 0.85 or lower behind long text.
 
 **Change the chart colours.** Edit the eight `NIGHT_*` and `DAY_*` constants in
-`src/gl/field.frag.glsl`. The page colours are in `src/styles/tokens.css`. Change both together.
+`src/gl/field.frag.glsl`. The page colours are in `src/styles/tokens.css`. Change both together. If
+a page colour (`--bg`) changes, change `THEME_COLORS` in `content/mode.js` and the `theme-color` in
+each page's head include as well: the browser's own bar takes that colour.
 
 **Add a drawing.** Write the SVG in `src/partials/art/name.html` with `class="art"`, a `viewBox`,
 `aria-hidden="true"` and `data-draw`. Use strokes only, in the order they should be drawn. Include it
@@ -483,7 +539,8 @@ site never reads from it.
 Every page has its own title, description, canonical address, Open Graph and Twitter tags, and
 structured data (the business, the site, the page, a breadcrumb). `robots.txt` is always written.
 `public/og.jpg` is the picture a shared link shows. Make it again after the home page's opening
-changes: `npm run og`, with the preview server running.
+changes: `npm run og`, with the preview server running. The picture is always taken of the mix,
+where the home page opens by night, whatever the hour.
 
 While `seo.index` is off, every page says `noindex` and there is no `sitemap.xml`. This is a lab
 copy of a site that already exists at another address, and two listed copies would compete. Turn it
@@ -501,34 +558,45 @@ with no browser.
 npm i --no-save puppeteer-core @sparticuz/chromium sharp   # once
 npm run build && npm run preview &                         # serve dist/
 
-npm run shot -- http://localhost:4173/ --name home --at 0,0.2,0.4,0.6,0.8,1 --sheet 3
-npm run shot -- http://localhost:4173/pricing/ --name m-pricing --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
-npm run shot -- http://localhost:4173/work/ --name sketches --at "#caretrack+300,.sketches"
-npm run shot -- http://localhost:4173/ --name reduced --reduced
-npm run shot -- http://localhost:4173/ --name mouse --mouse --hover ".hero .btn"
-npm run shot -- http://localhost:4173/nope/ --name 404 --expect 404
+npm run shot -- "http://localhost:4173/?theme=mix" --name home --at 0,0.2,0.4,0.6,0.8,1 --sheet 3
+npm run shot -- "http://localhost:4173/pricing/?theme=dark" --name m-pricing --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
+npm run shot -- "http://localhost:4173/studio/?theme=light" --name studio --walk --sheet 2 --sheet-width 720
+npm run shot -- "http://localhost:4173/work/?theme=mix" --name sketches --at "#caretrack+300,.sketches"
+npm run shot -- "http://localhost:4173/?theme=mix" --name reduced --reduced
+npm run shot -- "http://localhost:4173/?theme=mix" --name mouse --mouse --hover ".hero .btn"
+npm run shot -- "http://localhost:4173/nope/?theme=mix" --name 404 --expect 404
+npm run shot -- http://localhost:4173/ --name dawn --hour 6
 ```
 
 Images go to `shots/` (ignored by git). `--at` takes fractions of the page, or CSS selectors with an
-optional offset in pixels. `--sheet 3` also tiles every stop of the run into one image, three to a
-row, so a whole page can be looked at in one go. All options are listed at the top of the script.
+optional offset in pixels. `--walk` shoots the whole page from top to bottom instead. `--sheet 3`
+also tiles every stop of the run into one image, three to a row, so a whole page can be looked at
+in one go. All options are listed at the top of the script.
+
+Always name the mode in the address (`?theme=dark`, `?theme=mix` or `?theme=light`). Without it the
+page takes the mode that the hour on the machine's clock gives, and the same command shows
+something else in the evening. `--hour 6` sets that hour, to see what Auto does with it. Look at
+every page you touched in all three.
 
 Headless Chrome says it has no mouse, so what the site keeps for a mouse (the buttons that lean
 towards the pointer, the stickers that flinch) does not run there. `--mouse` makes it say it has one.
 
-Four more scripts check behaviour, not looks. Each prints one line per step and exits with an error
+Five more scripts check behaviour, not looks. Each prints one line per step and exits with an error
 if a step fails or the page logs an error:
 
 ```bash
 npm run check:admin    # signs in to the admin, edits, publishes, clashes, loads an old version
 npm run check:brief    # the brief form with the inbox off and with it on
+npm run check:theme    # the three modes: Auto by the hour, a choice that is kept, the switch and the button
 npm run check:stickers # walks every sticker up the screen, at seven screen sizes: none may touch text
-npm i --no-save lighthouse && npm run lighthouse   # SEO, accessibility and best practices, per page
+npm i --no-save lighthouse && npm run lighthouse   # SEO, accessibility and best practices, per page and per mode
 ```
 
-`check:admin`, `check:stickers` and `lighthouse` need the preview server running. `check:brief`
-builds and serves its own two copies of the site. `check:stickers` takes about ten minutes;
-`-- --page /pricing/` or `-- --width 390` checks one page or one size. None of them reaches GitHub, Firestore or WhatsApp: the browser's
+`check:admin`, `check:theme`, `check:stickers` and `lighthouse` need the preview server running.
+`check:brief` builds and serves its own two copies of the site. `check:stickers` takes about ten
+minutes; `-- --page /pricing/` or `-- --width 390` checks one page or one size. `lighthouse` tests
+every page in the dark mode and in the light mode (the mix shows each section in one of those two);
+`-- --theme light` tests one. None of them reaches GitHub, Firestore or WhatsApp: the browser's
 requests are caught and answered by the script. `vite preview` sends the headers in `vercel.json`,
 so the admin is checked under its real Content-Security-Policy.
 
@@ -537,6 +605,8 @@ from the shots, and frame rate on a real phone.
 
 Test switches, on any page:
 
+- `?theme=dark`, `?theme=mix`, `?theme=light` and `?theme=auto` show that mode for the visit,
+  whatever the visitor chose before and whatever the hour.
 - `?gl=live` forces the chart to animate, `?gl=still` draws it only when something changes, and
   `?gl=off` behaves as if WebGL 2 were missing.
 - `?slow=6` plays every animation six times slower. It also puts GSAP on `window.altraMotion`, so a
@@ -551,6 +621,9 @@ Test switches, on any page:
 | No WebGL 2 | The chart is skipped. Pages keep their background colour. |
 | No `backdrop-filter` | Glass panels become nearly solid. |
 | Reduced transparency is on | Glass panels become solid. |
+| Reduced motion is on, or a screen under 900 px | The selected work on the home page is not pinned. It is a row of cards that is swiped sideways, one card to a swipe, with the next one showing at the edge. Two buttons under the row move it by one card. |
+| No JavaScript | The pages are the mix, and the theme switch is not shown. |
+| Storage is blocked | A chosen mode lasts until the page is closed. After that the clock decides again. |
 | Narrow or short screen | The service cards stop stacking and scroll as a normal list. Rows of sketches swipe sideways. Stickers are smaller and drift half as far, the home page opens with one sticker and not four, and the arrows beside buttons and headings are left out. |
 | Software rendering, or a frame rate that stays low | The chart stops animating and redraws only on change. |
 | Slow GPU | Resolution steps down: 1, 0.8, 0.65, 0.5 of the device pixel ratio (capped at 1.75, or 1.5 on touch). |

@@ -16,6 +16,7 @@ function mountPlates(root, { stage, media }) {
   const counted = plates.filter((plate) => !plate.classList.contains('plate--end')).length;
   const current = section.querySelector('[data-plates-current]');
   const bar = section.querySelector('[data-plates-bar]');
+  const steppers = [...section.querySelectorAll('[data-plates-step]')];
 
   let active = -1;
   let inView = false;
@@ -34,12 +35,12 @@ function mountPlates(root, { stage, media }) {
     applyLook();
   };
 
-  // The active plate is the one under the middle of the row.
-  const pick = (offset) => {
-    const line = offset + viewport.clientWidth * 0.5;
+  // The active plate is the one under a line across the row: `line` is how far
+  // that line is from the row's left edge.
+  const pick = (offset, line) => {
     let index = 0;
     plates.forEach((plate, i) => {
-      if (plate.offsetLeft <= line) index = i;
+      if (plate.offsetLeft <= offset + line) index = i;
     });
     return index;
   };
@@ -73,7 +74,7 @@ function mountPlates(root, { stage, media }) {
         invalidateOnRefresh: true,
         onUpdate(self) {
           gsap.set(bar, { scaleX: self.progress });
-          activate(pick(self.progress * distance()));
+          activate(pick(self.progress * distance(), viewport.clientWidth * 0.5));
         },
       },
     });
@@ -99,15 +100,43 @@ function mountPlates(root, { stage, media }) {
     });
   });
 
-  // Small screens and reduced motion: the row scrolls sideways by touch or keyboard.
+  // Small screens and reduced motion: a row of cards that scrolls sideways by
+  // touch or keyboard, one card to a swipe (the stylesheet makes it snap). The
+  // two buttons under the row move it by one card as well.
   media.add(SWIPED, () => {
-    const onScroll = () => {
-      const max = Math.max(1, viewport.scrollWidth - viewport.clientWidth);
-      gsap.set(bar, { scaleX: viewport.scrollLeft / max });
-      activate(pick(viewport.scrollLeft));
+    // Where a card comes to rest: its left edge on the page's margin.
+    const rest = () => Number.parseFloat(getComputedStyle(viewport).scrollPaddingLeft) || 0;
+    const furthest = () => Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+
+    const update = () => {
+      const max = furthest();
+      const at = viewport.scrollLeft;
+      gsap.set(bar, { scaleX: max ? at / max : 0 });
+      // The card at rest is the one whose middle has not yet left on the left.
+      // At the far end the last card cannot reach the margin, so it wins there.
+      activate(at >= max - 2 ? plates.length - 1 : pick(at, rest() + plates[0].offsetWidth * 0.5));
+      steppers.forEach((button) => {
+        const none = Number(button.dataset.platesStep) < 0 ? at <= 2 : at >= max - 2;
+        button.setAttribute('aria-disabled', String(none));
+      });
     };
-    viewport.addEventListener('scroll', onScroll, { passive: true });
-    return () => viewport.removeEventListener('scroll', onScroll);
+
+    const step = (event) => {
+      const by = Number(event.currentTarget.dataset.platesStep);
+      const target = plates[Math.min(plates.length - 1, Math.max(0, active + by))];
+      viewport.scrollTo({ left: target.offsetLeft - rest(), behavior: reducedMotion ? 'auto' : 'smooth' });
+    };
+
+    viewport.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    steppers.forEach((button) => button.addEventListener('click', step));
+    update();
+
+    return () => {
+      viewport.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      steppers.forEach((button) => button.removeEventListener('click', step));
+    };
   });
 
   return () => {

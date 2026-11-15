@@ -84,7 +84,7 @@ export function createChrome({ scroll }) {
       header.classList.remove('is-hidden');
       if (!reducedMotion) {
         animate(menu, { opacity: { from: 0, to: 1 }, duration: 300, ease: 'outQuart' });
-        animate(menu.querySelectorAll('.menu__link, .menu__foot'), {
+        animate(menu.querySelectorAll('.menu__link, .menu__theme, .menu__foot'), {
           opacity: { from: 0, to: 1 },
           translateY: { from: 28, to: 0 },
           delay: stagger(70, { start: 80 }),

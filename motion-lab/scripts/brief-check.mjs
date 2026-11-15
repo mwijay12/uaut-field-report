@@ -103,7 +103,9 @@ async function open(url) {
     }
   });
 
-  await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
+  // The mode of the site goes by the hour (content/mode.js). Name one, so that
+  // the pictures and the result are the same at any time of day.
+  await page.goto(`${url}${url.includes('?') ? '&' : '?'}theme=mix`, { waitUntil: 'networkidle0', timeout: 60000 });
   await page.waitForFunction(() => document.documentElement.classList.contains('is-ready'), { timeout: 30000 });
   await sleep(1500);
 

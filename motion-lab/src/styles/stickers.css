@@ -69,8 +69,9 @@ html.js:not(.is-ready) :is(.sticker, .scribble-spot) {
   stroke: none;
 }
 
-/* Tones. Each works on the dark theme and on the light one, except night,
-   which is for light sections only. */
+/* Tones. Each works on the dark theme and on the light one. `night` is made
+   for a section written for the light theme: navy with a gold line there, and
+   paper with a navy line when the page is dark (tokens.css). */
 .sticker--sun {
   --sticker-back: var(--sticker-sun);
   --sticker-ink: var(--navy-800);
@@ -87,8 +88,8 @@ html.js:not(.is-ready) :is(.sticker, .scribble-spot) {
 }
 
 .sticker--night {
-  --sticker-back: var(--navy-700);
-  --sticker-ink: var(--gold);
+  --sticker-back: var(--sticker-night-back);
+  --sticker-ink: var(--sticker-night-ink);
 }
 
 .sticker--gold {

@@ -151,15 +151,15 @@
 .figures {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(2rem, 4vw, 3.5rem) var(--gap);
+  gap: var(--gap);
 }
 
+/* Each number is a glass tile (class `glass`, glass.css). */
 .figure {
   display: grid;
   align-content: start;
   gap: 0.8rem;
-  padding-top: 1.4rem;
-  border-top: 1px solid var(--rule);
+  padding: clamp(1.4rem, 2.2vw, 2.25rem) clamp(1rem, 2vw, 2rem) clamp(1.15rem, 2vw, 2rem);
 }
 
 .figure__value {
@@ -219,6 +219,14 @@
   .typed::after {
     animation: none;
   }
+}
+
+/* ---------- Words that light up as you scroll (data-scrub, src/lib/text.js) ----------
+   The script moves --lit from 0 to 1 on each word. How dim an unlit word is
+   belongs to the theme (--dim), so it is worked out here. */
+
+.scrub__word {
+  opacity: calc(var(--dim) + (1 - var(--dim)) * var(--lit, 1));
 }
 
 /* ---------- Written text (src/lib/stream.js) ----------
