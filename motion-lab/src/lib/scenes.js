@@ -27,6 +27,8 @@ export function mountScenes(root, { stage, setTheme }) {
     setTheme(scene.dataset.theme);
     if (scene.dataset.stage) stage.look(scene.dataset.stage, options);
     stage.calm(Number(scene.dataset.calm) || 0, options);
+    // For what stands over the chart and belongs to no section: the header.
+    document.documentElement.dataset.chart = scene.dataset.bg === 'plain' ? 'off' : 'on';
     scene.dispatchEvent(new CustomEvent('scene:enter'));
   };
 

@@ -60,6 +60,29 @@
   backdrop-filter: blur(14px);
 }
 
+/* By day the chart is pale lines on a pale page, and they run behind the
+   header's small type. Until the header has its own bar, the top of the chart
+   fades into the page colour behind it. data-chart is set by src/lib/scenes.js. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -2.75rem;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--bg) 94%, transparent),
+    color-mix(in srgb, var(--bg) 72%, transparent) 42%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity var(--dur-base) linear;
+  pointer-events: none;
+}
+
+:root[data-theme='day']:not([data-chart='off']) .site-header:not(.is-stuck)::before {
+  opacity: 1;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;

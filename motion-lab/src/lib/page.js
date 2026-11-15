@@ -37,6 +37,7 @@ export function mountPage(container, deps, arrival = {}) {
   let scenes;
   let reveals;
   let stickers;
+  let text;
 
   const context = gsap.context(() => {
     // Page code first: it holds the pinned scenes, and anything that pins has
@@ -47,7 +48,7 @@ export function mountPage(container, deps, arrival = {}) {
     cleanups.push(mountMarquee(container));
     mountMedia(container, { media });
     mountNumbers(container);
-    mountText(container);
+    text = mountText(container);
     mountDrawings(container);
     stickers = mountStickers(container, { media });
 
@@ -62,10 +63,12 @@ export function mountPage(container, deps, arrival = {}) {
     scenes,
     enter() {
       reveals.enter();
+      text.enter();
       stickers?.enter();
     },
     destroy() {
       stickers?.destroy();
+      text.destroy();
       cleanups.forEach((cleanup) => cleanup?.());
       media.revert();
       context.revert();

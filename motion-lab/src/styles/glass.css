@@ -1,0 +1,180 @@
+/* ---------- Glass ----------
+   A panel that keeps text readable over the chart: forms, lists of facts,
+   cards. The page colour shows through it, so it works by night and by day.
+
+   By night it is a frosted panel with a hairline edge. By day the chart is
+   pale lines on a pale page, so the panel is a sheet of clear glass instead:
+   light falls on its top left corner, its rim is lit on two opposite corners,
+   and it stands a little off the page. The theme switches those parts on and
+   off through the --glass tokens (tokens.css); nothing here names a theme.
+
+   .glass is always a panel. The other selectors are panes: see below. */
+
+.glass,
+[data-panes] :where(.pane, .section-head__text, .page-hero__foot > *, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
+:where([data-panes]) > .label {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-l);
+  background:
+    radial-gradient(130% 150% at 0% 0%, var(--glass-sheen), transparent 58%),
+    color-mix(in srgb, var(--bg) var(--glass-tint), transparent);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  box-shadow: inset 0 1px 0 var(--glass-shine), var(--glass-depth), 0 28px 56px -36px var(--glass-shadow);
+}
+
+/* The rim needs something to hold on to. No specificity, so a panel that is
+   already sticky or absolute stays that way. */
+:where(
+  .glass,
+  [data-panes] :is(.pane, .section-head__text, .page-hero__foot > *, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
+  [data-panes] > .label
+) {
+  position: relative;
+}
+
+/* The rim. --glass-ring is `none` by night, which leaves this out altogether. */
+.glass::after,
+[data-panes] :where(.pane, .section-head__text, .page-hero__foot > *, .section-head > .label, .section-head--row > div > .label, .product__head > .label)::after,
+:where([data-panes]) > .label::after {
+  content: var(--glass-ring);
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--glass-angle),
+    var(--glass-light) 0deg,
+    var(--glass-mid) 75deg,
+    var(--glass-shade) 150deg,
+    var(--glass-light) 195deg,
+    var(--glass-mid) 265deg,
+    var(--glass-shade) 325deg,
+    var(--glass-light) 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+
+  /* With a mouse, the light travels round the rim as the panel crosses the
+     screen. A phone keeps it still: there it would cost frames for a detail
+     that a thumb scrolls past. */
+  @supports (animation-timeline: view()) {
+    @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+      animation: glass-light linear both;
+      animation-timeline: view();
+    }
+  }
+}
+
+@property --glass-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 300deg;
+}
+
+@keyframes glass-light {
+  from {
+    --glass-angle: 264deg;
+  }
+
+  to {
+    --glass-angle: 336deg;
+  }
+}
+
+.glass--pad {
+  padding: clamp(1.25rem, 2.6vw, 2.5rem);
+}
+
+/* ---------- Panes ----------
+   Small text set straight on the day chart is crossed by its lines. So in a
+   day section whose chart is showing, loose text stands on glass too. Large
+   display type stays in the open.
+
+   The build marks such a section with data-panes (vite.config.js): a scene
+   with data-theme="day" whose background in content/site.json is not `plain`.
+   Nothing below applies anywhere else, so the same markup is loose text on a
+   plain page and a pane over the chart, and the admin's Backgrounds page
+   decides which.
+
+   These become panes by themselves:
+     the label that opens a section        a capsule
+     what stands under a page's title      a card each, or a capsule for a label
+     .section-head__text                   a note under a section's heading
+   Give any other loose text the class `pane`, or `pane pane--pill` for one
+   line. A page's own stylesheet fits the pane to its block with
+   `[data-panes] .block`. */
+
+[data-panes] .pane {
+  padding: clamp(1.1rem, 1.8vw, 1.6rem) clamp(1.25rem, 2vw, 1.85rem);
+}
+
+/* A capsule: one line of small type. */
+[data-panes] :is(.pane--pill, .page-hero__foot > .label, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
+[data-panes] > .label {
+  justify-self: start;
+  width: fit-content;
+  padding: 0.45rem 0.95rem 0.45rem 0.85rem;
+  border-radius: 1.1rem;
+}
+
+/* A little tighter on a phone, where a long label has to share its row. */
+@media (max-width: 480px) {
+  [data-panes] :is(.pane--pill, .page-hero__foot > .label, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
+  [data-panes] > .label {
+    padding-inline: 0.7rem 0.8rem;
+  }
+}
+
+/* Under a page's title: the opening lines on one card, the list of jump links
+   on another. They take the place of the rule that stands there on a plain page. */
+[data-panes] .page-hero__foot {
+  padding-top: 0;
+  border-top: 0;
+}
+
+[data-panes] .page-hero__foot > .lede {
+  max-width: none;
+  padding: clamp(1.1rem, 1.8vw, 1.6rem) clamp(1.25rem, 2vw, 1.85rem);
+}
+
+/* Each row of the list has a rule above it. The first row's rule would run
+   along the top of the card, so every row is raised by the width of a rule
+   and the card cuts off what sticks out. */
+[data-panes] .page-hero__foot > .index-list {
+  --index-min: 17.5rem;
+  overflow: hidden;
+  padding: 0 clamp(1.1rem, 1.6vw, 1.5rem);
+}
+
+[data-panes] .page-hero__foot > .index-list li {
+  margin-top: -1px;
+}
+
+[data-panes] .page-hero__foot > .index-list a:focus-visible {
+  outline-offset: -3px;
+}
+
+@media (min-width: 901px) {
+  [data-panes] .page-hero__foot > :last-child {
+    grid-column: 6 / -1;
+  }
+}
+
+/* A note: the few lines under a section's heading. */
+[data-panes] .section-head__text {
+  justify-self: start;
+  max-width: calc(44ch + 2.7rem);
+  padding: 1.05rem 1.35rem 1.15rem;
+  border-radius: var(--radius-m);
+}
+
+/* An outlined button is see-through, so over the chart it gets the glass as
+   its ground. One inside a panel already stands on glass. */
+[data-panes] .btn--ghost:not(:is(.glass, .pane) *) {
+  background: color-mix(in srgb, var(--bg) var(--glass-tint), transparent);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}

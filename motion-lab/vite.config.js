@@ -37,6 +37,11 @@ function loadContent() {
 const content = loadContent();
 const site = derive(content);
 
+// ALTRA_CHART=all builds a copy with the chart showing in every section,
+// whatever the content file says. It is how to look at a section over the
+// chart, and at its panes, before anyone switches that on in the admin.
+if (process.env.ALTRA_CHART === 'all') content.backgrounds = {};
+
 // Every section the admin can restyle must have a look, or its setting would do nothing.
 for (const { key } of SECTIONS) {
   if (!PRESETS[key]) throw new Error(`content/schema.js lists the section "${key}", but src/gl/presets.js has no look with that name.`);
@@ -240,6 +245,8 @@ function searchFiles() {
  *
  * Gets data-bg="plain" data-calm="1" (or "soft") beside it when the content
  * file asks for that. A name with no look in src/gl/presets.js fails the build.
+ * A day section whose chart is showing also gets data-panes: there the small
+ * text stands on glass, so the chart's lines do not cross it (src/styles/glass.css).
  */
 function htmlIncludes() {
   const include = /<!--\s*@include\s+([\w-]+(?:\/[\w-]+)*)((?:\s+[\w-]+="[^"]*")*)\s*-->/g;
@@ -247,7 +254,8 @@ function htmlIncludes() {
   const slot = /\{\{\s*([\w-]+)\s*\}\}/g;
   const fact = /\{\{\s*site\.([\w.]+)\s*\}\}/g;
   const branch = /<!--\s*@if\s+(!?)([\w-]+)\s*-->([\s\S]*?)(?:<!--\s*@else\s*-->([\s\S]*?))?<!--\s*@endif\s*-->/g;
-  const staged = /data-stage="([^"]*)"/g;
+  // The whole opening tag, because what a section gets depends on its theme too.
+  const staged = /<[a-z][\w-]*\s[^<>]*?\bdata-stage="([^"]*)"[^<>]*>/g;
 
   const fill = (html, depth = 0) =>
     html.replace(include, (_, name, attrs) => {
@@ -281,10 +289,14 @@ function htmlIncludes() {
     });
 
   const dress = (html, file) =>
-    html.replace(staged, (attr, name) => {
+    html.replace(staged, (tag, name) => {
       if (!PRESETS[name]) throw new Error(`data-stage="${name}" in ${file} has no look in src/gl/presets.js.`);
       const background = BACKGROUNDS.find((item) => item.key === (content.backgrounds[name] ?? 'effect'));
-      return background.calm ? `${attr} data-bg="${background.key}" data-calm="${background.calm}"` : attr;
+      const more = [];
+      if (background.calm) more.push(`data-bg="${background.key}"`, `data-calm="${background.calm}"`);
+      if (background.calm < 1 && /\sdata-theme="day"/.test(tag)) more.push('data-panes');
+      const attr = `data-stage="${name}"`;
+      return more.length ? tag.replace(attr, `${attr} ${more.join(' ')}`) : tag;
     });
 
   return {

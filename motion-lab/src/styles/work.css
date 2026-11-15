@@ -54,6 +54,11 @@
   max-width: 40ch;
 }
 
+/* Over the day chart the opening lines stand on a pane as wide as the column (glass.css). */
+[data-panes] .product__body .lede {
+  max-width: none;
+}
+
 .spec li {
   display: grid;
   grid-template-columns: minmax(6.5rem, 1fr) 3fr;

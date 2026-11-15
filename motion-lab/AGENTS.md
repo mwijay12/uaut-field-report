@@ -20,12 +20,23 @@ Motion and looks:
   `theme-color` in each page's head include). Keep those in step with the tokens.
 - A section declares its theme and chart look in HTML (`data-theme`, `data-stage`). Effects are
   declared the same way (`data-count`, `data-type-words`, `data-scramble`, `data-scrub`,
-  `data-draw`, `data-media`, `data-parallax`, `data-magnetic`, `data-marquee`). Prefer an attribute
-  to new JavaScript. Stickers and scribbles are includes (`<!-- @include sticker … -->`).
+  `data-write`, `data-draw`, `data-media`, `data-parallax`, `data-magnetic`, `data-marquee`).
+  Prefer an attribute to new JavaScript. Stickers and scribbles are includes
+  (`<!-- @include sticker … -->`).
 - The HTML holds the finished text, the final number and the whole drawing. An effect starts from
   that and returns to it. Never ship text that only exists after a script has run.
 - Text that has to be read closely goes on a `.glass` panel or in a plain section. Do not lay long
   text straight on the chart, and do not write a new translucent background per component.
+- Any day section can be switched to the chart in the admin, so every day section must read well
+  over it. Small loose text there carries the class `pane` (or is one of the things that become a
+  pane by themselves: see "Glass and panes" in the README). Large display type stays in the open.
+  After adding or changing a day section, build with `ALTRA_CHART=all` and look at it.
+- Do not write `data-panes` by hand, and do not name a theme in `src/styles/glass.css`. What a
+  panel looks like by night and by day is set by the `--glass-*` tokens.
+- A text that is written out (`data-write`, `write()` in `src/lib/stream.js`) stays whole in the
+  page while it is written. Do not build a typing effect that empties an element and fills it
+  again: the block would change size, and a screen reader would get the text in pieces. Use it on
+  ordinary running text only, never on a flex or grid box.
 - A drawing is an SVG file in `src/partials/art/`, with `class="art"`, strokes only, and
   `aria-hidden="true"`. It is animated by `data-draw` and its options, not by code written for it.
   What it shows must also be said in words next to it.
@@ -103,7 +114,7 @@ Run the checks that cover what you touched. Each must end with "all steps passed
 ```bash
 npm run check:admin    # after any change to the admin, the content file's rules or vercel.json
 npm run check:brief    # after any change to the contact page or to saving briefs
-npm run check:stickers # after moving or adding a sticker, or changing a heading, a caption or a layout near one
+npm run check:stickers # after moving or adding a sticker, or changing a heading, a caption, a pane or a layout near one
 npm run lighthouse     # after any change to a page: accessibility and best practices must stay at 100
 ```
 
@@ -115,6 +126,8 @@ Some things a still picture cannot show. Check these by driving the page from a 
 - Back and Forward. The reader must return to the place and the choices they left.
 - A number that counts. Wait three seconds after scrolling to it before reading the value.
 - A drawing. Look at it half-drawn (`?slow=5`) and finished, and with `--reduced`.
+- A text that is written out. Look at it half-written (`?slow=20`): the block must have the size
+  it ends with, and the line breaks must be the final ones. With `--reduced` it is simply there.
 - A sticker. Look at it half-popped (`?slow=6`). After a page change and after Back, the stickers
   of the page on screen must have popped and those of the page that left must be gone. With
   `--reduced` every sticker is simply there. What the pointer does to one needs `--mouse`.

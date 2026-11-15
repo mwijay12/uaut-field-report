@@ -6,7 +6,7 @@
 //
 //   npm i --no-save puppeteer-core @sparticuz/chromium
 //   npm run build && npm run preview &
-//   node scripts/sticker-check.mjs                     every page, at six screen sizes
+//   node scripts/sticker-check.mjs                     every page, at seven screen sizes
 //   node scripts/sticker-check.mjs --page /pricing/    one page
 //   node scripts/sticker-check.mjs --width 390         one width
 //   node scripts/sticker-check.mjs --width 820 --height 1180    a size that is not on the list
@@ -14,7 +14,7 @@
 // Prints one line per sticker and exits with an error if one of them touches
 // text, or if a page logs an error. Scribbles are not checked: a ring round a
 // price is meant to touch it. The screens run three at a time, each in its own
-// browser, and the whole check takes about eight minutes.
+// browser, and the whole check takes about ten minutes.
 
 process.env.AWS_EXECUTION_ENV ??= 'AWS_Lambda_nodejs22.x';
 const { default: chromium } = await import('@sparticuz/chromium');
@@ -29,7 +29,9 @@ const option = (name, fallback) => {
 const base = option('base', 'http://localhost:4173');
 const PAGES = ['/', '/work/', '/services/', '/pricing/', '/studio/', '/contact/'];
 // The layout changes at 900 wide, so there is a size just above it and one just
-// below, both tall: a tall screen is where a sticker drifts furthest.
+// below, both tall: a tall screen is where a sticker drifts furthest. The last
+// one is a short phone: there an opening has no height to spare, and its label
+// stands on the same row as its sticker.
 const touch = { deviceScaleFactor: 2, isMobile: true, hasTouch: true };
 const SCREENS = [
   { width: 1440, height: 900 },
@@ -38,6 +40,7 @@ const SCREENS = [
   { width: 820, height: 1180, ...touch },
   { width: 390, height: 844, ...touch },
   { width: 360, height: 740, ...touch },
+  { width: 375, height: 667, ...touch },
 ];
 const pages = option('page') ? [option('page')] : PAGES;
 // A width that is not on the list gets a screen of its own. Below 900 it is a touch screen.

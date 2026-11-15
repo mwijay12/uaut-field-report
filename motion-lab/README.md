@@ -86,7 +86,8 @@ src/lib/             shared behaviour, one file per job:
   page.js              mounts and removes everything inside a page
   scenes.js            data-theme, data-stage and how calm the chart is
   reveal.js            data-enter, data-split, data-reveal
-  text.js              data-type-words, data-scramble, data-scrub
+  text.js              data-type-words, data-scramble, data-scrub, data-write
+  stream.js            writes a text out, word by word or letter by letter
   draw.js              data-draw
   stickers.js          the stickers: drift, pop, lean
   numbers.js           data-count
@@ -157,7 +158,8 @@ which line of the file to fix. On Vercel a stopped build leaves the live site as
 edit cannot take the site down.
 
 `ALTRA_CONTENT=path/to/other.json npm run build` builds from another file. The checks use this to
-try a setting without touching the real one.
+try a setting without touching the real one. `ALTRA_CHART=all` builds with the chart showing in
+every section, whatever the file says, to look at the panes (see "Glass and panes").
 
 ## The admin
 
@@ -211,7 +213,7 @@ Most changes need HTML only. These attributes do the work:
 | Attribute | On | Effect |
 | --- | --- | --- |
 | `data-theme="night"` or `"day"` | a section | Page colours and chart palette while that section is on screen. |
-| `data-stage="name"` | the same section | The chart moves to that preset from `src/gl/presets.js`. The build adds `data-bg` and `data-calm` beside it when the content file asks for a soft or plain background. |
+| `data-stage="name"` | the same section | The chart moves to that preset from `src/gl/presets.js`. The build adds `data-bg` and `data-calm` beside it when the content file asks for a soft or plain background, and `data-panes` on a day section whose chart is showing (see "Glass and panes"). |
 | `data-enter-split` | a heading | Its lines rise when the page arrives. |
 | `data-enter` | any block | Fades up when the page arrives. |
 | `data-split` | a heading | Its lines rise when scrolled into view. |
@@ -220,6 +222,7 @@ Most changes need HTML only. These attributes do the work:
 | `data-type-words="a\|b\|c"` | a short span | Types each phrase, holds it, deletes it, goes to the next. |
 | `data-scramble` | a label with plain text | The text resolves out of random letters when scrolled into view. |
 | `data-scrub` | a paragraph | Its words light up as you scroll through it. |
+| `data-write` | a paragraph of running text | The text is written out word by word, as if it were being generated. Once, when scrolled into view. With `data-enter` beside it: when the page arrives. Inside a `<details>`: each time it is opened. `data-write="type"` goes letter by letter, like a typewriter. |
 | `data-draw` | an `<svg class="art">`, or a block that holds several | Every stroked shape inside draws itself, in the order it is written, when scrolled into view. |
 | `data-media` | a `<figure class="media">` | The picture is unveiled when scrolled into view. |
 | `data-parallax="8"` | a picture or any block | Drifts by up to 8% of its height as it crosses the screen. |
@@ -230,13 +233,59 @@ Most changes need HTML only. These attributes do the work:
 In every case the HTML holds the finished text, number or drawing. The effect is added on top, so
 the page reads correctly with reduced motion on, without JavaScript, and to a screen reader.
 
-Add the class `glass` to any block that holds text someone has to read closely: a form, a price
-card, a list of facts. `glass--pad` adds the standard padding. The panel takes its colour from the
-section's theme. Its settings are the `--glass-*` tokens in `src/styles/tokens.css`. Set
-`--glass-tint` higher on a component whose panels overlap, as the service cards do.
-
 The header, menu, canvas, curtain and scroll meter sit outside the Barba container, so they survive
 a page change. Everything inside `<main data-barba="container">` is replaced.
+
+### Glass and panes
+
+Add the class `glass` to any block that holds text someone has to read closely: a form, a price
+card, a list of facts. `glass--pad` adds the standard padding. Set `--glass-tint` higher on a
+component whose panels overlap, as the service cards do.
+
+By night the panel is frosted, with a hairline edge. By day the chart is pale lines on a pale page,
+so the panel is a sheet of clear glass instead: light falls on its top left corner, its rim is lit
+on two opposite corners, and it stands a little off the page. With a mouse, the light travels round
+the rim as the panel crosses the screen. The theme switches those parts on and off through the
+`--glass-*` tokens in `src/styles/tokens.css`. The rules are in `src/styles/glass.css`, which names
+no theme.
+
+Small text set straight on the day chart is crossed by its lines. So in a day section whose chart
+is showing, loose text stands on glass too. That is a pane. The build marks such a section with
+`data-panes`: a section with `data-theme="day"` whose background in the content file is the chart
+or its soft version. There, with no new markup:
+
+- the label that opens the section becomes a capsule
+- what stands under a page's title (`.page-hero__foot`) gets a card each
+- `.section-head__text`, the few lines under a heading, becomes a note
+- an outlined button gets the glass as its ground
+- the header fades the top of the chart into the page colour, until it has its own bar
+
+Give any other loose text the class `pane`, or `pane pane--pill` for one line. The class does
+nothing by night or on a plain section, so the same markup is loose text there and a pane over the
+chart, and the admin's Backgrounds page decides which. Large display type stays in the open: a
+heading reads well over the lines, and a slab behind it would hide the chart it was switched on for.
+A block that has to be fitted to its pane does that in its own stylesheet, under `[data-panes]`
+(see `.service-list` and `.waypoint` in `home.css`).
+
+Every day section is dressed this way, including those that are plain today. To look at them over
+the chart without publishing anything:
+
+```bash
+ALTRA_CHART=all npx vite build --outDir /tmp/chart
+npx vite preview --outDir /tmp/chart --port 4174
+```
+
+### Written text
+
+`data-write` and the brief's message use `write()` from `src/lib/stream.js`. The text never leaves
+the page: what is not written yet stays in its place and is only see-through. So the block keeps
+its size and its line breaks, nothing under it moves, and a screen reader has the whole text from
+the start. The caret takes no room in the line. A link inside the text stays a link.
+
+It is used in three places: the opening lines under each page's title, the answers on the pricing
+page, and the message on the contact page. Keep it to text a reader has just asked for or has just
+arrived at. The text has to be ordinary running text: inside a flex or a grid box each piece would
+become an item of its own, and the words would move.
 
 ### Drawings
 
@@ -415,6 +464,10 @@ asks for a written quote, so it goes to the person line and never to the chatbot
 
 With `leads.projectId` empty, that is all, and nothing is sent to a server.
 
+The message under the form is typed, not swapped: all of it when it first comes into view, and
+after that each change, in the place where it changed (`showMessage` in `src/pages/contact.js`).
+Its text is whole at every moment, so what the links carry never lags behind.
+
 With the Firebase project ID of the main site in `leads.projectId`, a copy of the brief is also
 added to that project's `inquiries` collection, where the main site's admin lists it under Leads &
 Inquiries. The form then asks for a name and a phone number, which that list needs, and the message
@@ -469,12 +522,12 @@ if a step fails or the page logs an error:
 ```bash
 npm run check:admin    # signs in to the admin, edits, publishes, clashes, loads an old version
 npm run check:brief    # the brief form with the inbox off and with it on
-npm run check:stickers # walks every sticker up the screen, at six screen sizes: none may touch text
+npm run check:stickers # walks every sticker up the screen, at seven screen sizes: none may touch text
 npm i --no-save lighthouse && npm run lighthouse   # SEO, accessibility and best practices, per page
 ```
 
 `check:admin`, `check:stickers` and `lighthouse` need the preview server running. `check:brief`
-builds and serves its own two copies of the site. `check:stickers` takes about eight minutes;
+builds and serves its own two copies of the site. `check:stickers` takes about ten minutes;
 `-- --page /pricing/` or `-- --width 390` checks one page or one size. None of them reaches GitHub, Firestore or WhatsApp: the browser's
 requests are caught and answered by the script. `vite preview` sends the headers in `vercel.json`,
 so the admin is checked under its real Content-Security-Policy.
@@ -528,7 +581,7 @@ Pictures:
 - `src/images/art/` holds three mood photos (a ledger, a contour map, a shop counter). They were
   made with an AI image model and show no real place or person. Replace them with real photos of
   the studio and its clients when there are some.
-- CareTrack and ShuleDirect Pro have no screenshots yet. Each is shown with three line drawings of
+- CareTrack and Shule Altra have no screenshots yet. Each is shown with three line drawings of
   what it does. They are drawings of the idea, not pictures of the product.
 - The stickers and the hand-drawn lines are original. `scripts/stickers.mjs` draws them from points
   placed by hand; nothing is traced or taken from a sticker pack.

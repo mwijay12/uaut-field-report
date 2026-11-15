@@ -12,7 +12,8 @@
 
 import { compact, describe, estimate, fromQuery } from '../lib/estimate.js';
 import { leadRecord, newRef, saveLead } from '../lib/leads.js';
-import { gsap, reducedMotion } from '../lib/motion.js';
+import { ScrollTrigger, gsap, reducedMotion } from '../lib/motion.js';
+import { write } from '../lib/stream.js';
 import { site } from '../site.js';
 
 // A brief asks for a written quote, so it goes to a person, not to the chatbot.
@@ -111,6 +112,34 @@ export function mountContact(root) {
     return lines.join('\n');
   }
 
+  // The message is typed, not swapped: all of it when it first comes into
+  // view, and after that each change, in the place where it changed.
+  const TYPING = { words: false, rate: 90 };
+  let typing = null;
+  let seen = false; // the message has come into view
+
+  function showMessage(message) {
+    const before = preview.textContent;
+    // One choice can report twice (an input event, then a change event). The
+    // second time nothing is new, and what is being typed carries on.
+    if (typing && before === message) return;
+    typing?.stop();
+    preview.textContent = message;
+    if (reducedMotion) return;
+    if (!seen) {
+      typing = write(preview, { ...TYPING, paused: true }); // waits, unseen, for the reader to get there
+      return;
+    }
+
+    const shorter = Math.min(before.length, message.length);
+    let from = 0;
+    while (from < shorter && before[from] === message[from]) from += 1;
+    let same = 0; // how much of the end is unchanged
+    while (same < shorter - from && before.at(-1 - same) === message.at(-1 - same)) same += 1;
+    const to = message.length - same;
+    if (to > from) typing = write(preview, { ...TYPING, from, to });
+  }
+
   function say(text, tone = '') {
     status.hidden = !text;
     status.dataset.tone = tone;
@@ -129,7 +158,7 @@ export function mountContact(root) {
       say('');
     }
     const message = ref ? `${text}\nRef: ${ref}` : text;
-    preview.textContent = message;
+    showMessage(message);
     whatsapp.href = `${WHATSAPP}?text=${encodeURIComponent(message)}`;
     email.href = `mailto:${EMAIL}?subject=${encodeURIComponent(ref ? `New project ${ref}` : 'New project')}&body=${encodeURIComponent(message)}`;
     save(Object.fromEntries(kept.map((name) => [name, form.elements[name].value])));
@@ -225,7 +254,20 @@ export function mountContact(root) {
   showEstimate();
   update();
 
+  if (!reducedMotion) {
+    ScrollTrigger.create({
+      trigger: preview,
+      start: 'top 92%',
+      once: true,
+      onEnter: () => {
+        seen = true;
+        typing?.play();
+      },
+    });
+  }
+
   return () => {
+    typing?.stop();
     form.removeEventListener('input', onInput);
     form.removeEventListener('change', update);
     form.removeEventListener('submit', onSubmit);
