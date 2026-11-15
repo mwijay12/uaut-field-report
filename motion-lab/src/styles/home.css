@@ -221,8 +221,23 @@
   color: var(--fg);
 }
 
+/* The service's drawing ends the row. Under a pointer it gives way to the arrow. */
+.service__glyph {
+  grid-column: 12;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  width: clamp(2.5rem, 1.6rem + 1.8vw, 3.5rem);
+  transition: transform var(--dur-base) var(--ease), opacity var(--dur-fast) var(--ease-out);
+}
+
+.service__glyph .glyph {
+  width: 100%;
+}
+
 .service__arrow {
   grid-column: 12;
+  grid-row: 1;
   justify-self: end;
   align-self: center;
   width: 1.4rem;
@@ -245,6 +260,11 @@
   .service:hover .service__arrow {
     transform: none;
     opacity: 1;
+  }
+
+  .service:hover .service__glyph {
+    transform: translateX(0.75rem);
+    opacity: 0;
   }
 }
 
@@ -271,6 +291,21 @@
 
   .service__arrow {
     grid-column: 11 / -1;
+    grid-row: auto;
+    transform: none;
+    opacity: 1;
+  }
+
+  /* Narrow: the drawing sits under the number, and the arrow is always shown. */
+  .service__glyph {
+    grid-column: 1 / span 2;
+    grid-row: 2 / span 2;
+    justify-self: start;
+    align-self: start;
+    width: 2.25rem;
+  }
+
+  .service:hover .service__glyph {
     transform: none;
     opacity: 1;
   }
@@ -319,12 +354,20 @@
   width: min(60vw, 60rem);
   padding: 0.5rem clamp(1.5rem, 3.4vw, 3.5rem) clamp(1.25rem, 2.4vw, 2.25rem);
   border-left: 1px solid var(--rule);
-  opacity: 0.3;
+}
+
+/* A plate that is not the one being looked at steps back: its picture most,
+   its words only as far as they can still be read (4.5 to 1 for the smallest). */
+.plate > * {
   transition: opacity var(--dur-base) var(--ease-out);
 }
 
-.plate.is-active {
-  opacity: 1;
+.js .plate:not(.is-active) > * {
+  opacity: 0.72;
+}
+
+.js .plate:not(.is-active) > :is(.plate__shot, .plate__index) {
+  opacity: 0.3;
 }
 
 .plate__shot {

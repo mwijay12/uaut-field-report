@@ -1,0 +1,92 @@
+{
+  "contact": {
+    "chatbot": "+255 790 942 616",
+    "person": "+255 792 867 427",
+    "email": "altrawaretechnology@gmail.com"
+  },
+  "prices": {
+    "starter": 350000,
+    "growth": 550000,
+    "portal": 750000,
+    "app": 800000,
+    "system": 1200000,
+    "mpesa": 350000,
+    "bilingual": 200000,
+    "booking": 350000,
+    "offline": 450000,
+    "notifications": 250000,
+    "training": 200000,
+    "tunza": 99000,
+    "kuza": 249000
+  },
+  "backgrounds": {
+    "home-hero": "effect",
+    "home-statement": "effect",
+    "home-figures": "effect",
+    "home-services": "plain",
+    "home-route": "plain",
+    "home-cta": "effect",
+    "work-hero": "effect",
+    "work-faida": "effect",
+    "work-caretrack": "plain",
+    "work-uaut": "effect",
+    "work-shule": "plain",
+    "work-more": "soft",
+    "work-cta": "effect",
+    "services-hero": "effect",
+    "services-list": "plain",
+    "services-serve": "effect",
+    "services-process": "plain",
+    "services-cta": "effect",
+    "pricing-hero": "effect",
+    "pricing-packages": "plain",
+    "pricing-estimator": "soft",
+    "pricing-support": "effect",
+    "pricing-faq": "plain",
+    "pricing-cta": "effect",
+    "studio-hero": "effect",
+    "studio-story": "effect",
+    "studio-people": "plain",
+    "studio-values": "effect",
+    "studio-paper": "plain",
+    "studio-cta": "effect",
+    "contact-hero": "effect",
+    "contact-brief": "plain",
+    "contact-reach": "effect",
+    "footer": "effect"
+  },
+  "seo": {
+    "index": false,
+    "origin": "https://altra-motion-lab.vercel.app",
+    "pages": {
+      "home": {
+        "title": "Altraware Technology | Software studio in Dar es Salaam",
+        "description": "A software studio in Dar es Salaam. Fast, mobile-first websites, apps and business systems in Kiswahili and English, with M-Pesa at the core."
+      },
+      "work": {
+        "title": "Our work: Faida POS, CareTrack, UAUT Connect | Altraware",
+        "description": "Four platforms from Altraware: Faida POS, CareTrack, UAUT Connect and ShuleDirect Pro. Built for shops, care centres, schools and a university in Tanzania."
+      },
+      "services": {
+        "title": "Websites, apps and business systems in Tanzania | Altraware",
+        "description": "Websites, apps, business systems, payment integrations and local search from Altraware in Dar es Salaam. What each one includes and how a project runs."
+      },
+      "pricing": {
+        "title": "Website and app prices in Tanzania | Altraware Technology",
+        "description": "Fixed packages from TSh {{site.price.starter}}, monthly support plans and an estimator that turns your choices into a price range and a timeline."
+      },
+      "studio": {
+        "title": "About Altraware Technology, a Tanzanian software company",
+        "description": "Altraware Technology is a Tanzanian software company in Dar es Salaam, founded by David Mwijage and Clemence Ng'unda. Who we are and how we work."
+      },
+      "contact": {
+        "title": "Start a project on WhatsApp | Altraware Technology",
+        "description": "Pick a package, write a short brief and send it to Altraware on WhatsApp. Fixed packages from TSh {{site.price.starter}}, with a written quote before work starts."
+      }
+    }
+  },
+  "leads": {
+    "projectId": "",
+    "inbox": "https://altra.tanzaniareach.com/admin"
+  }
+}

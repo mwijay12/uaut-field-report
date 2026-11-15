@@ -19,6 +19,7 @@ uniform float uSurge;   // 0..1, raised during page transitions
 uniform float uScale;   // zoom
 uniform vec2 uSeed;     // where on the chart we are
 uniform float uRush;    // 0..1, how fast the page is scrolling
+uniform float uCalm;    // 0 the full chart, 1 the flat page colour
 
 out vec4 fragColor;
 
@@ -121,6 +122,10 @@ const vec3 DAY_HIGH = vec3(0.984, 0.980, 0.965);
 const vec3 DAY_LINE = vec3(0.039, 0.090, 0.208);
 const vec3 DAY_ACCENT = vec3(0.486, 0.227, 0.929);
 
+// The page colours themselves (--bg in tokens.css). A plain section shows only these.
+const vec3 NIGHT_PLAIN = vec3(0.027, 0.063, 0.133);
+const vec3 DAY_PLAIN = vec3(0.969, 0.965, 0.949);
+
 void main() {
   float shortSide = min(uRes.x, uRes.y);
   vec2 screen = (gl_FragCoord.xy - 0.5 * uRes) / shortSide;
@@ -184,6 +189,9 @@ void main() {
   // Grain hides banding in the dark gradients.
   float grain = hash12(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5;
   color += grain * mix(0.030, 0.018, uDay);
+
+  // Calm takes all of the above away: at 1 the screen is the flat page colour.
+  color = mix(color, mix(NIGHT_PLAIN, DAY_PLAIN, uDay), uCalm);
 
   fragColor = vec4(color, 1.0);
 }

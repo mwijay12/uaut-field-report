@@ -209,6 +209,19 @@
   grid-column: 9 / -1;
 }
 
+.estimator__head {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* One drawing that turns into whatever is chosen (see pages/pricing.js). */
+.estimator__glyph {
+  flex: none;
+  width: 2.75rem;
+}
+
 .estimator__range {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 1rem + 4.2vw, 5rem);

@@ -6,12 +6,16 @@
   "engines": {
     "node": "22.x"
   },
-  "description": "Altraware Technology landing built with raw WebGL and GLSL, GSAP, Barba.js, Anime.js, tween.js and Lenis.",
+  "description": "Altraware Technology site built with raw WebGL and GLSL, GSAP, Barba.js, Anime.js, tween.js and Lenis, with a small admin that publishes through GitHub.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "shot": "node scripts/shot.mjs"
+    "shot": "node scripts/shot.mjs",
+    "og": "node scripts/og.mjs",
+    "check:admin": "node scripts/admin-check.mjs",
+    "check:brief": "node scripts/brief-check.mjs",
+    "lighthouse": "node scripts/lighthouse.mjs --min 100"
   },
   "dependencies": {
     "@barba/core": "^2.10.3",

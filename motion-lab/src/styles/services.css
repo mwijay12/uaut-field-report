@@ -23,7 +23,19 @@
 
 .svc__head {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem clamp(1rem, 3vw, 3rem);
+  align-items: start;
+}
+
+/* The drawing sits to the right of the label and the name. */
+.svc__head > :not(.glyph) {
+  grid-column: 1;
+}
+
+.svc__head .glyph {
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .svc__body {
@@ -170,11 +182,19 @@
 }
 
 .step {
+  position: relative;
   display: grid;
   align-content: start;
   gap: 0.9rem;
   padding: clamp(1.25rem, 1.8vw, 1.75rem);
   border-radius: var(--radius-m);
+}
+
+.step__art {
+  position: absolute;
+  top: clamp(1.25rem, 1.8vw, 1.75rem);
+  right: clamp(1.25rem, 1.8vw, 1.75rem);
+  width: clamp(2.25rem, 1.6rem + 1.4vw, 3rem);
 }
 
 .step__num {

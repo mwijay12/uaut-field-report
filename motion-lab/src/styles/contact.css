@@ -239,6 +239,42 @@
   font-size: var(--text-s);
 }
 
+/* What happened when the button was pressed: a missing field, or a tick that draws itself. */
+.brief__status {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.brief__tick {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brief__status[data-tone='missing'] {
+  color: #b42318;
+}
+
+:root[data-theme='night'] .brief__status[data-tone='missing'] {
+  color: #fda29b;
+}
+
+.brief__status[data-tone='missing'] .brief__tick {
+  display: none;
+}
+
+.field input[aria-invalid='true'] {
+  border-color: #b42318;
+}
+
 @media (max-width: 1000px) {
   .packages,
   .brief__side {

@@ -106,6 +106,10 @@
   max-height: 72svh;
 }
 
+.product__sketches {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+}
+
 .product__shots--pair {
   display: grid;
   grid-template-columns: 1.35fr 1fr;

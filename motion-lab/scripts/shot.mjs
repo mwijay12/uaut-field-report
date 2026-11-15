@@ -11,8 +11,10 @@
 //   --dpr <n>            device pixel ratio (default 1)
 //   --touch              emulate a phone: touch input and a coarse pointer
 //   --reduced            emulate prefers-reduced-motion: reduce
-//   --at <list>          where to shoot: fractions of the scroll height (0..1) or
-//                        pixel positions written as 1200px (default 0)
+//   --at <list>          where to shoot (default 0), separated by commas. Each stop is one of:
+//                        a fraction of the scroll height (0.5), a pixel position (1200px),
+//                        or a CSS selector, which puts the top of that element at the top of
+//                        the window (#process). Add or take pixels with +N or -N (#process+300).
 //   --wait <ms>          time to let things settle before each shot (default 1500)
 //   --first <ms>         extra time once the page is ready, for the arrival animation (default 2500)
 //   --click <selector>   click this before shooting (for example a link, to test a page change)
@@ -116,7 +118,21 @@ const taken = [];
 
 for (const [index, stop] of stops.entries()) {
   const max = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
-  const target = stop.endsWith('px') ? Number.parseFloat(stop) : Number(stop) * max;
+  let target;
+  if (/^[#.\[a-z]/i.test(stop)) {
+    const [, selector, shift = '0'] = stop.match(/^(.*?)([+-]\d+)?$/);
+    const top = await page.evaluate((query) => {
+      const element = document.querySelector(query);
+      return element ? element.getBoundingClientRect().top + window.scrollY : null;
+    }, selector);
+    if (top === null) {
+      problems.push(`[shot] nothing matches ${selector}`);
+      continue;
+    }
+    target = Math.min(max, Math.max(0, top + Number(shift)));
+  } else {
+    target = stop.endsWith('px') ? Number.parseFloat(stop) : Number(stop) * max;
+  }
   if (index > 0 || target > 0) await scrollTo(Math.round(target));
 
   const hover = option('hover');

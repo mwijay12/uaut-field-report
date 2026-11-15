@@ -2,6 +2,11 @@
 // (data-theme="night|day") and the look of the chart (data-stage="preset").
 // The scene whose top has passed the middle of the screen wins.
 //
+// A scene can also quieten the chart. The build writes data-bg="soft|plain"
+// and data-calm beside data-stage when content/site.json asks for it (the
+// admin's Backgrounds page), and the chart fades to that level while the
+// scene is the one being read. data-calm="1" leaves the flat page colour.
+//
 // Each scene also gets 'scene:enter' and 'scene:leave' events, for sections
 // that choose their look themselves (the pinned plates on the home page).
 
@@ -21,6 +26,7 @@ export function mountScenes(root, { stage, setTheme }) {
     current = scene;
     setTheme(scene.dataset.theme);
     if (scene.dataset.stage) stage.look(scene.dataset.stage, options);
+    stage.calm(Number(scene.dataset.calm) || 0, options);
     scene.dispatchEvent(new CustomEvent('scene:enter'));
   };
 

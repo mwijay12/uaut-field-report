@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-theme="night" data-page="services">
   <head>
-    <!-- @include head title="Services. Altraware Technology" description="Websites, apps, business systems, payment integrations and local search from Altraware, a software studio in Dar es Salaam. What each one includes and how a project runs." theme-color="#071022" -->
+    <!-- @include head page="services" theme-color="#071022" -->
   </head>
   <body data-barba="wrapper">
     <!-- @include chrome aria-services=" aria-current=page" -->
@@ -29,6 +29,7 @@
           <header class="svc__head">
             <p class="label"><span class="label__key">01</span> — <span lang="sw">Tovuti</span></p>
             <h2 class="svc__name display-l">Websites</h2>
+            <!-- @include art/glyph-web -->
           </header>
           <div class="svc__body">
             <p class="lede">Be found, be contacted, be trusted. From a landing page to a full business site with booking, ordering, catalogues and WhatsApp, in Kiswahili and English.</p>
@@ -40,7 +41,7 @@
           </div>
           <footer class="svc__foot">
             <ul class="chips"><li>SEO</li><li>Booking</li><li>M-Pesa</li></ul>
-            <p class="svc__price"><span class="label">From TSh</span> <span data-count="350000">350,000</span></p>
+            <p class="svc__price"><span class="label">From TSh</span> <span data-count="{{site.amount.starter}}">{{site.price.starter}}</span></p>
             <a class="btn btn--ghost" href="/pricing/?kind=website#estimator">Estimate a website <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
           </footer>
         </article>
@@ -49,6 +50,7 @@
           <header class="svc__head">
             <p class="label"><span class="label__key">02</span> — <span lang="sw">Apu</span></p>
             <h2 class="svc__name display-l">Apps</h2>
+            <!-- @include art/glyph-app -->
           </header>
           <div class="svc__body">
             <p class="lede">Web and mobile apps shaped around how you work. Built with Flutter for Android and iOS, and able to keep working when the network drops.</p>
@@ -60,7 +62,7 @@
           </div>
           <footer class="svc__foot">
             <ul class="chips"><li>Android</li><li>iOS</li><li>PWA</li><li>Flutter</li></ul>
-            <p class="svc__price"><span class="label">From TSh</span> <span data-count="800000">800,000</span></p>
+            <p class="svc__price"><span class="label">From TSh</span> <span data-count="{{site.amount.app}}">{{site.price.app}}</span></p>
             <a class="btn btn--ghost" href="/pricing/?kind=app#estimator">Estimate an app <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
           </footer>
         </article>
@@ -69,6 +71,7 @@
           <header class="svc__head">
             <p class="label"><span class="label__key">03</span> — <span lang="sw">Mifumo</span></p>
             <h2 class="svc__name display-l">Business systems</h2>
+            <!-- @include art/glyph-system -->
           </header>
           <div class="svc__body">
             <p class="lede">Platforms that run a whole operation: sales, stock, attendance, fees and messages to guardians. Designed for limited connectivity, with the PDPA 2022 and NECTA in mind.</p>
@@ -80,7 +83,7 @@
           </div>
           <footer class="svc__foot">
             <ul class="chips"><li>Retail</li><li>Care centres</li><li>Schools</li></ul>
-            <p class="svc__price"><span class="label">From TSh</span> <span data-count="1200000">1,200,000</span></p>
+            <p class="svc__price"><span class="label">From TSh</span> <span data-count="{{site.amount.system}}">{{site.price.system}}</span></p>
             <a class="btn btn--ghost" href="/pricing/?kind=system#estimator">Estimate a system <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
           </footer>
         </article>
@@ -89,6 +92,7 @@
           <header class="svc__head">
             <p class="label"><span class="label__key">04</span> — <span lang="sw">Malipo</span></p>
             <h2 class="svc__name display-l">Payment integrations</h2>
+            <!-- @include art/glyph-pay -->
           </header>
           <div class="svc__body">
             <p class="lede">Vodacom M-Pesa through the Daraja API, Tigo Pesa, Airtel Money and Halopesa. STK push, with callbacks reconciled automatically.</p>
@@ -100,7 +104,7 @@
           </div>
           <footer class="svc__foot">
             <ul class="chips"><li>M-Pesa</li><li>Tigo Pesa</li><li>Airtel Money</li><li>Halopesa</li></ul>
-            <p class="svc__price"><span class="label">Add-on, TSh</span> <span data-count="350000">350,000</span></p>
+            <p class="svc__price"><span class="label">Add-on, TSh</span> <span data-count="{{site.amount.mpesa}}">{{site.price.mpesa}}</span></p>
             <a class="btn btn--ghost" href="/pricing/?kind=website&amp;with=mpesa#estimator">Add it to an estimate <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
           </footer>
         </article>
@@ -109,6 +113,7 @@
           <header class="svc__head">
             <p class="label"><span class="label__key">05</span> — <span lang="sw">Ramani</span></p>
             <h2 class="svc__name display-l">Local search</h2>
+            <!-- @include art/glyph-map -->
           </header>
           <div class="svc__body">
             <p class="lede">Registration and optimisation on Google Maps and in search results, so that people nearby can find you and reach you.</p>
@@ -156,6 +161,7 @@
 
         <ol class="steps">
           <li class="step glass" data-reveal>
+            <!-- @include art/step-scope -->
             <p class="step__num"><span data-count="1" data-count-pad="2">01</span></p>
             <p class="label">Week 1</p>
             <h3 class="step__name">Discovery and scope</h3>
@@ -163,6 +169,7 @@
             <ul class="chips"><li>Scope map</li><li>Written quote</li></ul>
           </li>
           <li class="step glass" data-reveal>
+            <!-- @include art/step-prototype -->
             <p class="step__num"><span data-count="2" data-count-pad="2">02</span></p>
             <p class="label">Week 1 to 2</p>
             <h3 class="step__name">Prototype</h3>
@@ -170,6 +177,7 @@
             <ul class="chips"><li>Live prototype</li><li>Design sign-off</li></ul>
           </li>
           <li class="step glass" data-reveal>
+            <!-- @include art/step-build -->
             <p class="step__num"><span data-count="3" data-count-pad="2">03</span></p>
             <p class="label">Week 2 to 6</p>
             <h3 class="step__name">Build</h3>
@@ -177,6 +185,7 @@
             <ul class="chips"><li>Weekly preview</li><li>Staging link</li></ul>
           </li>
           <li class="step glass" data-reveal>
+            <!-- @include art/step-launch -->
             <p class="step__num"><span data-count="4" data-count-pad="2">04</span></p>
             <p class="label">Final week</p>
             <h3 class="step__name">Launch and training</h3>
@@ -184,10 +193,11 @@
             <ul class="chips"><li>Production rollout</li><li>Staff training</li></ul>
           </li>
           <li class="step glass" data-reveal>
+            <!-- @include art/step-care -->
             <p class="step__num"><span data-count="5" data-count-pad="2">05</span></p>
             <p class="label">Long term</p>
             <h3 class="step__name">Care and support</h3>
-            <p>Hosting, daily backups, security updates and WhatsApp support, from TSh 99,000 a month.</p>
+            <p>Hosting, daily backups, security updates and WhatsApp support, from TSh {{site.price.tunza}} a month.</p>
             <ul class="chips"><li>Automated backups</li><li>WhatsApp support</li></ul>
           </li>
         </ol>

@@ -58,15 +58,29 @@ function scramble(element) {
   });
 }
 
+// Words that are not lit yet stay readable: these levels keep large text at
+// 3 to 1 against the page, on the dark theme and on the light one.
+const DIM = { night: 0.4, day: 0.5 };
+
 function scrub(element) {
+  // Cut into words, a paragraph reads badly on a phone's screen reader, which
+  // stops at every word. So the cut copy is hidden from it, and a copy that
+  // reads as one piece is put in front.
+  const whole = element.cloneNode(true);
+  whole.removeAttribute('data-scrub');
+  whole.className = 'sr-only';
+  element.before(whole);
+
+  const dim = DIM[element.closest('[data-theme]')?.dataset.theme] ?? DIM.day;
   SplitText.create(element, {
     type: 'words',
     wordsClass: 'word',
+    aria: 'hidden',
     autoSplit: true,
     onSplit(self) {
       return gsap.fromTo(
         self.words,
-        { opacity: 0.16 },
+        { opacity: dim },
         {
           opacity: 1,
           ease: 'none',

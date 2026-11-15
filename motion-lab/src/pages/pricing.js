@@ -3,9 +3,18 @@
 // their new value instead of jumping.
 
 import { compact, estimate, fromQuery, shillings, toQuery } from '../lib/estimate.js';
+import { gsap, reducedMotion } from '../lib/motion.js';
 import { tweenNumber } from '../lib/numbers.js';
 
 const STORE_KEY = 'altraware:estimate';
+
+// One line drawing beside the range. It turns into the thing that is chosen:
+// a browser window, a phone, a database.
+const GLYPHS = {
+  website: 'M9 10h30a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z M5 18h38',
+  app: 'M18 4h12a4 4 0 0 1 4 4v32a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4z M21 38h6',
+  system: 'M9 12c0-3.3 6.7-6 15-6s15 2.7 15 6-6.7 6-15 6-15-2.7-15-6z M9 12v24c0 3.3 6.7 6 15 6s15-2.7 15-6V12',
+};
 
 function remembered() {
   try {
@@ -57,6 +66,14 @@ export function mountPricing(root, { returning = false } = {}) {
     const choice = read();
     const result = estimate(choice);
     const query = toQuery(choice);
+
+    const glyph = out('glyph');
+    if (glyph.dataset.kind !== choice.kind) {
+      const moving = Boolean(glyph.dataset.kind) && !reducedMotion; // the first one is simply there
+      glyph.dataset.kind = choice.kind;
+      if (moving) gsap.to(glyph, { morphSVG: GLYPHS[choice.kind], duration: 0.7, ease: 'power3.inOut', overwrite: true });
+      else glyph.setAttribute('d', GLYPHS[choice.kind]);
+    }
 
     tweenNumber(out('low'), result.low, compact);
     tweenNumber(out('high'), result.high, compact);

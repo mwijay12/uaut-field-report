@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-theme="day" data-page="contact">
   <head>
-    <!-- @include head title="Start a project. Altraware Technology" description="Pick a package, write a short brief and send it to Altraware on WhatsApp. Fixed packages from TSh 350,000, with a written quote before work starts." theme-color="#f7f6f2" -->
+    <!-- @include head page="contact" theme-color="#f7f6f2" -->
   </head>
   <body data-barba="wrapper">
     <!-- @include chrome aria-contact=" aria-current=page" -->
@@ -23,46 +23,46 @@
             <legend class="label"><span class="label__key">01</span> — Choose a starting point</legend>
 
             <label class="package" data-reveal>
-              <input type="radio" name="need" value="web-starter" data-summary="Web Starter (TSh 350,000, 1 to 2 weeks)" />
+              <input type="radio" name="need" value="web-starter" data-summary="Web Starter (TSh {{site.price.starter}}, 1 to 2 weeks)" />
               <span class="package__dot" aria-hidden="true"></span>
               <span class="package__name display-m">Web Starter</span>
-              <span class="package__price">TSh 350,000</span>
+              <span class="package__price">TSh {{site.price.starter}}</span>
               <span class="package__text">A landing page with WhatsApp integration, Google Maps setup and free SSL.</span>
               <span class="package__time label">1 to 2 weeks</span>
             </label>
 
             <label class="package" data-reveal>
-              <input type="radio" name="need" value="growth-site" data-summary="Growth Business Site (TSh 550,000, 2 to 3 weeks)" />
+              <input type="radio" name="need" value="growth-site" data-summary="Growth Business Site (TSh {{site.price.growth}}, 2 to 3 weeks)" />
               <span class="package__dot" aria-hidden="true"></span>
               <span class="package__name display-m">Growth Business Site</span>
-              <span class="package__price">TSh 550,000</span>
+              <span class="package__price">TSh {{site.price.growth}}</span>
               <span class="package__text">Four to six pages, a service catalogue, corporate email addresses and local SEO.</span>
               <span class="package__time label">2 to 3 weeks</span>
             </label>
 
             <label class="package" data-reveal>
-              <input type="radio" name="need" value="pro-portal" data-summary="Pro Web Portal (TSh 750,000, 2 to 4 weeks)" />
+              <input type="radio" name="need" value="pro-portal" data-summary="Pro Web Portal (TSh {{site.price.portal}}, 2 to 4 weeks)" />
               <span class="package__dot" aria-hidden="true"></span>
               <span class="package__name display-m">Pro Web Portal</span>
-              <span class="package__price">TSh 750,000</span>
+              <span class="package__price">TSh {{site.price.portal}}</span>
               <span class="package__text">A booking or client portal with database forms, in Kiswahili and English.</span>
               <span class="package__time label">2 to 4 weeks</span>
             </label>
 
             <label class="package" data-reveal>
-              <input type="radio" name="need" value="custom-app" data-summary="Custom web or mobile app (from TSh 800,000, 3 to 5 weeks)" />
+              <input type="radio" name="need" value="custom-app" data-summary="Custom web or mobile app (from TSh {{site.price.app}}, 3 to 5 weeks)" />
               <span class="package__dot" aria-hidden="true"></span>
               <span class="package__name display-m">Custom web or mobile app</span>
-              <span class="package__price">From TSh 800,000</span>
+              <span class="package__price">From TSh {{site.price.app}}</span>
               <span class="package__text">A workflow tailored to your team, role-based dashboards and CSV or PDF reports.</span>
               <span class="package__time label">3 to 5 weeks</span>
             </label>
 
             <label class="package" data-reveal>
-              <input type="radio" name="need" value="turnkey-system" data-summary="Turnkey business system (from TSh 1,200,000)" />
+              <input type="radio" name="need" value="turnkey-system" data-summary="Turnkey business system (from TSh {{site.price.system}})" />
               <span class="package__dot" aria-hidden="true"></span>
               <span class="package__name display-m">Turnkey business system</span>
-              <span class="package__price">From TSh 1,200,000</span>
+              <span class="package__price">From TSh {{site.price.system}}</span>
               <span class="package__text">Offline-first sales, thermal receipt integration and training for your team. Faida POS is one.</span>
               <span class="package__time label">Scoped with you</span>
             </label>
@@ -91,6 +91,12 @@
                 <span class="field__label">Your name</span>
                 <input type="text" name="name" autocomplete="name" />
               </label>
+              <!-- @if leads -->
+              <label class="field">
+                <span class="field__label">Phone or WhatsApp number</span>
+                <input type="tel" name="phone" autocomplete="tel" inputmode="tel" />
+              </label>
+              <!-- @endif -->
               <label class="field">
                 <span class="field__label">Business or organisation <small>(optional)</small></span>
                 <input type="text" name="org" autocomplete="organization" />
@@ -112,7 +118,15 @@ I would like to start a project.</pre>
               <a class="btn" href="{{site.person.whatsapp}}" target="_blank" rel="noopener" data-brief-whatsapp data-magnetic>Send on WhatsApp <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
               <a class="link" href="mailto:{{site.email}}" data-brief-email>Send by email instead</a>
             </div>
+            <p class="brief__status" data-brief-status role="status" hidden>
+              <svg class="brief__tick" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10.5" /><path d="M7 12.5l3.4 3.4L17 8.6" /></svg>
+              <span data-brief-status-text></span>
+            </p>
+            <!-- @if leads -->
+            <p class="brief__note">When you send, a copy of this brief is saved in Altraware's inbox so the team can follow up, and WhatsApp opens with the message ready to send to a person on our team, not to the chatbot.</p>
+            <!-- @else -->
             <p class="brief__note">Nothing is sent to a server. What you type stays in this tab, and the button opens WhatsApp with the message ready to send to a person on our team, not to the chatbot.</p>
+            <!-- @endif -->
           </div>
         </form>
       </section>

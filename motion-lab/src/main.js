@@ -112,6 +112,16 @@ function openAt(next, trigger) {
 
 let direction = 1; // 1: the curtain rises. -1: it falls.
 
+// Barba changes the title. The rest of what describes a page to a search
+// engine or a share card (description, canonical address, structured data)
+// is marked data-head in src/partials/head.html, and is changed here.
+function describe(html) {
+  const incoming = new DOMParser().parseFromString(html, 'text/html').head.querySelectorAll('[data-head]');
+  if (!incoming.length) return;
+  document.head.querySelectorAll('[data-head]').forEach((node) => node.remove());
+  document.head.querySelector('title').after(...[...incoming].map((node) => document.importNode(node, true)));
+}
+
 barba.init({
   timeout: 10000,
   preventRunning: true,
@@ -126,6 +136,8 @@ barba.init({
         setTheme(first?.dataset.theme ?? 'night', { duration: 0 });
         stage.look({ ...look, ink: 0, scale: look.scale * 0.72 }, { duration: 0 });
         stage.look(look, { duration: 2200, easing: Easing.Quartic.Out });
+        // A page that opens on a plain section opens plain, not with a chart that then fades.
+        stage.calm(Number(first?.dataset.calm) || 0, { duration: 0 });
 
         await Promise.all([fontsReady(), playIntro()]);
 
@@ -171,6 +183,7 @@ barba.init({
         page = null;
         current.container.remove();
         scroll.reset();
+        describe(next.html);
         root.dataset.page = next.namespace;
         chrome.setCurrent(next.namespace);
       },

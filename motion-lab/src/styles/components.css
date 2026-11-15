@@ -403,3 +403,115 @@
     block-size: auto;
   }
 }
+
+/* ---------- Line drawings (src/partials/art, drawn by src/lib/draw.js) ---------- */
+
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  color: color-mix(in srgb, var(--fg) 78%, transparent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Lines keep their width however large the drawing is shown. */
+.art * {
+  vector-effect: non-scaling-stroke;
+}
+
+.art .a {
+  stroke: var(--accent);
+}
+
+.art .f {
+  stroke: color-mix(in srgb, var(--fg) 30%, transparent);
+}
+
+.art .dot {
+  fill: var(--accent);
+  stroke: none;
+}
+
+.art .wash {
+  fill: color-mix(in srgb, var(--accent) 16%, transparent);
+  stroke: none;
+}
+
+.art text {
+  fill: var(--muted);
+  stroke: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.art text.grade {
+  fill: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.art text.figure {
+  fill: var(--fg);
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 340;
+  letter-spacing: -0.03em;
+}
+
+/* A row of three drawings that tell one story, left to right. */
+.sketches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.sketch {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.sketch .art {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+  background: color-mix(in srgb, var(--fg) 2.5%, transparent);
+}
+
+/* On a phone the three sit in one row that is swiped sideways. */
+@media (max-width: 760px) {
+  .sketches {
+    grid-template-columns: none;
+    grid-auto-columns: 80%;
+    grid-auto-flow: column;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: var(--gutter);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .sketches::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sketch {
+    scroll-snap-align: start;
+  }
+}
+
+/* One-off pictures beside a heading. */
+.glyph {
+  width: clamp(4rem, 2rem + 6vw, 7.5rem);
+}
+
+.ticks .icon path {
+  vector-effect: non-scaling-stroke;
+}

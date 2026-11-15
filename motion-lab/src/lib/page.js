@@ -2,6 +2,7 @@
 // Everything GSAP creates is collected in one context so a single revert()
 // removes it when the page leaves.
 
+import { mountDrawings } from './draw.js';
 import { mountMarquee } from './marquee.js';
 import { mountMedia } from './media.js';
 import { ScrollTrigger, gsap } from './motion.js';
@@ -45,6 +46,7 @@ export function mountPage(container, deps, arrival = {}) {
     mountMedia(container, { media });
     mountNumbers(container);
     mountText(container);
+    mountDrawings(container);
 
     scenes = mountScenes(container, deps);
     reveals = mountReveals(container);

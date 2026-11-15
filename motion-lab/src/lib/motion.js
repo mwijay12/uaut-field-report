@@ -2,11 +2,16 @@
 // from 'gsap', so the plugins are always registered.
 
 import { gsap } from 'gsap';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin);
+// DrawSVG draws a stroke, MotionPath moves something along a path, MorphSVG
+// turns one shape into another. See src/lib/draw.js and src/lib/track.js.
+gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin, DrawSVGPlugin, MotionPathPlugin, MorphSVGPlugin);
 
 export const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

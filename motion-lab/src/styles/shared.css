@@ -116,3 +116,30 @@
     justify-items: start;
   }
 }
+
+/* ---------- Page not found ---------- */
+
+.page-hero--lost {
+  position: relative;
+  min-height: 100svh;
+}
+
+.compass {
+  position: absolute;
+  top: 46%;
+  right: var(--gutter);
+  width: clamp(11rem, 6rem + 22vw, 26rem);
+  transform: translateY(-50%);
+}
+
+.compass text {
+  font-size: 9px;
+}
+
+@media (max-width: 760px) {
+  .compass {
+    top: calc(var(--header-h) + 1.5rem);
+    width: 9.5rem;
+    transform: none;
+  }
+}

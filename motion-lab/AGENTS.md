@@ -1,8 +1,11 @@
 # Working in this folder
 
-Read `README.md` first. It has the layout, the data attributes and the steps for common changes.
+Read `README.md` first. It has the layout, the data attributes, the content file, the admin and the
+steps for common changes.
 
 ## Rules
+
+Motion and looks:
 
 - Each library has one job (see the table in the README). Do not add a second library for a job
   that one of them already does, and do not add three.js for the chart.
@@ -17,25 +20,58 @@ Read `README.md` first. It has the layout, the data attributes and the steps for
   `theme-color` in each page's head include). Keep those in step with the tokens.
 - A section declares its theme and chart look in HTML (`data-theme`, `data-stage`). Effects are
   declared the same way (`data-count`, `data-type-words`, `data-scramble`, `data-scrub`,
-  `data-media`, `data-parallax`, `data-magnetic`, `data-marquee`). Prefer an attribute to new
-  JavaScript.
-- The HTML holds the finished text and the final number. An effect starts from that and returns to
-  it. Never ship text that only exists after a script has run.
-- Text that has to be read closely goes on a `.glass` panel. Do not lay long text straight on the
-  chart, and do not write a new translucent background per component.
+  `data-draw`, `data-media`, `data-parallax`, `data-magnetic`, `data-marquee`). Prefer an attribute
+  to new JavaScript.
+- The HTML holds the finished text, the final number and the whole drawing. An effect starts from
+  that and returns to it. Never ship text that only exists after a script has run.
+- Text that has to be read closely goes on a `.glass` panel or in a plain section. Do not lay long
+  text straight on the chart, and do not write a new translucent background per component.
+- A drawing is an SVG file in `src/partials/art/`, with `class="art"`, strokes only, and
+  `aria-hidden="true"`. It is animated by `data-draw` and its options, not by code written for it.
+  What it shows must also be said in words next to it.
 - Pictures are WebP files made with `scripts/images.mjs`, with `width`, `height` and a real `alt`.
   Keep originals out of git. Do not use stock photos, and do not show a third party's brand.
-- The pages and their order live in `src/lib/routes.js`. The pricing rules live in
-  `src/lib/estimate.js` and nowhere else.
-- Phone numbers and the email live in `src/site.js` and nowhere else. In HTML write
-  `{{site.person.number}}` and the like. Never type a number or the address into a page.
-- There are two WhatsApp lines. A brief or an estimate goes to `site.person`, never to
-  `site.chatbot`. Every link to the chatbot must say "chatbot", so nobody expects a person there.
 - Move things with `transform` and fade them with `opacity`. Colour transitions are fine. Never
   animate layout properties such as `width`, `height`, `top`, `left` or `margin`.
 - Everything must still work with reduced motion on, without WebGL 2, and at 390 px wide.
-- Copy states facts Altraware has published. Do not invent clients, numbers or testimonials.
+- Text that is dimmed on purpose (words not yet lit, a card that is not the current one) must still
+  be readable: 4.5 to 1 against the page, or 3 to 1 for large type. Dim a picture as far as you like.
+- A heading that is cut into lines keeps a label with its whole text. A paragraph may not carry a
+  label, so give a screen reader a copy that reads in one piece (`src/lib/text.js` does this).
 - Fonts and assets are self-hosted. Do not add a CDN link.
+
+Facts:
+
+- Phone numbers, the email, prices, section backgrounds, page titles and descriptions live in
+  `content/site.json` and nowhere else. In HTML write `{{site.person.number}}`,
+  `{{site.price.starter}}` and the like. Never type a number, a price or the address into a page.
+- Do not write `data-bg` or `data-calm` by hand, and do not write a `<title>` or a description in a
+  page. The build adds them from the content file.
+- A tag in the `<head>` that differs from page to page must carry `data-head`, or it will be stale
+  after a page change.
+- `content/schema.js` and `content/estimator.js` have no imports and use no browser or Node APIs.
+  The build, the site, the admin and the checks all run them. Keep them that way.
+- `vite.config.js` imports from `content/`, never from `src/site.js`.
+- The pages and their order live in `src/lib/routes.js` and in `PAGES` in `content/schema.js`. The
+  pricing rules live in `content/estimator.js` and nowhere else.
+- There are two WhatsApp lines. A brief or an estimate goes to `site.person`, never to
+  `site.chatbot`. Every link to the chatbot must say "chatbot", so nobody expects a person there.
+- Copy states facts Altraware has published. Do not invent clients, numbers or testimonials.
+
+The admin (`admin/index.html`, `src/admin/`):
+
+- It is served under a Content-Security-Policy (`vercel.json`): no inline scripts, no `style`
+  attributes in markup, and requests to `api.github.com` and `firestore.googleapis.com` only. Do
+  not loosen the policy to make something work. Set styles with classes or through `element.style`.
+- The token is kept in `sessionStorage` and sent to GitHub only. Never put it in `localStorage`, in
+  an address, in a log or in an error message.
+- The admin always calls the real GitHub address. There is no switch to point it elsewhere, and
+  there must not be one: such a switch is a way to steal a token. Checks catch the browser's
+  requests instead (`scripts/admin-check.mjs`).
+- It does not import the site's motion code, and the site does not import the admin.
+- Anything the admin can save, `check()` in `content/schema.js` must be able to judge. Add the rule
+  there first, so the build refuses the same mistakes the admin does.
+- Saving a brief (`src/lib/leads.js`) must never stop WhatsApp from opening.
 
 ## Before you say it is done
 
@@ -50,10 +86,19 @@ Then open the `-sheet.png` images in `shots/` and look at them. The script exits
 any console error, console warning or failed request, and prints `overflowX`, which must be 0. Shoot
 every page you touched, at both sizes. A clean build is not proof that the page looks right.
 
+Run the checks that cover what you touched. Each must end with "all steps passed, console clean":
+
+```bash
+npm run check:admin    # after any change to the admin, the content file's rules or vercel.json
+npm run check:brief    # after any change to the contact page or to saving briefs
+npm run lighthouse     # after any change to a page: accessibility and best practices must stay at 100
+```
+
 Some things a still picture cannot show. Check these by driving the page from a script:
 
 - A page change. Open the page with `?slow=6`, click a link, then pause with
   `altraMotion.globalTimeline.pause()` before each picture. Check both directions and the menu on a
-  phone.
+  phone. The title and the canonical address must be those of the new page.
 - Back and Forward. The reader must return to the place and the choices they left.
 - A number that counts. Wait three seconds after scrolling to it before reading the value.
+- A drawing. Look at it half-drawn (`?slow=5`) and finished, and with `--reduced`.

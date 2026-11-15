@@ -1,5 +1,9 @@
-// Contact page: turns the form into a WhatsApp message. Nothing is sent to a
-// server. The links simply carry the text.
+// Contact page: turns the form into a WhatsApp message. The links carry the
+// text, so the message reaches a person whether or not anything else works.
+//
+// When the admin has set a Firebase project (content/site.json, leads), a copy
+// of the brief is also saved in the inbox of Altraware's main site. Then the
+// form has a phone field, and asks for a name and a number before it sends.
 //
 // The page can be opened with a choice already made:
 //   /contact/?need=web-starter                      a package
@@ -7,13 +11,26 @@
 //   /contact/?kind=app&with=mpesa,booking&vat=1     an estimate from the pricing page
 
 import { compact, describe, estimate, fromQuery } from '../lib/estimate.js';
+import { leadRecord, newRef, saveLead } from '../lib/leads.js';
+import { gsap, reducedMotion } from '../lib/motion.js';
 import { site } from '../site.js';
 
 // A brief asks for a written quote, so it goes to a person, not to the chatbot.
 const WHATSAPP = site.person.whatsapp;
 const EMAIL = site.email;
+const INBOX = site.leads.on ? site.leads.projectId : '';
 const STORE_KEY = 'altraware:brief';
-const KEPT = ['name', 'org', 'note']; // what a visitor typed, kept for this tab only
+const KEPT = ['name', 'phone', 'org', 'note']; // what a visitor typed, kept for this tab only
+
+// The inbox of the main site files a lead under one of these.
+const TYPES = {
+  'web-starter': 'Website',
+  'growth-site': 'Website',
+  'pro-portal': 'Website',
+  'custom-app': 'Custom Software',
+  'turnkey-system': 'Custom Software',
+  other: 'Consultation',
+};
 
 function load() {
   try {
@@ -40,19 +57,27 @@ export function mountContact(root) {
   const email = form.querySelector('[data-brief-email]');
   const attached = form.querySelector('[data-brief-estimate]');
   const remove = form.querySelector('[data-brief-estimate-remove]');
+  const status = form.querySelector('[data-brief-status]');
+  const statusText = form.querySelector('[data-brief-status-text]');
+  const tick = status.querySelectorAll('.brief__tick > *');
+  const kept = KEPT.filter((name) => form.elements[name]); // the phone field exists only with the inbox on
 
   const query = new URLSearchParams(window.location.search);
   const wanted = query.get('need');
   const about = (query.get('about') || '').slice(0, 80);
   let choice = fromQuery(query); // null when no estimate came with the link
 
+  // With the inbox on, each brief carries a reference the team can find it by.
+  let ref = INBOX ? newRef() : '';
+  let savedBody = null; // the brief that was last saved, so the same one is not saved twice
+
   const picked = [...form.elements.need].find((input) => input.value === wanted);
   if (picked) picked.checked = true;
 
   // Bring back what was typed earlier in this tab.
-  const kept = load();
-  KEPT.forEach((name) => {
-    if (typeof kept[name] === 'string') form.elements[name].value = kept[name];
+  const before = load();
+  kept.forEach((name) => {
+    if (typeof before[name] === 'string') form.elements[name].value = before[name];
   });
 
   function showEstimate() {
@@ -66,32 +91,119 @@ export function mountContact(root) {
   }
 
   const clean = (value) => value.replace(/\s+/g, ' ').trim();
+  const value = (name) => clean(form.elements[name]?.value ?? '');
+  const selected = () => form.querySelector('input[name="need"]:checked');
 
-  function compose() {
-    const selected = form.querySelector('input[name="need"]:checked');
-    const undecided = selected.value === 'other';
-    const need = undecided && about ? about : selected.dataset.summary;
-    const name = clean(form.elements.name.value);
-    const org = clean(form.elements.org.value);
+  /** The message, without the reference: two briefs with the same body are the same brief. */
+  function body() {
+    const need = selected();
+    const undecided = need.value === 'other';
     const note = form.elements.note.value.trim();
 
     const lines = ['Habari Altraware,', '', 'I would like to start a project.'];
     // With an estimate attached and no package picked, the estimate says what is needed.
-    if (!(choice && undecided && !about)) lines.push(`Need: ${need}`);
+    if (!(choice && undecided && !about)) lines.push(`Need: ${undecided && about ? about : need.dataset.summary}`);
     if (choice) lines.push(describe(choice));
-    if (name) lines.push(`Name: ${name}`);
-    if (org) lines.push(`Business: ${org}`);
+    if (value('name')) lines.push(`Name: ${value('name')}`);
+    if (value('phone')) lines.push(`Phone: ${value('phone')}`);
+    if (value('org')) lines.push(`Business: ${value('org')}`);
     if (note) lines.push(`Note: ${note}`);
     return lines.join('\n');
   }
 
+  function say(text, tone = '') {
+    status.hidden = !text;
+    status.dataset.tone = tone;
+    statusText.textContent = text;
+    if (tone === 'done' && !reducedMotion) {
+      gsap.fromTo(tick, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.6, ease: 'power2.inOut', stagger: 0.25, overwrite: true });
+    }
+  }
+
   function update() {
-    const message = compose();
+    const text = body();
+    // A brief that was saved and then changed is a new brief, with its own reference.
+    if (savedBody !== null && text !== savedBody) {
+      savedBody = null;
+      ref = newRef();
+      say('');
+    }
+    const message = ref ? `${text}\nRef: ${ref}` : text;
     preview.textContent = message;
     whatsapp.href = `${WHATSAPP}?text=${encodeURIComponent(message)}`;
-    email.href = `mailto:${EMAIL}?subject=${encodeURIComponent('New project')}&body=${encodeURIComponent(message)}`;
-    save(Object.fromEntries(KEPT.map((name) => [name, form.elements[name].value])));
+    email.href = `mailto:${EMAIL}?subject=${encodeURIComponent(ref ? `New project ${ref}` : 'New project')}&body=${encodeURIComponent(message)}`;
+    save(Object.fromEntries(kept.map((name) => [name, form.elements[name].value])));
   }
+
+  /** With the inbox on: the first field that still needs filling, or null. */
+  function missing() {
+    const wants = [
+      ['name', value('name').length >= 2, 'Add your name, so we know who to answer.'],
+      ['phone', value('phone').replace(/\D/g, '').length >= 9, 'Add a phone or WhatsApp number we can reach you on.'],
+    ];
+    let first = null;
+    for (const [name, ok, message] of wants) {
+      form.elements[name].setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok && !first) first = { input: form.elements[name], message };
+    }
+    return first;
+  }
+
+  /** Saves the brief in the inbox, once per brief. WhatsApp has already been opened by the link itself. */
+  async function keepCopy() {
+    const text = body();
+    if (text === savedBody) return;
+    savedBody = text;
+    const sentAs = ref;
+
+    const need = selected();
+    const result = choice ? estimate(choice) : null;
+    const pack = need.closest('.package');
+    const record = leadRecord({
+      refCode: sentAs,
+      name: value('name'),
+      phone: value('phone'),
+      org: value('org'),
+      type: result && need.value === 'other' ? (choice.kind === 'website' ? 'Website' : 'Custom Software') : TYPES[need.value],
+      message: text,
+      budget: result ? `${compact(result.low)} to ${compact(result.high)}` : need.value === 'other' ? '' : clean(pack.querySelector('.package__price').textContent),
+      timeline: result ? `About ${result.weeks[0]} to ${result.weeks[1]} weeks` : need.value === 'other' ? '' : clean(pack.querySelector('.package__time').textContent),
+      notes: `Sent from the brief form on ${window.location.host}`,
+    });
+
+    say('Saving a copy in our inbox…');
+    const answer = await saveLead(INBOX, record, { keepalive: true });
+    if (savedBody !== text) return; // the form was changed while this was on its way
+    if (answer.ok) {
+      say(`Saved in our inbox as ${sentAs}. WhatsApp has the message ready: press send there.`, 'done');
+    } else {
+      savedBody = null; // so pressing the button again tries once more
+      say('WhatsApp has the message ready: press send there. A copy could not be saved in our inbox this time.', 'done');
+    }
+  }
+
+  const onSend = (event) => {
+    if (!INBOX) {
+      say(event.currentTarget === email ? 'Your mail app has the message ready: press send there.' : 'WhatsApp has the message ready: press send there.', 'done');
+      return;
+    }
+    const gap = missing();
+    if (gap) {
+      event.preventDefault(); // the link does not open until the inbox has what it needs
+      say(gap.message, 'missing');
+      gap.input.focus();
+      return;
+    }
+    keepCopy();
+  };
+
+  const onInput = (event) => {
+    if (event.target.getAttribute?.('aria-invalid') === 'true') {
+      event.target.setAttribute('aria-invalid', 'false');
+      if (status.dataset.tone === 'missing') say('');
+    }
+    update();
+  };
 
   const onRemove = () => {
     choice = null;
@@ -104,17 +216,21 @@ export function mountContact(root) {
     whatsapp.click();
   };
 
-  form.addEventListener('input', update);
+  form.addEventListener('input', onInput);
   form.addEventListener('change', update);
   form.addEventListener('submit', onSubmit);
+  whatsapp.addEventListener('click', onSend);
+  email.addEventListener('click', onSend);
   remove.addEventListener('click', onRemove);
   showEstimate();
   update();
 
   return () => {
-    form.removeEventListener('input', update);
+    form.removeEventListener('input', onInput);
     form.removeEventListener('change', update);
     form.removeEventListener('submit', onSubmit);
+    whatsapp.removeEventListener('click', onSend);
+    email.removeEventListener('click', onSend);
     remove.removeEventListener('click', onRemove);
   };
 }

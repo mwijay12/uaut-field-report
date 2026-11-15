@@ -12,6 +12,12 @@ import { DURATION, EASE, ScrollTrigger, SplitText, gsap, reducedMotion } from '.
 const LINES = { type: 'lines', mask: 'lines', linesClass: 'line', autoSplit: true };
 const RISE = { yPercent: 115, duration: DURATION.slow, ease: EASE.out };
 
+// What a screen reader gets once a text is cut into lines. A heading may carry
+// a label, so it is read whole and the pieces are skipped. A paragraph or a
+// span may not carry one (ARIA forbids it), so there the lines stay readable.
+const isHeading = (element) => /^H[1-6]$/.test(element.tagName);
+const spoken = (element) => (isHeading(element) ? 'auto' : 'none');
+
 export function mountReveals(root) {
   if (reducedMotion) return { enter() {} };
 
@@ -21,9 +27,12 @@ export function mountReveals(root) {
   // Lines that rise on arrival. SplitText may split again when fonts load or
   // the window resizes, so the tween is rebuilt in onSplit and returned to it.
   gsap.utils.toArray('[data-enter-split]', root).forEach((heading, index) => {
-    const lines = heading.querySelectorAll('.hero__line');
+    // A heading written as separate lines is labelled once, as a whole.
+    const lines = isHeading(heading) ? heading.querySelectorAll('.hero__line') : [];
+    if (lines.length) heading.setAttribute('aria-label', heading.textContent.replace(/\s+/g, ' ').trim());
     SplitText.create(lines.length ? lines : heading, {
       ...LINES,
+      aria: lines.length ? 'hidden' : spoken(heading),
       onSplit(self) {
         arrivals[index] = gsap.from(self.lines, { ...RISE, stagger: 0.09, paused: !entered });
         return arrivals[index];
@@ -38,6 +47,7 @@ export function mountReveals(root) {
   gsap.utils.toArray('[data-split]', root).forEach((heading) => {
     SplitText.create(heading, {
       ...LINES,
+      aria: spoken(heading),
       onSplit(self) {
         return gsap.from(self.lines, {
           ...RISE,
