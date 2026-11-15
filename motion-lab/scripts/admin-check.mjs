@@ -51,6 +51,7 @@ const commitTo = (text, message, author = 'tester') => {
 commitTo(first, 'Start');
 const latest = () => versions[versions.length - 1];
 const asked = new Map(); // commit -> how often its status was asked for
+let blind = false; // true: the token may not read build statuses
 const puts = []; // every body the admin has sent
 
 const cors = {
@@ -99,6 +100,7 @@ const api = createServer(async (req, res) => {
 
   const status = path.match(new RegExp(`^/repos/${REPO}/commits/(\\w+)/status$`));
   if (status) {
+    if (blind) return send(403, { message: 'Resource not accessible by personal access token' });
     const times = (asked.get(status[1]) ?? 0) + 1;
     asked.set(status[1], times);
     const state = times > 1 ? 'success' : 'pending';
@@ -130,9 +132,9 @@ await page.evaluateOnNewDocument(() => {
 const problems = [];
 page.on('console', (message) => {
   // Chrome logs every refused request. The ones this walk causes on purpose are not problems:
-  // a bad token and a clash at GitHub, a project with no database at Firestore.
+  // a bad token, a clash and a status it may not read at GitHub, a project with no database at Firestore.
   const from = message.location()?.url ?? '';
-  if (message.type() === 'error' && /^https:\/\/(api\.github\.com|firestore\.googleapis\.com)\//.test(from) && /status of (401|404|409)/.test(message.text())) return;
+  if (message.type() === 'error' && /^https:\/\/(api\.github\.com|firestore\.googleapis\.com)\//.test(from) && /status of (401|403|404|409)/.test(message.text())) return;
   if (message.type() === 'error' || message.type() === 'warn') problems.push(`[console.${message.type()}] ${message.text()}`);
 });
 page.on('pageerror', (error) => problems.push(`[pageerror] ${error.message}`));
@@ -317,9 +319,12 @@ check('their price is now on screen', (await page.$eval('#f-prices-kuza', (input
 await page.click('.bar .btn:not(.btn--quiet)');
 await sleep(200);
 check('only my change is left to publish', (await page.$$eval('.dialog .changes__item', (items) => items.length)) === 1);
+blind = true; // this time the token may publish but not watch the build
 await page.click('.dialog .btn[type="submit"]');
 await until(() => /Published/.test(document.querySelector('.banner')?.textContent ?? ''));
 check('both changes survive the clash', stored().prices.kuza === 300000 && stored().prices.tunza === 120000, JSON.stringify(stored().prices));
+check('a token that cannot watch the build is told so, once', await until(() => /cannot see the build/.test(document.querySelector('.banner')?.textContent ?? '')), await text('.banner'));
+blind = false;
 
 // History.
 await tab('history');

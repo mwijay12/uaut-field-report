@@ -189,7 +189,7 @@ function showSignIn(notice = '') {
         h('ol', null,
           h('li', null, 'Open ', h('a', { href: TOKEN_PAGE, target: '_blank', rel: 'noopener noreferrer' }, 'GitHub, Fine-grained tokens, Generate new token', icon('out')), '.'),
           h('li', null, 'Repository access: Only select repositories, then ', h('code', null, where.repo), '.'),
-          h('li', null, 'Repository permissions: ', h('strong', null, 'Contents'), ', Read and write. Nothing else.'),
+          h('li', null, 'Repository permissions: ', h('strong', null, 'Contents'), ', Read and write, so it can publish. And ', h('strong', null, 'Commit statuses'), ', Read-only, so it can tell you when the build is live. Nothing else.'),
           h('li', null, 'Generate it, copy it and paste it above.'),
         ),
         h('p', null,
@@ -949,8 +949,14 @@ function follow(commit, url) {
     let status = { state: 'none' };
     try {
       status = await app.github.deployment(commit);
-    } catch {
-      // A token that cannot read statuses, or a blip. Keep the plain message.
+    } catch (error) {
+      if (app.build !== commit) return;
+      if (error.status === 403 || error.status === 404) {
+        // The publish went through. This token is only not allowed to watch the build.
+        notify('Published. This token cannot see the build, so open the site in a minute or two to check it. To follow builds here, give the token "Commit statuses: Read-only".', 'info', seeCommit);
+        return;
+      }
+      // Anything else is a blip. Ask again.
     }
     if (app.build !== commit) return;
 

@@ -181,9 +181,12 @@ Signing in needs a GitHub fine-grained token, made once:
 
 1. GitHub, Settings, Developer settings, Personal access tokens, Fine-grained tokens, Generate new token.
 2. Repository access: Only select repositories, then this repository.
-3. Repository permissions: **Contents**, Read and write. Nothing else. (If the repository is made
-   private, add **Commit statuses**, Read-only, or the admin cannot see when a build has finished.)
+3. Repository permissions: **Contents**, Read and write, so it can publish. And **Commit
+   statuses**, Read-only, so it can tell you when the build is live. Nothing else.
 4. Generate it and paste it into the sign-in screen.
+
+Without the second permission publishing still works. The admin then says that it cannot see the
+build, and you look at the site yourself.
 
 The token stays in that browser tab (`sessionStorage`) and is sent only to `api.github.com`. Closing
 the tab signs out, and so do 30 minutes without a click or 8 hours in all. Anyone can open the
