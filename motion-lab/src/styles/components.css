@@ -221,6 +221,28 @@
   }
 }
 
+/* ---------- Written text (src/lib/stream.js) ----------
+   What is not written yet keeps its place and is see-through, so a block
+   never changes size while its text arrives. */
+
+.stream__rest,
+.stream__wait {
+  opacity: 0;
+}
+
+/* The caret: a block after the last word. A border draws it and a margin
+   takes the same width away again, so it takes no room in the line and
+   cannot push a word onto the next one. */
+.stream__caret {
+  margin-right: -0.5em;
+  border-left: 0.5em solid var(--accent);
+}
+
+/* The last word is written: the caret rests for a moment, and blinks. */
+.is-written .stream__caret {
+  animation: caret 1.05s steps(1) infinite;
+}
+
 /* ---------- Cards: packages and plans ---------- */
 
 .cards {
@@ -481,6 +503,16 @@
   border: 1px solid var(--rule);
   border-radius: var(--radius-m);
   background: color-mix(in srgb, var(--fg) 2.5%, transparent);
+}
+
+/* Over the day chart a drawing and its caption share one pane (glass.css),
+   so the chart's lines do not run through the drawing's. */
+[data-panes] .sketch {
+  padding: 0.6rem 0.6rem 0.95rem;
+}
+
+[data-panes] .sketch figcaption {
+  padding-inline: 0.6rem;
 }
 
 /* On a phone the three sit in one row that is swiped sideways. */

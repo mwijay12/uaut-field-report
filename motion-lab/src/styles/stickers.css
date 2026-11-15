@@ -329,6 +329,12 @@ html.js:not(.is-ready) :is(.sticker, .scribble-spot) {
     right: var(--gutter);
   }
 
+  /* On a short screen the sticker stands at the end of the label's row. A
+     long label stops short of it and goes on to a second line. */
+  :is(.hero, .page-hero).has-stickers > .label {
+    max-width: calc(100% - 4.75rem);
+  }
+
   .sticker--hero-phone,
   .sticker--hero-cursor,
   .sticker--hero-spark {

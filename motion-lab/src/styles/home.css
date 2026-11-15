@@ -182,6 +182,20 @@
   border-bottom: 1px solid var(--rule);
 }
 
+/* Over the day chart the list stands on one pane (glass.css), and the rules
+   that open and close it go: the pane's edge does that. */
+[data-panes] .service-list {
+  padding-block: 0;
+}
+
+[data-panes] .service:first-child {
+  border-top: 0;
+}
+
+[data-panes] .service:last-child {
+  border-bottom: 0;
+}
+
 .service__link {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -571,6 +585,23 @@
 .waypoint p:not(.label) {
   max-width: 38ch;
   color: var(--muted);
+}
+
+/* Over the day chart each stop is a pane (glass.css). What kept the stops
+   apart was inside the stop, and would be inside the pane: it moves outside.
+   The dot keeps its place beside the first line. */
+[data-panes] .waypoint {
+  --pad: clamp(1.1rem, 1.8vw, 1.6rem);
+  margin-bottom: clamp(1.25rem, 2.6vw, 2.25rem);
+  padding-block: var(--pad);
+}
+
+[data-panes] .waypoint:last-child {
+  margin-bottom: 0;
+}
+
+[data-panes] .waypoint__dot {
+  top: calc(var(--pad) + 0.55rem);
 }
 
 @media (max-width: 900px) {

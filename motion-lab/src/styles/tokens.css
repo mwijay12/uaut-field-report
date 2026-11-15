@@ -88,12 +88,22 @@
   --radius-m: 1.25rem;
   --radius-l: 1.75rem;
 
-  /* Glass: a frosted panel that keeps text readable over the chart. */
+  /* Glass: a panel that keeps text readable over the chart (glass.css).
+     By night it is frosted, with a hairline edge. */
   --glass-tint: 58%; /* how much of the page colour is in the panel */
   --glass-blur: 18px;
+  --glass-filter: blur(var(--glass-blur)) saturate(1.3);
   --glass-edge: rgba(247, 246, 242, 0.14);
+  --glass-border: var(--glass-edge);
   --glass-shine: rgba(255, 255, 255, 0.07);
   --glass-shadow: rgba(2, 6, 18, 0.6);
+  /* The parts that make it a sheet of clear glass. Off by night, on by day. */
+  --glass-sheen: transparent; /* the light that falls on its top left corner */
+  --glass-depth: 0 0 transparent; /* a glow under the top edge, a shade over the bottom one, a shadow where it meets the page */
+  --glass-ring: none; /* the lit rim: none, or '' to draw it */
+  --glass-light: transparent; /* the rim where it catches the light */
+  --glass-mid: transparent; /* the rim beside that */
+  --glass-shade: transparent; /* the rim away from the light */
 
   /* Motion: three durations and one easing family (GSAP power3). */
   --dur-fast: 0.3s;
@@ -122,16 +132,43 @@
 
   --sticker-shadow: rgba(10, 23, 53, 0.2);
 
-  --glass-tint: 64%;
+  --glass-tint: 58%;
+  --glass-filter: blur(var(--glass-blur)) saturate(1.7);
   --glass-edge: rgba(10, 23, 53, 0.12);
-  --glass-shine: rgba(255, 255, 255, 0.85);
-  --glass-shadow: rgba(10, 23, 53, 0.2);
+  --glass-border: rgba(10, 23, 53, 0.09);
+  --glass-shine: #ffffff;
+  --glass-shadow: rgba(10, 23, 53, 0.22);
+  --glass-sheen: rgba(255, 255, 255, 0.8);
+  --glass-depth:
+    inset 0 12px 20px -16px #ffffff,
+    inset 0 -12px 18px -16px rgba(10, 23, 53, 0.1),
+    0 2px 5px -2px rgba(10, 23, 53, 0.18);
+  --glass-ring: '';
+  --glass-light: #ffffff;
+  --glass-mid: rgba(255, 255, 255, 0.5);
+  --glass-shade: rgba(255, 255, 255, 0.12);
 }
 
 /* A blur costs more on a phone. A smaller one looks much the same there. */
 @media (pointer: coarse) {
   :root {
     --glass-blur: 12px;
+  }
+}
+
+/* No blur available: make the panels nearly solid instead. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root,
+  :root[data-theme] {
+    --glass-tint: 94%;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  :root[data-theme] {
+    --glass-tint: 100%;
+    --glass-filter: none;
   }
 }
 

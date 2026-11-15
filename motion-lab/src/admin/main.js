@@ -238,7 +238,7 @@ const TABS = [
   { key: 'overview', name: 'Overview', title: 'Overview', text: 'What is live, and what is waiting to be published.' },
   { key: 'lines', name: 'Lines', title: 'Phone lines and email', text: 'Every page, the footer, the menu and the WhatsApp message read these three.' },
   { key: 'prices', name: 'Prices', title: 'Prices', text: 'In Tanzanian shillings, before VAT. The cards, the estimator, the brief form and the page descriptions all follow.' },
-  { key: 'backgrounds', name: 'Backgrounds', title: 'Section backgrounds', text: 'Each section shows the moving chart, a soft version of it, or the plain page colour.' },
+  { key: 'backgrounds', name: 'Backgrounds', title: 'Section backgrounds', text: 'Each section shows the moving chart, a soft version of it, or the plain page colour. On a light section, the chart or its soft version puts the small text on glass panes, so the lines do not run through it.' },
   { key: 'search', name: 'Search', title: 'Search engines', text: 'Whether the site may be listed, and what each page says about itself in results and link previews.' },
   { key: 'leads', name: 'Leads', title: 'Where briefs go', text: 'A brief always opens WhatsApp. It can also be saved in the inbox of the main site.' },
   { key: 'history', name: 'History', title: 'History', text: 'Every publish, newest first. Any of them can be loaded back.' },

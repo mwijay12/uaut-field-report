@@ -14,11 +14,25 @@
 .packages {
   grid-column: 1 / span 7;
   padding: clamp(1.25rem, 2.6vw, 2.5rem);
+  /* The same as the panel beside it, so the two labels stand on one line. */
+  padding-top: clamp(1.25rem, 2.2vw, 2rem);
 }
 
 .packages legend,
 .brief__step {
   margin-bottom: 1.75rem;
+}
+
+/* A legend sits on the top edge of its fieldset and breaks it. Floated, it is
+   the first line inside the panel, like the label of the panel beside it, and
+   the panel's rim runs whole. */
+.packages legend {
+  float: left;
+  width: 100%;
+}
+
+.packages legend + * {
+  clear: both;
 }
 
 .package {
@@ -209,15 +223,13 @@
   overflow-wrap: anywhere;
 }
 
-/* A caret at the end of the message, as if it were still being written. */
+/* A caret at the end of the message, as if it were still being written.
+   It is drawn the way the typing caret is (.stream__caret, components.css):
+   the same block in the same place, and it takes no room in the line. */
 .ticket::after {
   content: '';
-  display: inline-block;
-  width: 0.5em;
-  height: 1em;
-  margin-left: 0.15em;
-  background: var(--accent);
-  vertical-align: -0.15em;
+  margin-right: -0.5em;
+  border-left: 0.5em solid var(--accent);
   animation: caret 1.05s steps(1) infinite;
 }
 
@@ -225,6 +237,12 @@
   .ticket::after {
     animation: none;
   }
+}
+
+/* While a change is typed in (src/lib/stream.js), the caret is where the
+   typing is. This one keeps its place, unseen, so the box keeps its height. */
+.ticket.is-writing::after {
+  visibility: hidden;
 }
 
 .brief__actions {

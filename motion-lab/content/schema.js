@@ -26,7 +26,7 @@ export const SECTIONS = [
   { key: 'work-faida', page: 'work', name: 'Faida POS' },
   { key: 'work-caretrack', page: 'work', name: 'CareTrack' },
   { key: 'work-uaut', page: 'work', name: 'UAUT Connect' },
-  { key: 'work-shule', page: 'work', name: 'ShuleDirect Pro' },
+  { key: 'work-shule', page: 'work', name: 'Shule Altra' },
   { key: 'work-more', page: 'work', name: 'Five more projects' },
   { key: 'work-cta', page: 'work', name: 'Closing call' },
 

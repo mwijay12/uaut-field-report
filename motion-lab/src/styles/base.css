@@ -263,6 +263,14 @@ html.js:not(.is-ready) :is([data-enter], [data-enter-split], [data-split], [data
   }
 }
 
+/* A link in the opening lines is part of a sentence: it sets no padding,
+   or its line would stand further from the next one, and it is not a flex
+   box, so its words stay ordinary text. */
+.lede .link {
+  display: inline-block;
+  padding-block: 0;
+}
+
 .btn {
   position: relative;
   isolation: isolate;
@@ -335,39 +343,6 @@ html.js:not(.is-ready) :is([data-enter], [data-enter-split], [data-split], [data
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
-}
-
-/* ---------- Glass ----------
-   A frosted panel. Put it behind any block of text that has to be read over
-   the chart: forms, lists of facts, cards. The page colour shows through, so
-   it works by night and by day. */
-
-.glass {
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--radius-l);
-  background: color-mix(in srgb, var(--bg) var(--glass-tint), transparent);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
-  box-shadow: inset 0 1px 0 var(--glass-shine), 0 28px 56px -36px var(--glass-shadow);
-}
-
-.glass--pad {
-  padding: clamp(1.25rem, 2.6vw, 2.5rem);
-}
-
-/* No blur available: make the panel nearly solid instead. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass {
-    background: color-mix(in srgb, var(--bg) 94%, transparent);
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .glass {
-    background: var(--bg);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
 }
 
 /* ---------- Layout ---------- */
