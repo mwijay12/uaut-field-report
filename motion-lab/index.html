@@ -7,7 +7,11 @@
     <!-- @include chrome aria-home=" aria-current=page" -->
 
     <main id="main" class="page" data-barba="container" data-barba-namespace="home" tabindex="-1">
-      <section class="hero" data-theme="night" data-stage="home-hero">
+      <section class="hero has-stickers" data-theme="night" data-stage="home-hero">
+        <!-- @include sticker name="spark" tone="gold" place="hero-spark" depth="-0.14" turn="-30" -->
+        <!-- @include sticker name="thumb" tone="sun" place="hero-thumb" depth="0.3" turn="16" -->
+        <!-- @include sticker name="phone" tone="violet" place="hero-phone" depth="0.14" turn="-14" -->
+        <!-- @include sticker name="cursor" tone="lilac" place="hero-cursor" depth="0.46" turn="20" -->
         <p class="label" data-enter><span class="label__key" lang="sw">Mizizi ya nyumbani. Ufundi wa kidunia.</span></p>
 
         <h1 class="hero__title display-xl" data-enter-split>
@@ -49,7 +53,8 @@
         <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Sisi</span> — Who we are</p>
         <p class="statement__text display-l" data-scrub>We help organisations move from paper, spreadsheets and scattered tools to <em>reliable digital systems.</em></p>
 
-        <figure class="statement__figure media" data-media>
+        <figure class="statement__figure media has-stickers" data-media>
+          <!-- @include sticker name="cloud" tone="lilac" place="ledger-cloud" depth="0.3" turn="-16" -->
           <div class="media__frame" style="--ratio: 5 / 4">
             <img src="/src/images/art/ledger-1264.webp" srcset="/src/images/art/ledger-720.webp 720w, /src/images/art/ledger-1264.webp 1264w" sizes="(min-width: 900px) 42vw, 100vw" width="1264" height="848" alt="An open paper ledger, a stack of receipts and a phone on a dark desk." loading="lazy" decoding="async" data-parallax="8" />
           </div>
@@ -92,19 +97,20 @@
             <p class="figure__text">Websites, apps, business systems, payment integrations and local search.</p>
           </li>
           <li class="figure" data-reveal>
-            <p class="figure__value"><span data-count="0.8" data-count-decimals="1">0.8</span><span class="figure__unit">s</span></p>
+            <p class="figure__value"><span class="figure__mark"><span data-count="0.8" data-count-decimals="1">0.8</span><span class="figure__unit">s</span><!-- @include scribble name="burst" place="figure-burst" draw="scrub" --></span></p>
             <p class="label">Average checkout</p>
             <p class="figure__text">A sale on Faida POS takes under 0.8 seconds on average, barcode to receipt.</p>
           </li>
           <li class="figure" data-reveal>
-            <p class="figure__value"><span data-count="30">30</span><span class="figure__unit">days</span></p>
+            <p class="figure__value"><span class="figure__mark"><span data-count="30">30</span><span class="figure__unit">days</span><!-- @include scribble name="underline" place="figure-line" draw="scrub" --></span></p>
             <p class="label">Close support after launch</p>
             <p class="figure__text">Every project gets 30 days of close support before a support plan begins.</p>
           </li>
         </ul>
       </section>
 
-      <section class="services section" id="services" data-theme="day" data-stage="home-services">
+      <section class="services section has-stickers" id="services" data-theme="day" data-stage="home-services">
+        <!-- @include sticker name="receipt" tone="night" place="build" depth="0.3" turn="14" -->
         <header class="section-head section-head--row">
           <div>
             <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Huduma</span> — Services</p>
@@ -343,6 +349,8 @@
         <div class="cta__actions" data-reveal>
           <a class="btn" href="/contact/" data-magnetic>Start your project <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
           <!-- @include chatbot-link -->
+          <!-- @include scribble name="loop" place="cta" draw="scrub" -->
+          <!-- @include sticker name="chat" tone="lilac" place="cta" depth="0.1" turn="12" -->
         </div>
       </section>
 

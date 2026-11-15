@@ -10,7 +10,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
 // DrawSVG draws a stroke, MotionPath moves something along a path, MorphSVG
-// turns one shape into another. See src/lib/draw.js and src/lib/track.js.
+// turns one shape into another. See src/lib/draw.js, src/lib/stickers.js and
+// src/pages/pricing.js.
 gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin, DrawSVGPlugin, MotionPathPlugin, MorphSVGPlugin);
 
 export const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

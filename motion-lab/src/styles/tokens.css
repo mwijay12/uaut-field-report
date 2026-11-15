@@ -48,7 +48,13 @@
   --paper: #f7f6f2;
   --violet: #7c3aed;
   --violet-deep: #5b21b6;
+  --violet-ink: #3b1a8f;
   --gold: #eab308;
+
+  /* Stickers: two soft backings, and the shadow under every one. */
+  --sticker-sun: #f4d774;
+  --sticker-lilac: #dccfff;
+  --sticker-shadow: rgba(3, 8, 22, 0.3);
 
   /* Night is the default theme. One accent per theme: gold by night, violet by day. */
   color-scheme: dark;
@@ -113,6 +119,8 @@
   --rule: rgba(10, 23, 53, 0.2);
   --accent: #7c3aed;
   --accent-ink: #ffffff;
+
+  --sticker-shadow: rgba(10, 23, 53, 0.2);
 
   --glass-tint: 64%;
   --glass-edge: rgba(10, 23, 53, 0.12);

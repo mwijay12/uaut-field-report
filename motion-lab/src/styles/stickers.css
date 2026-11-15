@@ -1,0 +1,378 @@
+/* ---------- Stickers and scribbles ----------
+   Doodles that sit on the page a little askew and move at their own pace as it
+   scrolls (src/lib/stickers.js). The drawings are made by scripts/stickers.mjs.
+   A sticker is decoration: it never sits on text that has to be read. */
+
+/* Put this on the block a sticker is placed in. */
+.has-stickers {
+  position: relative;
+}
+
+.sticker {
+  --size: clamp(5.5rem, 3.4rem + 5.4vw, 9.5rem);
+  --tilt: -8deg;
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: var(--size);
+  rotate: var(--tilt);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Like the rest of what moves (base.css): out of sight until the script has
+   set the starting state, so nothing flashes. Without JavaScript, and with
+   reduced motion, every sticker and line is simply there. */
+html.js:not(.is-ready) :is(.sticker, .scribble-spot) {
+  visibility: hidden;
+}
+
+.sticker__drift,
+.sticker__body {
+  display: block;
+  will-change: transform;
+}
+
+.doodle {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0.55rem 0.8rem var(--sticker-shadow));
+  will-change: transform;
+}
+
+.doodle__back {
+  fill: var(--sticker-back);
+}
+
+.doodle__ink {
+  fill: none;
+  stroke: var(--sticker-ink);
+  stroke-width: 3.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.doodle__dot {
+  fill: var(--sticker-ink);
+  stroke: none;
+}
+
+/* Loose sparkles: filled in, no backing, no shadow. */
+.doodle--solid {
+  filter: none;
+}
+
+.doodle--solid .doodle__ink {
+  fill: var(--sticker-ink);
+  stroke: none;
+}
+
+/* Tones. Each works on the dark theme and on the light one, except night,
+   which is for light sections only. */
+.sticker--sun {
+  --sticker-back: var(--sticker-sun);
+  --sticker-ink: var(--navy-800);
+}
+
+.sticker--lilac {
+  --sticker-back: var(--sticker-lilac);
+  --sticker-ink: var(--violet-ink);
+}
+
+.sticker--violet {
+  --sticker-back: var(--violet);
+  --sticker-ink: var(--paper);
+}
+
+.sticker--night {
+  --sticker-back: var(--navy-700);
+  --sticker-ink: var(--gold);
+}
+
+.sticker--gold {
+  --sticker-ink: var(--gold);
+}
+
+/* A line drawn by hand: an arrow, an underline, a ring round a word. It is
+   drawn as the page scrolls (data-draw="scrub", src/lib/draw.js). The spot is
+   what the stylesheet places; the drawing fills it. */
+.scribble-spot {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  width: clamp(5.5rem, 3rem + 7vw, 10.5rem);
+  pointer-events: none;
+}
+
+.scribble {
+  display: block;
+  width: 100%;
+  color: var(--accent);
+  stroke-width: 2.5;
+}
+
+/* ---------- Places ----------
+   One rule per place: where the sticker or the line sits in its block, how
+   big, how tilted. A sticker drifts, so a place has to be clear of words all
+   the way up the screen, at every width. `npm run check:stickers` walks each
+   one across the screen and says which words it touches. */
+
+/* The closing call of every page: an arrow loops in from the right to the
+   button, and a sticker sits where the arrow starts. */
+.cta__actions {
+  position: relative;
+}
+
+.cta {
+  --arrow: clamp(8.5rem, 4rem + 11vw, 15rem); /* how long the arrow is */
+  --arrow-gap: clamp(1rem, 2vw, 2rem); /* between the last button and its tip */
+}
+
+.scribble-spot--cta {
+  top: 50%;
+  left: calc(100% + var(--arrow-gap));
+  width: var(--arrow);
+  translate: 0 -80%;
+  scale: -1 1; /* drawn left to right, shown right to left */
+}
+
+/* It hangs a little below the row, and drifts less than the others, because
+   the last line of the heading is close above it. */
+.sticker--cta {
+  --size: clamp(5rem, 3rem + 4.6vw, 8.25rem);
+  --tilt: 9deg;
+  top: 50%;
+  left: calc(100% + var(--arrow-gap) + var(--arrow) * 0.97);
+  translate: 0 -18%;
+}
+
+/* Home, the opening: a small cluster in the open water to the right of the
+   words. Four depths, so the cluster comes apart as the page starts to move. */
+.sticker--hero-thumb {
+  --size: clamp(6.5rem, 3.5rem + 6.5vw, 11rem);
+  --tilt: 10deg;
+  top: 23%;
+  right: 8%;
+}
+
+.sticker--hero-phone {
+  --size: clamp(5.5rem, 3rem + 5vw, 9rem);
+  --tilt: -12deg;
+  top: 43%;
+  right: 20%;
+}
+
+.sticker--hero-cursor {
+  --size: clamp(5rem, 2.8rem + 4.6vw, 8.25rem);
+  --tilt: 8deg;
+  top: 55%;
+  right: 5%;
+}
+
+.sticker--hero-spark {
+  --size: clamp(3.5rem, 2rem + 3vw, 5.5rem);
+  --tilt: 0deg;
+  top: 17%;
+  right: 25%;
+}
+
+/* The opening of a page: top right, above where the heading's first line ends. */
+.sticker--hero {
+  --size: clamp(6rem, 3.4rem + 6.2vw, 10.5rem);
+  --tilt: 10deg;
+  top: calc(var(--header-h) + 3.25rem);
+  right: calc(var(--gutter) + 3%);
+}
+
+/* A section heading: to the right of it, with an arrow down to what follows. */
+.sticker--head {
+  --tilt: -9deg;
+  top: 4%;
+  right: 15%;
+}
+
+.scribble-spot--head {
+  top: 52%;
+  right: 3%;
+  width: clamp(5rem, 2.5rem + 6vw, 8.5rem);
+}
+
+/* A heading with an arrow after it. The box is as wide as the words, so the
+   arrow starts where they end, whatever the size of the type. */
+.section-head__title {
+  justify-self: start;
+}
+
+.scribble-spot--process {
+  top: 46%;
+  left: calc(100% + clamp(0.75rem, 1.6vw, 1.75rem));
+  width: clamp(5rem, 2.5rem + 6vw, 8.5rem);
+}
+
+/* Home, the numbers: two of them marked with a pen. The sizes are in em, so
+   the marks keep their place as the numbers grow with the screen. */
+.figure__mark {
+  position: relative;
+  display: inline-block;
+}
+
+.scribble-spot--figure-burst {
+  bottom: 0.4em;
+  left: calc(100% - 0.3em);
+  width: 0.56em;
+  rotate: 32deg;
+}
+
+.scribble-spot--figure-line {
+  top: 0.91em;
+  left: 0;
+  width: 0.96em;
+}
+
+/* Home, "What we build": beside the heading. */
+.sticker--build {
+  --tilt: 9deg;
+  top: calc(var(--space-section) - 2.5rem);
+  left: min(58%, 46rem);
+}
+
+/* On the corner of a picture, half off it. Which corner depends on what is
+   beside the picture: the statement above this one ends over its right half,
+   so the cloud takes the left corner. */
+.sticker--ledger-cloud {
+  --tilt: -11deg;
+  top: -2.25rem;
+  left: -2rem;
+}
+
+.sticker--faida-receipt {
+  --tilt: 10deg;
+  top: -2.75rem;
+  right: -1.25rem;
+}
+
+.sticker--uaut-cursor {
+  --tilt: -8deg;
+  top: -1.25rem;
+  right: 9%;
+}
+
+/* The top corner: a caption runs the whole width under this picture. */
+.sticker--counter-coins {
+  --tilt: -9deg;
+  top: -2.5rem;
+  right: -2.25rem;
+}
+
+/* Pricing: a ring round the price of the package most people take. */
+.card__amount {
+  position: relative;
+}
+
+.scribble-spot--price {
+  top: 50%;
+  left: -8%;
+  z-index: 0;
+  width: 113%;
+  translate: 0 -47%;
+}
+
+/* Contact, "Or reach us directly": to the right of the heading, clear of the list. */
+.sticker--reach-chat {
+  --tilt: 10deg;
+  top: calc(var(--space-section) - 1.5rem);
+  right: calc(var(--gutter) + 7%);
+}
+
+.sticker--reach-phone {
+  --size: clamp(4.25rem, 2.6rem + 4vw, 7rem);
+  --tilt: -14deg;
+  top: calc(var(--space-section) + 4.5rem);
+  right: calc(var(--gutter) + 21%);
+}
+
+@media (max-width: 900px) {
+  .sticker {
+    --size: clamp(4.25rem, 3rem + 5vw, 6rem);
+  }
+
+  /* No room beside the buttons for the arrow: the sticker alone, at the end of the row. */
+  .scribble-spot--cta,
+  .scribble-spot--head,
+  .scribble-spot--process {
+    display: none;
+  }
+
+  /* The second action goes under the button, which leaves the end of the row free. */
+  .cta .cta__actions {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-self: start;
+    width: min(100%, 21rem);
+  }
+
+  /* A little below the top of the row: the heading's last line is just above. */
+  .sticker--cta {
+    --size: 4.5rem;
+    top: 0;
+    right: 0;
+    left: auto;
+    translate: 0 18%;
+  }
+
+  .sticker--hero,
+  .sticker--hero-thumb {
+    --size: 4.5rem;
+    top: calc(var(--header-h) + 0.75rem);
+    right: var(--gutter);
+  }
+
+  .sticker--hero-phone,
+  .sticker--hero-cursor,
+  .sticker--hero-spark {
+    display: none;
+  }
+
+  /* Above the heading, level with the label, where a long heading cannot reach it. */
+  .sticker--head {
+    --size: 4.25rem;
+    top: -3.75rem;
+    right: 0;
+  }
+
+  .sticker--build {
+    top: calc(var(--space-section) - 4.5rem);
+    right: var(--gutter);
+    left: auto;
+  }
+
+  /* The pictures are as wide as the screen here, so a sticker stays inside the edge. */
+  .sticker--ledger-cloud,
+  .sticker--faida-receipt,
+  .sticker--counter-coins {
+    top: -2.5rem;
+    right: -0.4rem;
+    left: auto;
+  }
+
+  .sticker--ledger-cloud {
+    --tilt: 11deg;
+  }
+
+  /* The two screenshots are stacked here: the sticker sits where they meet. */
+  .sticker--uaut-cursor {
+    top: 44%;
+    right: -0.4rem;
+  }
+
+  .sticker--reach-chat {
+    top: calc(var(--space-section) - 5.25rem);
+    right: var(--gutter);
+  }
+
+  .sticker--reach-phone {
+    display: none;
+  }
+}

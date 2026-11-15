@@ -13,8 +13,10 @@
     "preview": "vite preview",
     "shot": "node scripts/shot.mjs",
     "og": "node scripts/og.mjs",
+    "stickers": "node scripts/stickers.mjs",
     "check:admin": "node scripts/admin-check.mjs",
     "check:brief": "node scripts/brief-check.mjs",
+    "check:stickers": "node scripts/sticker-check.mjs",
     "lighthouse": "node scripts/lighthouse.mjs --min 100"
   },
   "dependencies": {

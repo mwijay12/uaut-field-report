@@ -43,13 +43,18 @@ text. Between pages a curtain crosses the screen with the Swahili name of the pa
 Small line drawings draw themselves when they scroll into view: what a product does in three
 sketches, a glyph for each service, the ticks in a price card. They are plain SVG in the HTML.
 
+On top of all that sit a few stickers: doodles on a soft backing, a little askew, on the corner of
+a picture or beside a heading. Each one moves at its own pace as the page scrolls, which is what
+gives a flat page some depth. Hand-drawn lines go with them: an arrow that is drawn towards a
+button as you scroll to it, a ring round a price, an underline under a number.
+
 ## What each library does
 
 | Library | Job here | Where |
 | --- | --- | --- |
 | WebGL 2 + GLSL | Draws the chart in one fragment shader. No three.js. | `src/gl/field.frag.glsl`, `src/gl/stage.js` |
 | tween.js | Moves the shader values from one look to the next. | `src/gl/stage.js` |
-| GSAP (ScrollTrigger, SplitText, ScrambleText, DrawSVG, MotionPath, MorphSVG) | Everything tied to scroll or to text: reveals, typing, counting numbers, the marquee, parallax, the pinned plates, the stacked cards, the curtain, and the line drawings. | `src/lib/`, `src/pages/` |
+| GSAP (ScrollTrigger, SplitText, ScrambleText, DrawSVG, MotionPath, MorphSVG) | Everything tied to scroll or to text: reveals, typing, counting numbers, the marquee, parallax, the pinned plates, the stacked cards, the curtain, the line drawings and the stickers. | `src/lib/`, `src/pages/` |
 | Barba.js | Swaps pages without a reload, so the chart never restarts. | `src/main.js` |
 | Anime.js | The intro, the menu stagger, the waypoint ping. | `src/lib/intro.js`, `src/lib/chrome.js`, `src/pages/home.js` |
 | Lenis | Smooth scrolling, driven by GSAP's ticker. Its speed also stretches the chart. | `src/lib/scroll.js` |
@@ -68,7 +73,9 @@ content/             the facts, and the rules about them:
   estimator.js         the pricing rules, with no DOM in it
   derive.js            turns site.json into what the pages use (links, formatted prices)
 src/partials/        head, header and menu and curtain, footer (shared by every page)
-  art/                 the line drawings, one SVG per file
+  sticker.html, scribble.html   what wraps a sticker or a hand-drawn line
+  art/                 the line drawings, one SVG per file. sticker-* and scribble-* are
+                       written by scripts/stickers.mjs
 src/main.js          entry: chart, scroll, header, Barba transition
 src/site.js          the facts the scripts need, filled in by the build
 src/gl/              the shader, its presets, and the WebGL code
@@ -81,6 +88,7 @@ src/lib/             shared behaviour, one file per job:
   reveal.js            data-enter, data-split, data-reveal
   text.js              data-type-words, data-scramble, data-scrub
   draw.js              data-draw
+  stickers.js          the stickers: drift, pop, lean
   numbers.js           data-count
   media.js             data-media, data-parallax, data-magnetic
   marquee.js           data-marquee
@@ -93,7 +101,7 @@ src/styles/          tokens.css first, then one file per area
 src/images/          WebP pictures, made with scripts/images.mjs
 src/fonts/           self-hosted fonts (SIL OFL 1.1)
 public/og.jpg        the picture a shared link shows, made with scripts/og.mjs
-scripts/             shot.mjs, images.mjs, og.mjs, and the checks (see "Look before you ship")
+scripts/             shot.mjs, images.mjs, og.mjs, stickers.mjs, and the checks (see "Look before you ship")
 ```
 
 Pages share markup through a small step in `vite.config.js`:
@@ -239,7 +247,47 @@ a filled dot and `class="wash"` is a tinted area. Lines keep their width at any 
 `data-draw` on the `<svg>` is enough. The options, on the drawing or on a shape inside it, are
 listed at the top of `src/lib/draw.js`: when a shape starts (`data-at`), a shape that fades in
 or pops instead of being drawn (`data-fade`, `data-pop`), a dot that travels along a path
-(`data-travel="#id"`), and a few more. `data-draw="scrub"` ties the drawing to the scroll.
+(`data-travel="#id"`), and a few more. `data-draw="scrub"` ties the drawing to the scroll, and
+`data-draw-from` and `data-draw-to` say where on the screen it starts and is finished.
+
+### Stickers and scribbles
+
+A sticker is a doodle that sits on the page a little askew. Put `has-stickers` on the block it
+belongs to and include it there:
+
+```html
+<figure class="media has-stickers" data-media>
+  <!-- @include sticker name="cloud" tone="lilac" place="ledger-cloud" depth="0.3" turn="-16" -->
+  …
+</figure>
+```
+
+| | |
+| --- | --- |
+| `name` | The drawing: `thumb`, `cursor`, `phone`, `chat`, `receipt`, `coins`, `cloud`, `pin`, or `spark` (three sparkles, no backing). |
+| `tone` | Its colours. `sun` is a yellow backing with a navy line, `lilac` pale violet with a deep violet line, `violet` violet with a paper line. `night` is navy with a gold line and is for day sections only. `gold` is for `spark`. |
+| `place` | Where it sits: the class `sticker--<place>` in `src/styles/stickers.css`, one rule per place. |
+| `depth` | How far it drifts while it crosses the screen, as a share of the screen's height. Above 0 it moves faster than the page and looks nearer. Below 0 it lags and looks further away. 0.2 if left out. Keep it at 0.1 next to a heading. |
+| `turn` | Degrees it turns while it crosses the screen. 10 if left out. |
+
+A sticker pops in when it scrolls into view and its lines are drawn on it. It drifts and turns with
+the scroll, leans with the speed of the scroll and springs back, and flinches when a mouse brushes
+it. All of that is `src/lib/stickers.js`. A sticker lets clicks through and a screen reader skips it.
+
+A scribble is a line drawn by hand: `loop` (an arrow that loops once), `hook` (an arrow that turns
+down), `underline`, `oval` (a ring) and `burst` (five short rays).
+
+```html
+<!-- @include scribble name="hook" place="process" draw="scrub" -->
+```
+
+`place` is the class `scribble-spot--<place>`, in the same stylesheet. With `draw="scrub"` the line
+is drawn as the page scrolls past it. Leave `draw` out and it is drawn once, when it comes into view.
+
+The drawings are made by a script, not by hand in the SVG. Each one is a list of points in
+`scripts/stickers.mjs`; the script draws a smooth line through them, nudges every point a little so
+nothing is quite straight, and cuts a backing round the result. They are original drawings in the
+site's own colours. Do not paste in a sticker pack.
 
 ## Page changes
 
@@ -289,6 +337,23 @@ Keep `ink` at 0.85 or lower behind long text.
 `aria-hidden="true"` and `data-draw`. Use strokes only, in the order they should be drawn. Include it
 with `<!-- @include art/name -->`. If the drawing says something the words beside it do not, say it
 in words too: a screen reader skips the drawing.
+
+**Add a sticker.** Include it in a block that has `has-stickers`, and give it a place: a rule
+`.sticker--<place>` in `src/styles/stickers.css` with `top` or `bottom`, `left` or `right`, and
+`--tilt`. A sticker drifts, so its place must be clear of words all the way up the screen, at every
+width. Do not judge that from one picture: run `npm run check:stickers`. Use few stickers: one or
+two to a screen.
+
+**Change a sticker, or draw a new one.** Edit the points in `scripts/stickers.mjs`, or add an entry
+to `STICKERS` or `SCRIBBLES` there, then:
+
+```bash
+npm i --no-save sharp          # once, for the preview
+npm run stickers -- --preview  # writes src/partials/art/sticker-*.html and scribble-*.html, and shots/stickers.png
+```
+
+Look at `shots/stickers.png`, and commit the files the script wrote. Do not edit those files by
+hand: the next run overwrites them.
 
 **Add a picture.** Keep the original outside the repository and make the WebP sizes from it:
 
@@ -387,6 +452,7 @@ npm run shot -- http://localhost:4173/ --name home --at 0,0.2,0.4,0.6,0.8,1 --sh
 npm run shot -- http://localhost:4173/pricing/ --name m-pricing --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
 npm run shot -- http://localhost:4173/work/ --name sketches --at "#caretrack+300,.sketches"
 npm run shot -- http://localhost:4173/ --name reduced --reduced
+npm run shot -- http://localhost:4173/ --name mouse --mouse --hover ".hero .btn"
 npm run shot -- http://localhost:4173/nope/ --name 404 --expect 404
 ```
 
@@ -394,17 +460,22 @@ Images go to `shots/` (ignored by git). `--at` takes fractions of the page, or C
 optional offset in pixels. `--sheet 3` also tiles every stop of the run into one image, three to a
 row, so a whole page can be looked at in one go. All options are listed at the top of the script.
 
-Three more scripts check behaviour, not looks. Each prints one line per step and exits with an error
+Headless Chrome says it has no mouse, so what the site keeps for a mouse (the buttons that lean
+towards the pointer, the stickers that flinch) does not run there. `--mouse` makes it say it has one.
+
+Four more scripts check behaviour, not looks. Each prints one line per step and exits with an error
 if a step fails or the page logs an error:
 
 ```bash
 npm run check:admin    # signs in to the admin, edits, publishes, clashes, loads an old version
 npm run check:brief    # the brief form with the inbox off and with it on
+npm run check:stickers # walks every sticker up the screen, at six screen sizes: none may touch text
 npm i --no-save lighthouse && npm run lighthouse   # SEO, accessibility and best practices, per page
 ```
 
-`check:admin` and `lighthouse` need the preview server running. `check:brief` builds and serves its
-own two copies of the site. None of them reaches GitHub, Firestore or WhatsApp: the browser's
+`check:admin`, `check:stickers` and `lighthouse` need the preview server running. `check:brief`
+builds and serves its own two copies of the site. `check:stickers` takes about eight minutes;
+`-- --page /pricing/` or `-- --width 390` checks one page or one size. None of them reaches GitHub, Firestore or WhatsApp: the browser's
 requests are caught and answered by the script. `vite preview` sends the headers in `vercel.json`,
 so the admin is checked under its real Content-Security-Policy.
 
@@ -423,11 +494,11 @@ Test switches, on any page:
 
 | Situation | What happens |
 | --- | --- |
-| Reduced motion is on | No smooth scroll, no reveals, no intro, no typing or counting, and a short fade in place of the curtain. The chart is drawn once. Drawings are simply there. |
+| Reduced motion is on | No smooth scroll, no reveals, no intro, no typing or counting, and a short fade in place of the curtain. The chart is drawn once. Drawings, stickers and scribbles are simply there. |
 | No WebGL 2 | The chart is skipped. Pages keep their background colour. |
 | No `backdrop-filter` | Glass panels become nearly solid. |
 | Reduced transparency is on | Glass panels become solid. |
-| Narrow or short screen | The service cards stop stacking and scroll as a normal list. Rows of sketches swipe sideways. |
+| Narrow or short screen | The service cards stop stacking and scroll as a normal list. Rows of sketches swipe sideways. Stickers are smaller and drift half as far, the home page opens with one sticker and not four, and the arrows beside buttons and headings are left out. |
 | Software rendering, or a frame rate that stays low | The chart stops animating and redraws only on change. |
 | Slow GPU | Resolution steps down: 1, 0.8, 0.65, 0.5 of the device pixel ratio (capped at 1.75, or 1.5 on touch). |
 | A plain section is on screen | The chart is not drawn at all, which also saves battery. |
@@ -459,3 +530,5 @@ Pictures:
   the studio and its clients when there are some.
 - CareTrack and ShuleDirect Pro have no screenshots yet. Each is shown with three line drawings of
   what it does. They are drawings of the idea, not pictures of the product.
+- The stickers and the hand-drawn lines are original. `scripts/stickers.mjs` draws them from points
+  placed by hand; nothing is traced or taken from a sticker pack.
