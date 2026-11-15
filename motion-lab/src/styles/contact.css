@@ -335,6 +335,11 @@
   font-size: 0.95rem;
 }
 
+/* A link inside a sentence: no padding, or its line stands further from the next. */
+.reach__item p:not(.label, .reach__value) .link {
+  padding-block: 0;
+}
+
 @media (max-width: 900px) {
   .reach__list {
     grid-template-columns: 1fr;

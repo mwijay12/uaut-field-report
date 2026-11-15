@@ -9,6 +9,7 @@ import { ScrollTrigger, gsap } from './motion.js';
 import { mountNumbers } from './numbers.js';
 import { mountReveals } from './reveal.js';
 import { mountScenes } from './scenes.js';
+import { mountStickers } from './stickers.js';
 import { mountText } from './text.js';
 import { mountContact } from '../pages/contact.js';
 import { mountHome } from '../pages/home.js';
@@ -35,6 +36,7 @@ export function mountPage(container, deps, arrival = {}) {
   const cleanups = [];
   let scenes;
   let reveals;
+  let stickers;
 
   const context = gsap.context(() => {
     // Page code first: it holds the pinned scenes, and anything that pins has
@@ -47,6 +49,7 @@ export function mountPage(container, deps, arrival = {}) {
     mountNumbers(container);
     mountText(container);
     mountDrawings(container);
+    stickers = mountStickers(container, { media });
 
     scenes = mountScenes(container, deps);
     reveals = mountReveals(container);
@@ -57,8 +60,12 @@ export function mountPage(container, deps, arrival = {}) {
 
   return {
     scenes,
-    enter: () => reveals.enter(),
+    enter() {
+      reveals.enter();
+      stickers?.enter();
+    },
     destroy() {
+      stickers?.destroy();
       cleanups.forEach((cleanup) => cleanup?.());
       media.revert();
       context.revert();

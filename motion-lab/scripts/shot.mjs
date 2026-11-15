@@ -10,6 +10,9 @@
 //   --viewport <WxH>     default 1440x900
 //   --dpr <n>            device pixel ratio (default 1)
 //   --touch              emulate a phone: touch input and a coarse pointer
+//   --mouse              emulate a mouse: hover and a fine pointer. Headless Chrome reports
+//                        neither, so what the site keeps for a mouse (magnetic buttons, the
+//                        stickers that flinch) does not run without this
 //   --reduced            emulate prefers-reduced-motion: reduce
 //   --at <list>          where to shoot (default 0), separated by commas. Each stop is one of:
 //                        a fraction of the scroll height (0.5), a pixel position (1200px),
@@ -61,7 +64,11 @@ const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 await mkdir(out, { recursive: true });
 
 const browser = await puppeteer.launch({
-  args: [...chromium.args, '--enable-unsafe-swiftshader'],
+  args: [
+    ...chromium.args,
+    '--enable-unsafe-swiftshader',
+    ...(flag('mouse') ? ['--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4'] : []),
+  ],
   executablePath: await chromium.executablePath(),
   headless: 'shell',
   defaultViewport: { width, height, deviceScaleFactor: dpr, isMobile: touch, hasTouch: touch },

@@ -4,7 +4,9 @@
 // the order it is written, once, when it scrolls into view.
 //
 // On the element with data-draw:
-//   data-draw="scrub"       the drawing follows the scroll instead of playing once
+//   data-draw="scrub"       the drawing follows the scroll instead of playing once.
+//                           data-draw-from and data-draw-to say where on the screen it
+//                           begins and is finished ("top 85%" and "bottom 60%" if not given)
 //   data-draw-step="0.07"   seconds from the start of one shape to the start of the next
 //   data-draw-delay="0.5"   wait this long after it comes into view
 //
@@ -119,7 +121,13 @@ export function mountDrawings(root) {
     });
 
     if (host.dataset.draw === 'scrub') {
-      ScrollTrigger.create({ trigger: host, start: 'top 85%', end: 'bottom 60%', scrub: 0.6, animation: timeline });
+      ScrollTrigger.create({
+        trigger: host,
+        start: host.dataset.drawFrom ?? 'top 85%',
+        end: host.dataset.drawTo ?? 'bottom 60%',
+        scrub: 0.6,
+        animation: timeline,
+      });
     } else {
       ScrollTrigger.create({ trigger: host, start: 'top 86%', once: true, onEnter: () => timeline.play() });
     }
