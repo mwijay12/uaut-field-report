@@ -328,6 +328,47 @@ html.js:not(.is-ready) :is([data-enter], [data-enter-split], [data-split], [data
   }
 }
 
+/* A small round button with one icon in it, for stepping through a row.
+   It stands on glass, because it is used over the chart. */
+.round-btn {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--glass-ground) var(--glass-tint), transparent);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), opacity var(--dur-fast) linear;
+}
+
+.round-btn--back .icon {
+  transform: scaleX(-1);
+}
+
+/* Nowhere further to go that way. The button stays where it is and keeps the
+   focus, so it is marked with aria-disabled and not with disabled. */
+.round-btn[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .round-btn:not([aria-disabled='true']):hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+}
+
+.round-btn:not([aria-disabled='true']):active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

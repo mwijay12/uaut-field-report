@@ -16,8 +16,20 @@ Motion and looks:
 - Use the durations and easings in `src/lib/motion.js` and `src/styles/tokens.css`. Do not invent
   new ones per component.
 - Colours, type sizes and spacing come from `src/styles/tokens.css`. The only colour values outside
-  it are the shader palette and the browser theme colour (`THEME_COLORS` in `src/main.js` and
+  it are the shader palette and the browser theme colour (`THEME_COLORS` in `content/mode.js` and
   `theme-color` in each page's head include). Keep those in step with the tokens.
+- The site has three modes: dark, mix and light (see "Dark, mix and light" in the README). In the
+  dark mode a section written for the day is shown by night, and in the light mode the reverse. So
+  every section has to read well in both themes, and anything you add must be looked at with
+  `?theme=dark`, `?theme=mix` and `?theme=light`.
+- The theme on screen is `data-theme` on `<html>`. Never style a section by its own `data-theme`
+  attribute (`section[data-theme='day'] …`): that says which theme the section was written for,
+  not which one is shown. A colour that differs between the themes is best a token, set once for
+  the night and once under `:root[data-theme='day']` in `tokens.css`.
+- The layout is the same in all three modes. A mode changes colours and nothing else.
+- Which mode a visitor gets is decided in one place, `pickMode()` in `content/mode.js`. The build
+  writes that function's source into every page, so it must stay one function with no imports that
+  uses nothing from outside itself.
 - A section declares its theme and chart look in HTML (`data-theme`, `data-stage`). Effects are
   declared the same way (`data-count`, `data-type-words`, `data-scramble`, `data-scrub`,
   `data-write`, `data-draw`, `data-media`, `data-parallax`, `data-magnetic`, `data-marquee`).
@@ -27,12 +39,14 @@ Motion and looks:
   that and returns to it. Never ship text that only exists after a script has run.
 - Text that has to be read closely goes on a `.glass` panel or in a plain section. Do not lay long
   text straight on the chart, and do not write a new translucent background per component.
-- Any day section can be switched to the chart in the admin, so every day section must read well
-  over it. Small loose text there carries the class `pane` (or is one of the things that become a
-  pane by themselves: see "Glass and panes" in the README). Large display type stays in the open.
-  After adding or changing a day section, build with `ALTRA_CHART=all` and look at it.
+- Any section can be switched to the chart in the admin, so every section must read well over it,
+  by night and by day. Small loose text carries the class `pane` (or is one of the things that
+  become a pane by themselves: see "Glass and panes" in the README). Large display type stays in
+  the open. After adding or changing a section, build with `ALTRA_CHART=all` and look at it.
 - Do not write `data-panes` by hand, and do not name a theme in `src/styles/glass.css`. What a
   panel looks like by night and by day is set by the `--glass-*` tokens.
+- A glass panel that fades stops blurring what is behind it. Fade what is on the panel, not the
+  panel (see `.plate__glass` in `home.css`).
 - A text that is written out (`data-write`, `write()` in `src/lib/stream.js`) stays whole in the
   page while it is written. Do not build a typing effect that empties an element and fills it
   again: the block would change size, and a screen reader would get the text in pieces. Use it on
@@ -55,7 +69,8 @@ Motion and looks:
   Keep originals out of git. Do not use stock photos, and do not show a third party's brand.
 - Move things with `transform` and fade them with `opacity`. Colour transitions are fine. Never
   animate layout properties such as `width`, `height`, `top`, `left` or `margin`.
-- Everything must still work with reduced motion on, without WebGL 2, and at 390 px wide.
+- Everything must still work with reduced motion on, without WebGL 2, and at 390 px wide, in all
+  three modes.
 - Text that is dimmed on purpose (words not yet lit, a card that is not the current one) must still
   be readable: 4.5 to 1 against the page, or 3 to 1 for large type. Dim a picture as far as you like.
 - A heading that is cut into lines keeps a label with its whole text. A paragraph may not carry a
@@ -100,13 +115,16 @@ The admin (`admin/index.html`, `src/admin/`):
 ```bash
 npm run build
 npm run preview &
-npm run shot -- http://localhost:4173/ --name home --at 0,0.2,0.4,0.6,0.8,1 --sheet 3
-npm run shot -- http://localhost:4173/ --name m-home --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
+npm run shot -- "http://localhost:4173/?theme=mix" --name home --at 0,0.2,0.4,0.6,0.8,1 --sheet 3
+npm run shot -- "http://localhost:4173/?theme=dark" --name m-home --viewport 390x844 --dpr 2 --touch --at 0,0.25,0.5,0.75,1 --sheet 5
+npm run shot -- "http://localhost:4173/?theme=light" --name home-light --walk --sheet 2 --sheet-width 720
 ```
 
 Then open the `-sheet.png` images in `shots/` and look at them. The script exits with an error on
 any console error, console warning or failed request, and prints `overflowX`, which must be 0. Shoot
-every page you touched, at both sizes. A clean build is not proof that the page looks right.
+every page you touched, at both sizes and in all three modes. Always put `?theme=` in the address:
+without it the page takes its mode from the hour on the machine's clock, and you will not be
+looking at what you think. A clean build is not proof that the page looks right.
 
 Run the checks that cover what you touched. Each must end with "all steps passed, console clean"
 (`check:stickers` ends with "all N stickers clear of text, console clean"):
@@ -114,8 +132,9 @@ Run the checks that cover what you touched. Each must end with "all steps passed
 ```bash
 npm run check:admin    # after any change to the admin, the content file's rules or vercel.json
 npm run check:brief    # after any change to the contact page or to saving briefs
+npm run check:theme    # after any change to the theme switch, to content/mode.js or to how a page sets its theme
 npm run check:stickers # after moving or adding a sticker, or changing a heading, a caption, a pane or a layout near one
-npm run lighthouse     # after any change to a page: accessibility and best practices must stay at 100
+npm run lighthouse     # after any change to a page: accessibility and best practices must stay at 100, in the dark mode and in the light mode
 ```
 
 Some things a still picture cannot show. Check these by driving the page from a script:

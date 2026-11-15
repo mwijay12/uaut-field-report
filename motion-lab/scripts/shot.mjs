@@ -14,10 +14,16 @@
 //                        neither, so what the site keeps for a mouse (magnetic buttons, the
 //                        stickers that flinch) does not run without this
 //   --reduced            emulate prefers-reduced-motion: reduce
+//   --hour <0-23>        the hour the visitor's clock shows, to see what Auto does with it
+//                        (light by day, dark at night: content/mode.js). To see one mode
+//                        whatever the hour, put ?theme=light, ?theme=mix or ?theme=dark in
+//                        the address instead
 //   --at <list>          where to shoot (default 0), separated by commas. Each stop is one of:
 //                        a fraction of the scroll height (0.5), a pixel position (1200px),
 //                        or a CSS selector, which puts the top of that element at the top of
 //                        the window (#process). Add or take pixels with +N or -N (#process+300).
+//   --walk [share]       shoot the whole page from top to bottom instead of --at: one stop
+//                        every <share> of the screen's height (default 0.85)
 //   --wait <ms>          time to let things settle before each shot (default 1500)
 //   --first <ms>         extra time once the page is ready, for the arrival animation (default 2500)
 //   --click <selector>   click this before shooting (for example a link, to test a page change)
@@ -54,7 +60,9 @@ const name = option('name', 'page');
 const [width, height] = option('viewport', '1440x900').split('x').map(Number);
 const dpr = Number(option('dpr', 1));
 const touch = flag('touch');
-const stops = option('at', '0').split(',');
+let stops = option('at', '0').split(',');
+// --walk, or --walk 0.6. The next word is the share only when it is a number.
+const walk = flag('walk') ? Number(option('walk')) || 0.85 : 0;
 const settle = Number(option('wait', 1500));
 const first = Number(option('first', 2500));
 const expected = Number(option('expect', 200));
@@ -94,6 +102,13 @@ page.on('response', (response) => {
 
 if (flag('reduced')) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
 
+const hour = option('hour');
+if (hour !== undefined) {
+  await page.evaluateOnNewDocument((value) => {
+    Date.prototype.getHours = () => value;
+  }, Number(hour));
+}
+
 await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 await page.waitForFunction(() => document.documentElement.classList.contains('is-ready'), { timeout: 30000 });
 await sleep(first);
@@ -119,6 +134,13 @@ async function scrollTo(target) {
     else await page.mouse.wheel({ deltaY: step });
     await sleep(140);
   }
+}
+
+if (walk) {
+  const end = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+  stops = [];
+  for (let y = 0; y < end; y += Math.round(height * walk)) stops.push(`${y}px`);
+  stops.push(`${end}px`);
 }
 
 const taken = [];
@@ -183,6 +205,7 @@ const state = await page.evaluate(() => ({
   title: document.title,
   path: window.location.pathname,
   theme: document.documentElement.dataset.theme,
+  mode: `${document.documentElement.dataset.modeChoice} → ${document.documentElement.dataset.mode}`,
   classes: document.documentElement.className,
   overflowX: document.documentElement.scrollWidth - window.innerWidth,
 }));

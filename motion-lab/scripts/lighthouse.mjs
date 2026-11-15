@@ -5,10 +5,15 @@
 //
 //   npm i --no-save puppeteer-core @sparticuz/chromium lighthouse
 //   npm run build && npm run preview &
-//   node scripts/lighthouse.mjs [http://localhost:4173] [--min 100]
+//   node scripts/lighthouse.mjs [http://localhost:4173] [--min 100] [--theme dark,light]
 //
-// --min <score>  exit code 1 when a page scores below this in any category.
-//                `npm run lighthouse` asks for 100.
+// --min <score>   exit code 1 when a page scores below this in any category.
+//                 `npm run lighthouse` asks for 100.
+// --theme <list>  the modes to test, separated by commas: dark, light, mix
+//                 (content/mode.js). Every page is tested once in each. The
+//                 default is dark and light: the mix shows each section in one
+//                 of those two, so they cover it, and a page with no mode named
+//                 would be tested in whatever the hour of the day gives.
 //
 // While content/site.json has seo.index off, every page says "noindex" and the
 // "is-crawlable" audit fails on purpose. That audit is reported apart, and the
@@ -22,6 +27,7 @@ const { default: lighthouse } = await import('lighthouse');
 const args = process.argv.slice(2);
 const base = (args.find((arg) => /^https?:\/\//.test(arg)) ?? 'http://localhost:4173').replace(/\/$/, '');
 const min = Number(args[args.indexOf('--min') + 1]) || 0;
+const themes = (args.includes('--theme') ? args[args.indexOf('--theme') + 1] : 'dark,light').split(',').filter(Boolean);
 const PAGES = ['/', '/work/', '/services/', '/pricing/', '/studio/', '/contact/'];
 const CATEGORIES = ['seo', 'accessibility', 'best-practices'];
 
@@ -31,10 +37,10 @@ const browser = await puppeteer.launch({
   headless: 'shell',
 });
 
-let low = false;
-for (const path of PAGES) {
+/** One page in one mode. Prints its scores and what failed, and says whether it is below the mark. */
+async function test(path, theme) {
   const page = await browser.newPage();
-  const { lhr } = await lighthouse(`${base}${path}`, { output: 'json', logLevel: 'silent', onlyCategories: CATEGORIES }, undefined, page);
+  const { lhr } = await lighthouse(`${base}${path}?theme=${theme}`, { output: 'json', logLevel: 'silent', onlyCategories: CATEGORIES }, undefined, page);
   await page.close();
 
   const failed = [];
@@ -62,7 +68,15 @@ for (const path of PAGES) {
       console.log(`      ${String(where).replace(/\s+/g, ' ').slice(0, 170)}`);
     }
   }
-  if ((blocked ? listed : scores[0]) < min || scores[1] < min || scores[2] < min) low = true;
+  return (blocked ? listed : scores[0]) < min || scores[1] < min || scores[2] < min;
+}
+
+let low = false;
+for (const [index, theme] of themes.entries()) {
+  console.log(`${index ? '\n' : ''}${theme}`);
+  for (const path of PAGES) {
+    if (await test(path, theme)) low = true;
+  }
 }
 
 await browser.close();

@@ -64,10 +64,6 @@ function scramble(element) {
   });
 }
 
-// Words that are not lit yet stay readable: these levels keep large text at
-// 3 to 1 against the page, on the dark theme and on the light one.
-const DIM = { night: 0.4, day: 0.5 };
-
 function scrub(element) {
   // Cut into words, a paragraph reads badly on a phone's screen reader, which
   // stops at every word. So the cut copy is hidden from it, and a copy that
@@ -77,18 +73,20 @@ function scrub(element) {
   whole.className = 'sr-only';
   element.before(whole);
 
-  const dim = DIM[element.closest('[data-theme]')?.dataset.theme] ?? DIM.day;
+  // Each word goes from 0 to 1 in --lit. How dim an unlit word is depends on
+  // the theme, so the stylesheet turns --lit into an opacity (.scrub__word in
+  // components.css). A word then stays readable when the theme changes under it.
   SplitText.create(element, {
     type: 'words',
-    wordsClass: 'word',
+    wordsClass: 'scrub__word',
     aria: 'hidden',
     autoSplit: true,
     onSplit(self) {
       return gsap.fromTo(
         self.words,
-        { opacity: dim },
+        { '--lit': 0 },
         {
-          opacity: 1,
+          '--lit': 1,
           ease: 'none',
           stagger: 0.12,
           scrollTrigger: { trigger: element, start: 'top 84%', end: 'bottom 52%', scrub: true },

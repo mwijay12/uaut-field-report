@@ -42,6 +42,11 @@
   max-width: 36ch;
 }
 
+/* On a pane the lines keep their length: the pane's padding is added to it. */
+[data-panes] .hero__aside .lede {
+  max-width: calc(36ch + 3.7rem);
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -325,7 +330,10 @@
   }
 }
 
-/* ---------- Plates: the pinned horizontal scene ---------- */
+/* ---------- Plates: the row of selected work ----------
+   On a wide screen the section is pinned and the page's scroll moves the row
+   sideways. On a phone, and with reduced motion, it is a row of glass cards
+   to swipe (further down). */
 
 .plates {
   position: relative;
@@ -357,9 +365,12 @@
 }
 
 /* A plate is a screenshot with a few lines under it. The screenshot takes
-   whatever height is left, so the plate fits a short screen as well as a tall one. */
+   whatever height is left, so the plate fits a short screen as well as a tall
+   one. The lines stand on a sheet of glass (.plate__glass, an empty element
+   with the class `glass`), so the chart does not run through them. */
 .plate {
   position: relative;
+  isolation: isolate;
   display: grid;
   flex: none;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -370,13 +381,21 @@
   border-left: 1px solid var(--rule);
 }
 
+/* The sheet lies under the words and is as large as their cell. */
+.plate__glass {
+  z-index: -1;
+  grid-area: 2 / 1 / 3 / 2;
+  border-radius: var(--radius-m);
+}
+
 /* A plate that is not the one being looked at steps back: its picture most,
-   its words only as far as they can still be read (4.5 to 1 for the smallest). */
-.plate > * {
+   its words only as far as they can still be read (4.5 to 1 for the smallest).
+   The glass does not: a sheet that fades stops blurring what is behind it. */
+.plate > :not(.plate__glass) {
   transition: opacity var(--dur-base) var(--ease-out);
 }
 
-.js .plate:not(.is-active) > * {
+.js .plate:not(.is-active) > :not(.plate__glass) {
   opacity: 0.72;
 }
 
@@ -386,7 +405,7 @@
 
 .plate__shot {
   display: flex;
-  grid-column: 1 / -1;
+  grid-area: 1 / 1 / 2 / -1;
   min-height: 0;
 }
 
@@ -398,7 +417,9 @@
 .plate__text {
   display: grid;
   gap: 0.75rem;
+  grid-area: 2 / 1 / 3 / 2;
   justify-items: start;
+  padding: clamp(1.1rem, 1.7vw, 1.6rem) clamp(1.25rem, 2vw, 1.85rem) clamp(1.15rem, 1.8vw, 1.7rem);
 }
 
 .plate__name {
@@ -417,6 +438,7 @@
 }
 
 .plate__index {
+  grid-area: 2 / 2 / 3 / 3;
   align-self: end;
   font-family: var(--font-display);
   font-size: clamp(4rem, 9vw, 9rem);
@@ -430,6 +452,7 @@
   user-select: none;
 }
 
+/* The last plate holds large type and a button. They need no glass. */
 .plate--end {
   display: flex;
   flex-direction: column;
@@ -439,9 +462,20 @@
   width: min(48vw, 44rem);
 }
 
-.plates__progress {
-  height: 1px;
+.plate--end .plate__glass {
+  display: none;
+}
+
+.plates__foot {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   margin: 0 var(--gutter) 1.5rem;
+}
+
+.plates__progress {
+  flex: 1;
+  height: 1px;
   background: var(--rule);
 }
 
@@ -453,7 +487,15 @@
   transform-origin: left;
 }
 
-/* Small screens and reduced motion: a swipeable row instead of a pinned scene. */
+.plates__nav {
+  display: none;
+  gap: 0.6rem;
+}
+
+/* Small screens and reduced motion: a row of cards to swipe. Each card is one
+   sheet of glass with the screenshot and the words on it. A swipe moves one
+   card and stops there; the next card shows at the edge, so it is plain there
+   is more; the two buttons do the same for a keyboard or a mouse. */
 @media (max-width: 899px), (prefers-reduced-motion: reduce) {
   .plates {
     height: auto;
@@ -464,32 +506,82 @@
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scroll-padding-left: var(--gutter);
+    scroll-padding-inline: var(--gutter);
     scrollbar-width: none;
+    /* Room for the shadow under the cards, which the scroller would cut off. */
+    padding-block: 0.5rem 2.25rem;
   }
 
   .plates__viewport::-webkit-scrollbar {
     display: none;
   }
 
-  .plate {
-    grid-template-rows: auto auto;
-    width: min(86vw, 36rem);
-    padding-top: 1.5rem;
+  .plates__track {
+    gap: 0.75rem;
+  }
+
+  .plate,
+  .plate--end {
+    grid-template-rows: auto 1fr;
+    gap: 1rem 0.75rem;
+    width: min(82vw, 30rem);
+    padding: 0.7rem 0.7rem 1.35rem;
+    border-left: 0;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* The sheet is the whole card. (No grid area: for an element taken out of
+     the flow, a grid area would be what it is measured against.) */
+  .plate .plate__glass {
+    position: absolute;
+    inset: 0;
+    display: block;
+    grid-area: auto;
+    border-radius: var(--radius-l);
+  }
+
+  /* Every card is in plain view here, so none steps back. */
+  .js .plate:not(.is-active) > :not(.plate__glass) {
+    opacity: 1;
+  }
+
+  /* The picture's corners follow the card's: its radius less the gap between them. */
+  .plate__shot .media__frame {
+    border-radius: calc(var(--radius-l) - 0.7rem);
+  }
+
+  .plate__text {
+    align-content: start;
+    padding: 0 0.65rem;
+  }
+
+  .plate__index {
+    padding: 0 0.4rem 0 0;
+    font-size: clamp(3rem, 9vw, 5rem);
   }
 
   .plate--end {
-    width: min(86vw, 36rem);
+    justify-content: flex-end;
     min-height: 22rem;
+    padding: 1.5rem 1.35rem 1.6rem;
   }
 
-  .plates__progress {
-    margin-top: 1.5rem;
+  .plates__foot {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .plates__nav {
+    display: flex;
   }
 }
 
 @media (max-width: 560px) {
+  .plate {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .plate__index {
     display: none;
   }

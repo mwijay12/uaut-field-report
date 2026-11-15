@@ -16,6 +16,18 @@
   <symbol id="i-plus" viewBox="0 0 20 20">
     <path d="M10 4v12M4 10h12" fill="none" stroke="currentColor" stroke-width="1.5" />
   </symbol>
+  <!-- The three modes of the site: light, mix and dark. -->
+  <symbol id="i-sun" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="3.4" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <path d="M10 2.2v2.1M10 15.7v2.1M2.2 10h2.1M15.7 10h2.1M4.5 4.5l1.5 1.5M14 14l1.5 1.5M4.5 15.5L6 14M14 6l1.5-1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </symbol>
+  <symbol id="i-mix" viewBox="0 0 20 20">
+    <circle cx="10" cy="10" r="6.6" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <path d="M10 3.4a6.6 6.6 0 0 1 0 13.2z" fill="currentColor" />
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 20 20">
+    <path d="M16.4 11.9A6.9 6.9 0 1 1 8.1 3.6a5.4 5.4 0 0 0 8.3 8.3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+  </symbol>
 </svg>
 
 <!-- Everything from here to <main> stays in place while Barba swaps pages. -->
@@ -34,18 +46,35 @@
     <span data-status-text>Dar es Salaam</span>
   </p>
 
-  <nav class="nav" aria-label="Primary">
-    <a class="nav__link" href="/work/" data-nav="work"{{aria-work}}><span class="roll"><span class="roll__text" data-text="Work">Work</span></span></a>
-    <a class="nav__link" href="/services/" data-nav="services"{{aria-services}}><span class="roll"><span class="roll__text" data-text="Services">Services</span></span></a>
-    <a class="nav__link" href="/pricing/" data-nav="pricing"{{aria-pricing}}><span class="roll"><span class="roll__text" data-text="Pricing">Pricing</span></span></a>
-    <a class="nav__link" href="/studio/" data-nav="studio"{{aria-studio}}><span class="roll"><span class="roll__text" data-text="Studio">Studio</span></span></a>
-    <a class="nav__cta" href="/contact/" data-nav="contact"{{aria-contact}}><span class="roll"><span class="roll__text" data-text="Start a project">Start a project</span></span></a>
-  </nav>
+  <div class="site-header__end">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="/work/" data-nav="work"{{aria-work}}><span class="roll"><span class="roll__text" data-text="Work">Work</span></span></a>
+      <a class="nav__link" href="/services/" data-nav="services"{{aria-services}}><span class="roll"><span class="roll__text" data-text="Services">Services</span></span></a>
+      <a class="nav__link" href="/pricing/" data-nav="pricing"{{aria-pricing}}><span class="roll"><span class="roll__text" data-text="Pricing">Pricing</span></span></a>
+      <a class="nav__link" href="/studio/" data-nav="studio"{{aria-studio}}><span class="roll"><span class="roll__text" data-text="Studio">Studio</span></span></a>
+      <a class="nav__cta" href="/contact/" data-nav="contact"{{aria-contact}}><span class="roll"><span class="roll__text" data-text="Start a project">Start a project</span></span></a>
+    </nav>
 
-  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
-    <span class="menu-toggle__bars" aria-hidden="true"></span>
-    <span data-menu-label>Menu</span>
-  </button>
+    <!-- Dark, mix or light: src/lib/mode.js. Auto goes by the visitor's clock. The same switch stands in the menu. -->
+    <div class="mode-switch" role="radiogroup" aria-label="Theme" data-mode-switch>
+      <label class="mode-switch__option" title="Auto: light by day, dark at night"><input class="sr-only" type="radio" name="mode-header" value="auto" /><span class="mode-switch__face">Auto</span></label>
+      <label class="mode-switch__option" title="Light"><input class="sr-only" type="radio" name="mode-header" value="light" /><span class="mode-switch__face"><svg class="icon" aria-hidden="true"><use href="#i-sun" /></svg><span class="sr-only">Light</span></span></label>
+      <label class="mode-switch__option" title="Mix"><input class="sr-only" type="radio" name="mode-header" value="mix" /><span class="mode-switch__face"><svg class="icon" aria-hidden="true"><use href="#i-mix" /></svg><span class="sr-only">Mix</span></span></label>
+      <label class="mode-switch__option" title="Dark"><input class="sr-only" type="radio" name="mode-header" value="dark" /><span class="mode-switch__face"><svg class="icon" aria-hidden="true"><use href="#i-moon" /></svg><span class="sr-only">Dark</span></span></label>
+    </div>
+
+    <!-- On a narrow screen: one button that steps to the next mode, in reach without opening the menu. -->
+    <button class="mode-step" type="button" data-mode-step aria-label="Change theme">
+      <svg class="icon mode-step__icon mode-step__icon--light" aria-hidden="true"><use href="#i-sun" /></svg>
+      <svg class="icon mode-step__icon mode-step__icon--mix" aria-hidden="true"><use href="#i-mix" /></svg>
+      <svg class="icon mode-step__icon mode-step__icon--dark" aria-hidden="true"><use href="#i-moon" /></svg>
+    </button>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+      <span class="menu-toggle__bars" aria-hidden="true"></span>
+      <span data-menu-label>Menu</span>
+    </button>
+  </div>
 </header>
 
 <div class="menu" id="menu" data-menu hidden>
@@ -81,6 +110,16 @@
       <span class="menu__sw" lang="sw">Tuongee</span>
     </a>
   </nav>
+  <div class="menu__theme">
+    <p class="label" id="menu-theme">Theme</p>
+    <div class="mode-switch mode-switch--wide" role="radiogroup" aria-labelledby="menu-theme" data-mode-switch>
+      <label class="mode-switch__option"><input class="sr-only" type="radio" name="mode-menu" value="auto" /><span class="mode-switch__face">Auto</span></label>
+      <label class="mode-switch__option"><input class="sr-only" type="radio" name="mode-menu" value="light" /><span class="mode-switch__face"><svg class="icon" aria-hidden="true"><use href="#i-sun" /></svg>Light</span></label>
+      <label class="mode-switch__option"><input class="sr-only" type="radio" name="mode-menu" value="mix" /><span class="mode-switch__face"><svg class="icon" aria-hidden="true"><use href="#i-mix" /></svg>Mix</span></label>
+      <label class="mode-switch__option"><input class="sr-only" type="radio" name="mode-menu" value="dark" /><span class="mode-switch__face"><svg class="icon" aria-hidden="true"><use href="#i-moon" /></svg>Dark</span></label>
+    </div>
+    <p class="menu__hint">Auto goes by your clock: light by day, dark at night.</p>
+  </div>
   <div class="menu__foot">
     <a class="link" href="{{site.chatbot.whatsapp}}" target="_blank" rel="noopener">WhatsApp chatbot {{site.chatbot.number}} <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
     <a class="link" href="{{site.person.whatsapp}}" target="_blank" rel="noopener">Talk to a person {{site.person.number}} <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>

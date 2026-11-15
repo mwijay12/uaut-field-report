@@ -17,6 +17,7 @@
     "check:admin": "node scripts/admin-check.mjs",
     "check:brief": "node scripts/brief-check.mjs",
     "check:stickers": "node scripts/sticker-check.mjs",
+    "check:theme": "node scripts/theme-check.mjs",
     "lighthouse": "node scripts/lighthouse.mjs --min 100"
   },
   "dependencies": {

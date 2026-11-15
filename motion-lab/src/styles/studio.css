@@ -26,6 +26,16 @@
   }
 }
 
+/* Over the chart the facts stand on a card (glass.css). The rule above the
+   first row would run along the card's top edge, so it goes. */
+[data-panes] .page-hero__foot > .facts {
+  padding: clamp(0.3rem, 0.7vw, 0.7rem) clamp(1.25rem, 2vw, 1.85rem);
+}
+
+[data-panes] .facts div:first-child {
+  border-top: 0;
+}
+
 /* ---------- Story ---------- */
 
 .story {
@@ -48,6 +58,11 @@
 
 .story__figure {
   grid-column: 9 / -1;
+}
+
+/* On a pane the lines keep their length: the pane's padding is added to it. */
+[data-panes] .story__text .lede {
+  max-width: calc(40ch + 3.7rem);
 }
 
 @media (max-width: 900px) {
@@ -161,6 +176,21 @@
   color: var(--muted);
   font-size: var(--text-l);
   line-height: 1.4;
+}
+
+/* Over the chart the four rows stand on one panel (class `pane`). The rules
+   above the first row and under the last would run along its edges, so they go. */
+[data-panes] .creed {
+  padding-block: clamp(0.25rem, 0.8vw, 0.75rem);
+  padding-inline: clamp(1.25rem, 2.6vw, 2.5rem);
+}
+
+[data-panes] .creed li:first-child {
+  border-top: 0;
+}
+
+[data-panes] .creed li:last-child {
+  border-bottom: 0;
 }
 
 /* A small drawing closes each row. On a narrow screen it sits under the number. */

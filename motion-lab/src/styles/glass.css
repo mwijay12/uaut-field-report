@@ -1,43 +1,47 @@
 /* ---------- Glass ----------
    A panel that keeps text readable over the chart: forms, lists of facts,
-   cards. The page colour shows through it, so it works by night and by day.
+   cards. It is a sheet of clear glass. The chart shows through it, blurred;
+   light falls on its top left corner; its rim is lit on two opposite corners;
+   and it stands a little off the page.
 
-   By night it is a frosted panel with a hairline edge. By day the chart is
-   pale lines on a pale page, so the panel is a sheet of clear glass instead:
-   light falls on its top left corner, its rim is lit on two opposite corners,
-   and it stands a little off the page. The theme switches those parts on and
-   off through the --glass tokens (tokens.css); nothing here names a theme.
+   It is the same sheet by night and by day. Only its colours change, and they
+   are the --glass tokens in tokens.css. Nothing here names a theme.
 
    .glass is always a panel. The other selectors are panes: see below. */
 
 .glass,
-[data-panes] :where(.pane, .section-head__text, .page-hero__foot > *, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
+[data-panes] :where(.pane, .section-head__text, .page-hero__foot > :not(.page-hero__actions), .section-head > .label, .section-head--row > div > .label, .product__head > .label),
 :where([data-panes]) > .label {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-l);
   background:
     radial-gradient(130% 150% at 0% 0%, var(--glass-sheen), transparent 58%),
-    color-mix(in srgb, var(--bg) var(--glass-tint), transparent);
+    color-mix(in srgb, var(--glass-ground) var(--glass-tint), transparent);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
-  box-shadow: inset 0 1px 0 var(--glass-shine), var(--glass-depth), 0 28px 56px -36px var(--glass-shadow);
+  box-shadow:
+    inset 0 1px 0 var(--glass-shine),
+    inset 0 12px 20px -16px var(--glass-glow),
+    inset 0 -12px 18px -16px var(--glass-dusk),
+    0 2px 5px -2px var(--glass-contact),
+    0 28px 56px -36px var(--glass-shadow);
 }
 
 /* The rim needs something to hold on to. No specificity, so a panel that is
    already sticky or absolute stays that way. */
 :where(
   .glass,
-  [data-panes] :is(.pane, .section-head__text, .page-hero__foot > *, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
+  [data-panes] :is(.pane, .section-head__text, .page-hero__foot > :not(.page-hero__actions), .section-head > .label, .section-head--row > div > .label, .product__head > .label),
   [data-panes] > .label
 ) {
   position: relative;
 }
 
-/* The rim. --glass-ring is `none` by night, which leaves this out altogether. */
+/* The rim. */
 .glass::after,
-[data-panes] :where(.pane, .section-head__text, .page-hero__foot > *, .section-head > .label, .section-head--row > div > .label, .product__head > .label)::after,
+[data-panes] :where(.pane, .section-head__text, .page-hero__foot > :not(.page-hero__actions), .section-head > .label, .section-head--row > div > .label, .product__head > .label)::after,
 :where([data-panes]) > .label::after {
-  content: var(--glass-ring);
+  content: '';
   position: absolute;
   inset: 0;
   padding: 1.5px;
@@ -89,19 +93,20 @@
 }
 
 /* ---------- Panes ----------
-   Small text set straight on the day chart is crossed by its lines. So in a
-   day section whose chart is showing, loose text stands on glass too. Large
+   Small text set straight on the chart is crossed by its lines. So in a
+   section whose chart is showing, loose text stands on glass too. Large
    display type stays in the open.
 
-   The build marks such a section with data-panes (vite.config.js): a scene
-   with data-theme="day" whose background in content/site.json is not `plain`.
-   Nothing below applies anywhere else, so the same markup is loose text on a
-   plain page and a pane over the chart, and the admin's Backgrounds page
-   decides which.
+   The build marks such a section with data-panes (vite.config.js): a section
+   whose background in content/site.json is not `plain`, written for the night
+   or for the day. Nothing below applies anywhere else, so the same markup is
+   loose text on a plain page and a pane over the chart, and the admin's
+   Backgrounds page decides which.
 
    These become panes by themselves:
      the label that opens a section        a capsule
      what stands under a page's title      a card each, or a capsule for a label
+                                           (not .page-hero__actions, a row of buttons)
      .section-head__text                   a note under a section's heading
    Give any other loose text the class `pane`, or `pane pane--pill` for one
    line. A page's own stylesheet fits the pane to its block with
@@ -114,6 +119,7 @@
 /* A capsule: one line of small type. */
 [data-panes] :is(.pane--pill, .page-hero__foot > .label, .section-head > .label, .section-head--row > div > .label, .product__head > .label),
 [data-panes] > .label {
+  align-self: start;
   justify-self: start;
   width: fit-content;
   padding: 0.45rem 0.95rem 0.45rem 0.85rem;
@@ -174,7 +180,7 @@
 /* An outlined button is see-through, so over the chart it gets the glass as
    its ground. One inside a panel already stands on glass. */
 [data-panes] .btn--ghost:not(:is(.glass, .pane) *) {
-  background: color-mix(in srgb, var(--bg) var(--glass-tint), transparent);
+  background: color-mix(in srgb, var(--glass-ground) var(--glass-tint), transparent);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
 }

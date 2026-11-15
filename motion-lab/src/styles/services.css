@@ -166,6 +166,20 @@
   border-bottom: 1px solid var(--rule);
 }
 
+/* Over the chart the list stands on a panel (class `pane`), which closes it
+   off at the top and the bottom in place of the two outer rules. */
+[data-panes] .serve__list {
+  padding-block: 0.35rem;
+}
+
+[data-panes] .serve__list li:first-child {
+  border-top: 0;
+}
+
+[data-panes] .serve__list li:last-child {
+  border-bottom: 0;
+}
+
 @media (max-width: 900px) {
   .serve__figure,
   .serve__text {
