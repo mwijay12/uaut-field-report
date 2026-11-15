@@ -27,6 +27,10 @@ Read `README.md` first. It has the layout, the data attributes and the steps for
   Keep originals out of git. Do not use stock photos, and do not show a third party's brand.
 - The pages and their order live in `src/lib/routes.js`. The pricing rules live in
   `src/lib/estimate.js` and nowhere else.
+- Phone numbers and the email live in `src/site.js` and nowhere else. In HTML write
+  `{{site.person.number}}` and the like. Never type a number or the address into a page.
+- There are two WhatsApp lines. A brief or an estimate goes to `site.person`, never to
+  `site.chatbot`. Every link to the chatbot must say "chatbot", so nobody expects a person there.
 - Move things with `transform` and fade them with `opacity`. Colour transitions are fine. Never
   animate layout properties such as `width`, `height`, `top`, `left` or `margin`.
 - Everything must still work with reduced motion on, without WebGL 2, and at 390 px wide.

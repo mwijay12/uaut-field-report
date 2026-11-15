@@ -109,10 +109,10 @@ I would like to start a project.</pre>
             </div>
 
             <div class="brief__actions">
-              <a class="btn" href="https://wa.me/255792867427" target="_blank" rel="noopener" data-brief-whatsapp data-magnetic>Send on WhatsApp <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
-              <a class="link" href="mailto:altrawaretechnology@gmail.com" data-brief-email>Send by email instead</a>
+              <a class="btn" href="{{site.person.whatsapp}}" target="_blank" rel="noopener" data-brief-whatsapp data-magnetic>Send on WhatsApp <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              <a class="link" href="mailto:{{site.email}}" data-brief-email>Send by email instead</a>
             </div>
-            <p class="brief__note">Nothing is sent to a server. What you type stays in this tab, and the button opens WhatsApp with the message ready to send.</p>
+            <p class="brief__note">Nothing is sent to a server. What you type stays in this tab, and the button opens WhatsApp with the message ready to send to a person on our team, not to the chatbot.</p>
           </div>
         </form>
       </section>
@@ -125,13 +125,18 @@ I would like to start a project.</pre>
 
         <ul class="reach__list">
           <li class="reach__item" data-reveal>
-            <p class="label">WhatsApp and phone</p>
-            <a class="reach__value link" href="https://wa.me/255792867427" target="_blank" rel="noopener">+255 792 867 427</a>
-            <p>Second line: <a class="link" href="tel:+255790942616">+255 790 942 616</a></p>
+            <p class="label">WhatsApp chatbot</p>
+            <a class="reach__value link" href="{{site.chatbot.whatsapp}}" target="_blank" rel="noopener">{{site.chatbot.number}}</a>
+            <p>Automated replies. For a written quote, send the brief above.</p>
+          </li>
+          <li class="reach__item" data-reveal>
+            <p class="label">Talk to a person</p>
+            <a class="reach__value link" href="{{site.person.whatsapp}}" target="_blank" rel="noopener">{{site.person.number}}</a>
+            <p>On WhatsApp, or <a class="link" href="{{site.person.tel}}">call this number</a>. The brief above is sent here.</p>
           </li>
           <li class="reach__item" data-reveal>
             <p class="label">Email</p>
-            <a class="reach__value link" href="mailto:altrawaretechnology@gmail.com">altrawaretechnology@gmail.com</a>
+            <a class="reach__value link" href="mailto:{{site.email}}">{{site.email}}</a>
             <p>Monday to Saturday, 8:00 to 18:00 East Africa Time.</p>
           </li>
           <li class="reach__item" data-reveal>

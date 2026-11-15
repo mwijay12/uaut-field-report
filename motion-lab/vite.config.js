@@ -3,22 +3,35 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { site } from './src/site.js';
+
 const root = dirname(fileURLToPath(import.meta.url));
 const partials = resolve(root, 'src/partials');
 
 /**
- * Tiny HTML include step, so the three pages share one header, footer and <head>.
+ * Tiny HTML include step, so the pages share one header, footer and <head>.
  *
  *   <!-- @include footer -->
  *   <!-- @include head title="Work" description="..." -->
  *
  * The comment is replaced by src/partials/<name>.html. Inside a partial,
  * {{title}} is replaced by the attribute of the same name, or by nothing.
+ *
+ * Anywhere in a page or a partial, {{site.person.number}} is replaced by that
+ * value from src/site.js. An unknown name fails the build.
  */
 function htmlIncludes() {
   const include = /<!--\s*@include\s+([\w-]+)((?:\s+[\w-]+="[^"]*")*)\s*-->/g;
   const attribute = /([\w-]+)="([^"]*)"/g;
   const slot = /\{\{\s*([\w-]+)\s*\}\}/g;
+  const fact = /\{\{\s*site\.([\w.]+)\s*\}\}/g;
+
+  const facts = (html, file) =>
+    html.replace(fact, (token, path) => {
+      const value = path.split('.').reduce((at, key) => at?.[key], site);
+      if (typeof value !== 'string') throw new Error(`Unknown ${token} in ${file}. The values are in src/site.js.`);
+      return value;
+    });
 
   const fill = (html, depth = 0) =>
     html.replace(include, (_, name, attrs) => {
@@ -39,7 +52,10 @@ function htmlIncludes() {
 
   return {
     name: 'html-includes',
-    transformIndexHtml: { order: 'pre', handler: (html, context) => check(fill(html), context.filename) },
+    transformIndexHtml: {
+      order: 'pre',
+      handler: (html, context) => facts(check(fill(html), context.filename), context.filename),
+    },
     configureServer(server) {
       server.watcher.add(partials);
       server.watcher.on('change', (file) => {

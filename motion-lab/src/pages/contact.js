@@ -7,9 +7,11 @@
 //   /contact/?kind=app&with=mpesa,booking&vat=1     an estimate from the pricing page
 
 import { compact, describe, estimate, fromQuery } from '../lib/estimate.js';
+import { site } from '../site.js';
 
-const WHATSAPP = 'https://wa.me/255792867427';
-const EMAIL = 'altrawaretechnology@gmail.com';
+// A brief asks for a written quote, so it goes to a person, not to the chatbot.
+const WHATSAPP = site.person.whatsapp;
+const EMAIL = site.email;
 const STORE_KEY = 'altraware:brief';
 const KEPT = ['name', 'org', 'note']; // what a visitor typed, kept for this tab only
 

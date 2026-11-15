@@ -267,10 +267,10 @@
 
 /* ---------- Reach ---------- */
 
-/* The email address is the longest value, so its column is the widest. */
+/* Two by two: the two WhatsApp lines side by side, then email and office. */
 .reach__list {
   display: grid;
-  grid-template-columns: 3fr 5fr 4fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 var(--gap);
 }
 

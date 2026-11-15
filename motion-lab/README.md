@@ -52,6 +52,7 @@ so keep it that way.
 index.html, work/, services/, pricing/, studio/, contact/, 404.html   the pages
 src/partials/        head, header and menu and curtain, footer (shared by every page)
 src/main.js          entry: chart, scroll, header, Barba transition
+src/site.js          the phone lines and the email, in one place
 src/gl/              the shader, its presets, and the WebGL code
 src/lib/             shared behaviour, one file per job:
   motion.js            GSAP setup and the motion tokens
@@ -83,6 +84,10 @@ Pages share markup through a small include step in `vite.config.js`:
 
 Attribute values take double quotes and cannot contain a double quote or HTML. A malformed include
 fails the build.
+
+The same step fills in contact details from `src/site.js`. Write `{{site.person.number}}` in a page
+or a partial and the build puts the number there. A name that is not in `src/site.js` fails the
+build, so a page cannot ship with a blank or a stale number.
 
 ## Conventions
 
@@ -160,6 +165,17 @@ write an `alt` that says what the picture shows:
   <figcaption class="media__caption">A short caption</figcaption>
 </figure>
 ```
+
+**Change a phone number or the email.** Edit `src/site.js` and nothing else. There are two WhatsApp
+lines, and each has one job:
+
+| In `src/site.js` | What it is | Where it is used |
+| --- | --- | --- |
+| `site.chatbot` | The WhatsApp chatbot. Replies are automated. | The link beside the main button, the menu, the footer, the contact page. Every link to it says "chatbot". |
+| `site.person` | A person on the team, on WhatsApp and by phone. | "Send on WhatsApp" on the contact page, and "Talk to a person" in the menu, the footer and the contact page. |
+
+In HTML each line gives `{{site.person.number}}`, `{{site.person.whatsapp}}` (the `wa.me` link) and
+`{{site.person.tel}}`. The email is `{{site.email}}`. In JavaScript, import `site` from `src/site.js`.
 
 **Change a price.** Package prices are written in `pricing/index.html` and in the service cards.
 The estimator's numbers and rules are in `src/lib/estimate.js`. Change both together. The option
@@ -253,7 +269,8 @@ pointing a real domain at it.
 ## Content
 
 Copy and prices come from Altraware's own published material. The contact page sends nothing to a
-server: it writes a WhatsApp message and opens WhatsApp with it.
+server: it writes a WhatsApp message and opens WhatsApp with it. That message asks for a written
+quote, so it goes to the person line and never to the chatbot.
 
 Pictures:
 
