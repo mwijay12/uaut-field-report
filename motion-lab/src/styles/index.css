@@ -1,8 +1,12 @@
-/* Order matters: tokens, then base, then the persistent chrome, then sections. */
+/* Order matters: tokens, then base, then the persistent chrome, then the building blocks, then pages. */
 @import './tokens.css';
 @import './base.css';
 @import './chrome.css';
+@import './components.css';
 @import './shared.css';
 @import './home.css';
 @import './work.css';
+@import './services.css';
+@import './pricing.css';
+@import './studio.css';
 @import './contact.css';

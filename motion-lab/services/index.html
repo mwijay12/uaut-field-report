@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-theme="night" data-page="services">
+  <head>
+    <!-- @include head page="services" theme-color="#071022" -->
+  </head>
+  <body data-barba="wrapper">
+    <!-- @include chrome aria-services=" aria-current=page" -->
+
+    <main id="main" class="page" data-barba="container" data-barba-namespace="services" tabindex="-1">
+      <section class="page-hero" data-theme="night" data-stage="services-hero">
+        <p class="label" data-enter><span class="label__key" lang="sw">Huduma</span> — Services</p>
+        <h1 class="page-hero__title page-hero__title--wide display-xl" data-enter-split>Five kinds of work, <em>one way of working.</em></h1>
+
+        <div class="page-hero__foot">
+          <p class="lede" data-enter>Websites, apps and business systems for small businesses, schools, care centres and NGOs. Every project runs in clear phases, with a written agreement and a fixed quote.</p>
+          <ol class="index-list" data-enter>
+            <li><a href="#websites"><span class="label">01</span><span>Websites</span><span lang="sw">Tovuti</span></a></li>
+            <li><a href="#apps"><span class="label">02</span><span>Apps</span><span lang="sw">Apu</span></a></li>
+            <li><a href="#systems"><span class="label">03</span><span>Business systems</span><span lang="sw">Mifumo</span></a></li>
+            <li><a href="#payments"><span class="label">04</span><span>Payment integrations</span><span lang="sw">Malipo</span></a></li>
+            <li><a href="#local-search"><span class="label">05</span><span>Local search</span><span lang="sw">Ramani</span></a></li>
+            <li><a href="#process"><span class="label">→</span><span>How a project runs</span><span lang="sw">Njia</span></a></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="svc-list" data-theme="day" data-stage="services-list" aria-label="Services">
+        <article class="svc glass" id="websites" data-stack style="--i: 0">
+          <header class="svc__head">
+            <p class="label"><span class="label__key">01</span> — <span lang="sw">Tovuti</span></p>
+            <h2 class="svc__name display-l">Websites</h2>
+            <!-- @include art/glyph-web -->
+          </header>
+          <div class="svc__body">
+            <p class="lede">Be found, be contacted, be trusted. From a landing page to a full business site with booking, ordering, catalogues and WhatsApp, in Kiswahili and English.</p>
+            <ul class="svc__points">
+              <li><h3>Performance first</h3><p>Image optimisation, caching and a CDN, so pages load fast on Tanzanian mobile networks.</p></li>
+              <li><h3>Found on Google</h3><p>Search optimisation, a Google Business profile and Maps indexing.</p></li>
+              <li><h3>Built to convert</h3><p>Click-to-WhatsApp, quote estimators and enquiry forms.</p></li>
+            </ul>
+          </div>
+          <footer class="svc__foot">
+            <ul class="chips"><li>SEO</li><li>Booking</li><li>M-Pesa</li></ul>
+            <p class="svc__price"><span class="label">From TSh</span> <span data-count="{{site.amount.starter}}">{{site.price.starter}}</span></p>
+            <a class="btn btn--ghost" href="/pricing/?kind=website#estimator">Estimate a website <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          </footer>
+        </article>
+
+        <article class="svc glass" id="apps" data-stack style="--i: 1">
+          <header class="svc__head">
+            <p class="label"><span class="label__key">02</span> — <span lang="sw">Apu</span></p>
+            <h2 class="svc__name display-l">Apps</h2>
+            <!-- @include art/glyph-app -->
+          </header>
+          <div class="svc__body">
+            <p class="lede">Web and mobile apps shaped around how you work. Built with Flutter for Android and iOS, and able to keep working when the network drops.</p>
+            <ul class="svc__points">
+              <li><h3>Operations apps</h3><p>Orders, deliveries, field teams and approvals, in place of paper notebooks.</p></li>
+              <li><h3>Customer apps</h3><p>Booking, loyalty, ordering and catalogues, with your brand in your customer's pocket.</p></li>
+              <li><h3>Offline-first engineering</h3><p>The app works without internet and syncs by itself when it is connected again.</p></li>
+            </ul>
+          </div>
+          <footer class="svc__foot">
+            <ul class="chips"><li>Android</li><li>iOS</li><li>PWA</li><li>Flutter</li></ul>
+            <p class="svc__price"><span class="label">From TSh</span> <span data-count="{{site.amount.app}}">{{site.price.app}}</span></p>
+            <a class="btn btn--ghost" href="/pricing/?kind=app#estimator">Estimate an app <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          </footer>
+        </article>
+
+        <article class="svc glass" id="systems" data-stack style="--i: 2">
+          <header class="svc__head">
+            <p class="label"><span class="label__key">03</span> — <span lang="sw">Mifumo</span></p>
+            <h2 class="svc__name display-l">Business systems</h2>
+            <!-- @include art/glyph-system -->
+          </header>
+          <div class="svc__body">
+            <p class="lede">Platforms that run a whole operation: sales, stock, attendance, fees and messages to guardians. Designed for limited connectivity, with the PDPA 2022 and NECTA in mind.</p>
+            <ul class="svc__points">
+              <li><h3>Faida POS</h3><p>Offline sales, stock alarms, staff tracking and instant thermal receipts.</p></li>
+              <li><h3>CareTrack</h3><p>Attendance, health records, caregiver notes and guardian updates, with privacy by design.</p></li>
+              <li><h3>ShuleDirect Pro</h3><p>NECTA-aligned school management, grading matrices and messages to parents.</p></li>
+            </ul>
+          </div>
+          <footer class="svc__foot">
+            <ul class="chips"><li>Retail</li><li>Care centres</li><li>Schools</li></ul>
+            <p class="svc__price"><span class="label">From TSh</span> <span data-count="{{site.amount.system}}">{{site.price.system}}</span></p>
+            <a class="btn btn--ghost" href="/pricing/?kind=system#estimator">Estimate a system <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          </footer>
+        </article>
+
+        <article class="svc glass" id="payments" data-stack style="--i: 3">
+          <header class="svc__head">
+            <p class="label"><span class="label__key">04</span> — <span lang="sw">Malipo</span></p>
+            <h2 class="svc__name display-l">Payment integrations</h2>
+            <!-- @include art/glyph-pay -->
+          </header>
+          <div class="svc__body">
+            <p class="lede">Vodacom M-Pesa through the Daraja API, Tigo Pesa, Airtel Money and Halopesa. STK push, with callbacks reconciled automatically.</p>
+            <ul class="svc__points">
+              <li><h3>A receipt people can read</h3><p>Every payment produces a plain receipt for the customer.</p></li>
+              <li><h3>An SMS confirmation</h3><p>Each payment is confirmed to the payer by SMS.</p></li>
+              <li><h3>A line for the owner</h3><p>Each payment is one reconciliation line that needs no accountant to read.</p></li>
+            </ul>
+          </div>
+          <footer class="svc__foot">
+            <ul class="chips"><li>M-Pesa</li><li>Tigo Pesa</li><li>Airtel Money</li><li>Halopesa</li></ul>
+            <p class="svc__price"><span class="label">Add-on, TSh</span> <span data-count="{{site.amount.mpesa}}">{{site.price.mpesa}}</span></p>
+            <a class="btn btn--ghost" href="/pricing/?kind=website&amp;with=mpesa#estimator">Add it to an estimate <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          </footer>
+        </article>
+
+        <article class="svc glass" id="local-search" data-stack style="--i: 4">
+          <header class="svc__head">
+            <p class="label"><span class="label__key">05</span> — <span lang="sw">Ramani</span></p>
+            <h2 class="svc__name display-l">Local search</h2>
+            <!-- @include art/glyph-map -->
+          </header>
+          <div class="svc__body">
+            <p class="lede">Registration and optimisation on Google Maps and in search results, so that people nearby can find you and reach you.</p>
+            <ul class="svc__points">
+              <li><h3>Google Business profile</h3><p>We register your business and set the profile up for you.</p></li>
+              <li><h3>On the map</h3><p>Your business registered on Google Maps.</p></li>
+              <li><h3>Local ranking</h3><p>Local SEO indexing, so that searches made nearby can find your pages.</p></li>
+            </ul>
+          </div>
+          <footer class="svc__foot">
+            <ul class="chips"><li>Google Maps</li><li>Google Business</li><li>Local SEO</li></ul>
+            <p class="svc__price"><span class="label">Included with every website package</span></p>
+            <a class="btn btn--ghost" href="/pricing/#packages">See the packages <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          </footer>
+        </article>
+      </section>
+
+      <section class="serve section" data-theme="night" data-stage="services-serve">
+        <figure class="serve__figure media" data-media>
+          <div class="media__frame" style="--ratio: 4 / 3">
+            <img src="/src/images/art/counter-1264.webp" srcset="/src/images/art/counter-720.webp 720w, /src/images/art/counter-1264.webp 1264w" sizes="(min-width: 900px) 46vw, 100vw" width="1264" height="848" alt="A receipt printer and a barcode scanner on the wooden counter of a small shop." loading="lazy" decoding="async" data-parallax="8" />
+          </div>
+          <figcaption>A shop counter, where a system has to keep working</figcaption>
+        </figure>
+
+        <div class="serve__text">
+          <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Wateja</span> — Who we work for</p>
+          <p class="display-m" data-scrub>Small and medium businesses, schools, clinics, care centres, NGOs and contractors in Tanzania, with growing work for clients elsewhere in East Africa and beyond.</p>
+          <ul class="serve__list">
+            <li data-reveal><span class="label">01</span>Shops and supermarkets</li>
+            <li data-reveal><span class="label">02</span>Schools and universities</li>
+            <li data-reveal><span class="label">03</span>Clinics and care centres</li>
+            <li data-reveal><span class="label">04</span>NGOs and community centres</li>
+            <li data-reveal><span class="label">05</span>Contractors and small businesses</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="process section" id="process" data-theme="day" data-stage="services-process">
+        <header class="section-head">
+          <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Njia</span> — Process</p>
+          <h2 class="display-l" data-split>How a project runs</h2>
+          <p class="section-head__text" data-reveal>Five stops, in order. You get a written scope and a fixed quote before any work starts.</p>
+        </header>
+
+        <ol class="steps">
+          <li class="step glass" data-reveal>
+            <!-- @include art/step-scope -->
+            <p class="step__num"><span data-count="1" data-count-pad="2">01</span></p>
+            <p class="label">Week 1</p>
+            <h3 class="step__name">Discovery and scope</h3>
+            <p>Written scope, fixed quote and launch date agreed upfront.</p>
+            <ul class="chips"><li>Scope map</li><li>Written quote</li></ul>
+          </li>
+          <li class="step glass" data-reveal>
+            <!-- @include art/step-prototype -->
+            <p class="step__num"><span data-count="2" data-count-pad="2">02</span></p>
+            <p class="label">Week 1 to 2</p>
+            <h3 class="step__name">Prototype</h3>
+            <p>Clickable prototypes, tested on your phone before any code is written.</p>
+            <ul class="chips"><li>Live prototype</li><li>Design sign-off</li></ul>
+          </li>
+          <li class="step glass" data-reveal>
+            <!-- @include art/step-build -->
+            <p class="step__num"><span data-count="3" data-count-pad="2">03</span></p>
+            <p class="label">Week 2 to 6</p>
+            <h3 class="step__name">Build</h3>
+            <p>Short sprints with offline tests, device checks and a demo every week.</p>
+            <ul class="chips"><li>Weekly preview</li><li>Staging link</li></ul>
+          </li>
+          <li class="step glass" data-reveal>
+            <!-- @include art/step-launch -->
+            <p class="step__num"><span data-count="4" data-count-pad="2">04</span></p>
+            <p class="label">Final week</p>
+            <h3 class="step__name">Launch and training</h3>
+            <p>Production rollout, training for your team and 30 days of close support.</p>
+            <ul class="chips"><li>Production rollout</li><li>Staff training</li></ul>
+          </li>
+          <li class="step glass" data-reveal>
+            <!-- @include art/step-care -->
+            <p class="step__num"><span data-count="5" data-count-pad="2">05</span></p>
+            <p class="label">Long term</p>
+            <h3 class="step__name">Care and support</h3>
+            <p>Hosting, daily backups, security updates and WhatsApp support, from TSh {{site.price.tunza}} a month.</p>
+            <ul class="chips"><li>Automated backups</li><li>WhatsApp support</li></ul>
+          </li>
+        </ol>
+      </section>
+
+      <section class="cta section" data-theme="night" data-stage="services-cta">
+        <p class="label" data-reveal><span class="label__key" lang="sw">Bei</span> — What it costs</p>
+        <h2 class="display-xl" data-split>Price it <em>yourself.</em></h2>
+        <div class="cta__actions" data-reveal>
+          <a class="btn" href="/pricing/#estimator" data-magnetic>Open the estimator <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          <a class="link" href="/contact/">Or tell us what you need</a>
+        </div>
+      </section>
+
+      <!-- @include footer -->
+    </main>
+  </body>
+</html>

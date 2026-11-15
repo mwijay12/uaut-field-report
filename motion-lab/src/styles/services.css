@@ -1,0 +1,236 @@
+/* Services page. */
+
+/* ---------- The five services ----------
+   On a wide, tall screen the cards stack: each one stays put under the header
+   while the next slides over it (src/pages/services.js settles the covered
+   card back a little). Anywhere else they are a plain list. */
+
+.svc-list {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  padding: clamp(3rem, 6vw, 6rem) var(--gutter) var(--space-section);
+}
+
+.svc {
+  /* A covered card must not show through the one on top of it. */
+  --glass-tint: 95%;
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  padding: clamp(1.5rem, 3.2vw, 3.25rem);
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+  transform-origin: 50% 0;
+}
+
+.svc__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem clamp(1rem, 3vw, 3rem);
+  align-items: start;
+}
+
+/* The drawing sits to the right of the label and the name. */
+.svc__head > :not(.glyph) {
+  grid-column: 1;
+}
+
+.svc__head .glyph {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.svc__body {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2rem var(--gap);
+}
+
+.svc__body .lede {
+  grid-column: 1 / span 5;
+  max-width: 34ch;
+}
+
+.svc__points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem var(--gap);
+  grid-column: 7 / -1;
+}
+
+.svc__points li {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.svc__points h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+
+.svc__points p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.svc__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  padding-top: clamp(1.25rem, 2vw, 1.75rem);
+  border-top: 1px solid var(--rule);
+}
+
+.svc__price {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem);
+  font-weight: 330;
+  font-variation-settings: 'opsz' 144;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.svc__price .label {
+  margin-right: 0.35rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  white-space: normal;
+}
+
+@media (min-width: 1000px) and (min-height: 760px) {
+  .svc {
+    position: sticky;
+    top: calc(var(--header-h) + 0.75rem + var(--i) * 0.9rem);
+  }
+}
+
+@media (max-width: 1100px) {
+  .svc__body .lede,
+  .svc__points {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .svc__points {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+
+  .svc__price {
+    margin-left: 0;
+  }
+
+  .svc__foot .btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Who we work for ---------- */
+
+.serve {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 3rem var(--gap);
+  align-items: center;
+}
+
+.serve__figure {
+  grid-column: 1 / span 6;
+}
+
+.serve__text {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  grid-column: 8 / -1;
+}
+
+.serve__list li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  align-items: baseline;
+  padding-block: 0.9rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--text-l);
+  letter-spacing: -0.01em;
+}
+
+.serve__list li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (max-width: 900px) {
+  .serve__figure,
+  .serve__text {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Process ---------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.step {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+  padding: clamp(1.25rem, 1.8vw, 1.75rem);
+  border-radius: var(--radius-m);
+}
+
+.step__art {
+  position: absolute;
+  top: clamp(1.25rem, 1.8vw, 1.75rem);
+  right: clamp(1.25rem, 1.8vw, 1.75rem);
+  width: clamp(2.25rem, 1.6rem + 1.4vw, 3rem);
+}
+
+.step__num {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.5rem + 4vw, 5.5rem);
+  font-style: italic;
+  font-weight: 300;
+  font-variation-settings: 'opsz' 144;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+}
+
+.step__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 1rem + 1vw, 1.75rem);
+  font-weight: 380;
+  font-variation-settings: 'opsz' 72;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.step > p:not(.label, .step__num) {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 1200px) {
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}

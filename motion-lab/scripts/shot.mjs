@@ -11,8 +11,10 @@
 //   --dpr <n>            device pixel ratio (default 1)
 //   --touch              emulate a phone: touch input and a coarse pointer
 //   --reduced            emulate prefers-reduced-motion: reduce
-//   --at <list>          where to shoot: fractions of the scroll height (0..1) or
-//                        pixel positions written as 1200px (default 0)
+//   --at <list>          where to shoot (default 0), separated by commas. Each stop is one of:
+//                        a fraction of the scroll height (0.5), a pixel position (1200px),
+//                        or a CSS selector, which puts the top of that element at the top of
+//                        the window (#process). Add or take pixels with +N or -N (#process+300).
 //   --wait <ms>          time to let things settle before each shot (default 1500)
 //   --first <ms>         extra time once the page is ready, for the arrival animation (default 2500)
 //   --click <selector>   click this before shooting (for example a link, to test a page change)
@@ -21,13 +23,16 @@
 //   --expect <status>    the page itself should answer with this status (use 404 for the not-found page)
 //   --out <dir>          default ./shots
 //   --full               also save one full-page image
+//   --sheet <columns>    also tile every shot of this run into one image, <name>-sheet.png,
+//                        so several stops can be looked at in one go
+//   --sheet-width <px>   width of one tile on the sheet (default 480)
 //
 // Exit code 1 when the page logged an error, so it can gate a commit.
 //
 // WebGL runs on the CPU here (SwiftShader). Use it to judge layout and looks,
 // not frame rate.
 
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 process.env.AWS_EXECUTION_ENV ??= 'AWS_Lambda_nodejs22.x';
@@ -109,9 +114,25 @@ async function scrollTo(target) {
   }
 }
 
+const taken = [];
+
 for (const [index, stop] of stops.entries()) {
   const max = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
-  const target = stop.endsWith('px') ? Number.parseFloat(stop) : Number(stop) * max;
+  let target;
+  if (/^[#.\[a-z]/i.test(stop)) {
+    const [, selector, shift = '0'] = stop.match(/^(.*?)([+-]\d+)?$/);
+    const top = await page.evaluate((query) => {
+      const element = document.querySelector(query);
+      return element ? element.getBoundingClientRect().top + window.scrollY : null;
+    }, selector);
+    if (top === null) {
+      problems.push(`[shot] nothing matches ${selector}`);
+      continue;
+    }
+    target = Math.min(max, Math.max(0, top + Number(shift)));
+  } else {
+    target = stop.endsWith('px') ? Number.parseFloat(stop) : Number(stop) * max;
+  }
   if (index > 0 || target > 0) await scrollTo(Math.round(target));
 
   const hover = option('hover');
@@ -121,12 +142,33 @@ for (const [index, stop] of stops.entries()) {
   const y = await page.evaluate(() => Math.round(window.scrollY));
   const file = `${out}/${name}-${width}x${height}-${String(index).padStart(2, '0')}.png`;
   await page.screenshot({ path: file });
+  taken.push(file);
   console.log(`${file}  scrollY=${y}/${max}`);
 }
 
 if (flag('full')) {
   const file = `${out}/${name}-${width}x${height}-full.png`;
   await page.screenshot({ path: file, fullPage: true });
+  console.log(file);
+}
+
+// A contact sheet: the shots of this run side by side in one picture.
+const columns = Number(option('sheet', 0));
+if (columns && taken.length) {
+  const tile = Number(option('sheet-width', 480));
+  const images = await Promise.all(taken.map(async (file) => `data:image/png;base64,${(await readFile(file)).toString('base64')}`));
+  const sheet = await browser.newPage();
+  const rows = Math.ceil(taken.length / columns);
+  const tileHeight = Math.round((tile * height) / width);
+  await sheet.setViewport({ width: columns * tile + (columns - 1) * 8, height: rows * tileHeight + (rows - 1) * 8, deviceScaleFactor: 1 });
+  await sheet.setContent(
+    `<body style="margin:0;background:#808080;display:grid;gap:8px;grid-template-columns:repeat(${columns},${tile}px)">` +
+      images.map((source) => `<img src="${source}" style="display:block;width:${tile}px">`).join('') +
+      '</body>',
+  );
+  const file = `${out}/${name}-sheet.png`;
+  await sheet.screenshot({ path: file });
+  await sheet.close();
   console.log(file);
 }
 

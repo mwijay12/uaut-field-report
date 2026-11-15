@@ -10,8 +10,11 @@ import { DEFAULT_PRESET, preset } from './presets.js';
 
 const UNIFORMS = [
   'uRes', 'uPx', 'uTime', 'uPointer', 'uPress', 'uScroll', 'uDay',
-  'uDensity', 'uWarp', 'uAccent', 'uInk', 'uSurge', 'uScale', 'uSeed',
+  'uDensity', 'uWarp', 'uAccent', 'uInk', 'uSurge', 'uScale', 'uSeed', 'uRush', 'uCalm',
 ];
+
+// Scrolling this fast (pixels per millisecond) counts as full speed for the shader.
+const FULL_RUSH = 3.2;
 
 // Device pixel ratio is capped: the field is smooth, so extra pixels cost a lot and add little.
 const MAX_RATIO_FINE = 1.75;
@@ -104,13 +107,16 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
   }
 
   // Everything the shader reads that is animated. Flat numbers so tween.js can drive them.
-  const state = { day: 0, surge: 0, ...DEFAULT_PRESET };
+  const state = { day: 0, surge: 0, calm: 0, ...DEFAULT_PRESET };
   const pointer = { x: 0.7, y: 0.45, targetX: 0.7, targetY: 0.45, press: 0, targetPress: 0 };
 
   let uniforms = null; // null until the program is ready
+  let lastScroll = window.scrollY;
+  let rush = 0; // 0..1, eased scroll speed
   let ratio = 1;
   let cssHeight = 1;
   let dirty = true;
+  let rested = false; // true once the flat colour of a plain section has been drawn
   let shown = false;
   let frames = 0;
   let sampled = 0;
@@ -237,6 +243,8 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
     gl.uniform1f(uniforms.uSurge, state.surge);
     gl.uniform1f(uniforms.uScale, state.scale);
     gl.uniform2f(uniforms.uSeed, state.seedX, state.seedY);
+    gl.uniform1f(uniforms.uRush, still ? 0 : rush);
+    gl.uniform1f(uniforms.uCalm, state.calm);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     // The canvas starts transparent in CSS and fades up once it has a picture.
@@ -292,7 +300,30 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
         return;
       }
 
+      // A plain section shows the flat page colour and nothing else. Once the
+      // last tween has landed there is nothing left to animate, so the picture
+      // is drawn one more time and the GPU is left alone until something changes.
+      if (state.calm >= 1 && running.size === 0) {
+        if (!rested || dirty) {
+          draw(seconds);
+          dirty = false;
+          rested = true;
+        }
+        lastScroll = window.scrollY;
+        return;
+      }
+      rested = false;
+
       measure(delta);
+
+      // The chart stretches a little while the page moves fast.
+      // A jump of more than a screen is a page change or an anchor, not scrolling.
+      const scrolled = window.scrollY;
+      const moved = Math.abs(scrolled - lastScroll);
+      const speed = moved > cssHeight ? 0 : Math.min(1, moved / Math.max(1, delta) / FULL_RUSH);
+      lastScroll = scrolled;
+      rush += (speed - rush) * (speed > rush ? 0.18 : 0.07);
+
       pointer.x += (pointer.targetX - pointer.x) * 0.08;
       pointer.y += (pointer.targetY - pointer.y) * 0.08;
       pointer.press += (pointer.targetPress - pointer.press) * 0.05;
@@ -310,6 +341,19 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
       return tween('theme', { day: isDay ? 1 : 0 }, { duration: 900, ...options });
     },
 
+    /**
+     * 0..1. How much of the chart is taken away: 0 is the full chart, 1 is the
+     * flat page colour. A section asks for it with data-bg, see src/lib/scenes.js.
+     */
+    calm(value, options) {
+      return tween('calm', { calm: value }, { duration: 900, ...options });
+    },
+
+    /** True while a plain section has left the chart with nothing to draw. */
+    get resting() {
+      return rested;
+    },
+
     /** 0..1. Raised while one page leaves and the next arrives. */
     surge(value, options) {
       return tween('surge', { surge: value }, options);
@@ -320,7 +364,7 @@ export function createStage(canvas, { still = false, mode = 'auto', onFail = () 
 /** Stand-in used when WebGL 2 is missing, so callers never have to check. */
 export function createNullStage() {
   const done = () => Promise.resolve();
-  return { state: {}, tick() {}, look: done, theme: done, surge: done };
+  return { state: {}, resting: true, tick() {}, look: done, theme: done, surge: done, calm: done };
 }
 
 export { Easing };

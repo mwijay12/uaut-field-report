@@ -13,7 +13,7 @@
 
 .hero__title {
   /* Never taller than the screen can hold on a short laptop. */
-  font-size: min(var(--display-xl), 20svh);
+  font-size: min(var(--display-xl), 18svh);
 }
 
 @media (max-width: 700px) {
@@ -67,9 +67,18 @@
   margin-left: auto;
 }
 
-@media (max-width: 560px) {
-  .hero__foot > :nth-child(2) {
+/* The line that types itself. */
+.hero__typed {
+  margin-left: clamp(0rem, 4vw, 4rem);
+}
+
+@media (max-width: 700px) {
+  .hero__coords {
     display: none;
+  }
+
+  .hero__typed {
+    margin-left: 0;
   }
 }
 
@@ -99,11 +108,17 @@
   max-width: 17ch;
 }
 
+.statement__figure {
+  grid-column: 1 / span 6;
+  margin-top: clamp(3rem, 7vw, 6rem);
+}
+
 .values {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 2.5rem var(--gap);
-  grid-column: 4 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: end;
+  gap: var(--gap);
+  grid-column: 8 / -1;
   margin-top: clamp(3rem, 7vw, 6rem);
 }
 
@@ -111,8 +126,8 @@
   display: grid;
   align-content: start;
   gap: 0.75rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--rule);
+  padding: clamp(1.1rem, 1.6vw, 1.6rem);
+  border-radius: var(--radius-m);
 }
 
 .values h3 {
@@ -127,22 +142,32 @@
   line-height: 1.55;
 }
 
+@media (max-width: 1100px) {
+  .statement__figure {
+    grid-column: 1 / span 5;
+  }
+
+  .values {
+    grid-column: 6 / -1;
+  }
+}
+
 @media (max-width: 900px) {
   .statement > .label,
   .statement__text,
+  .statement__figure,
   .values {
     grid-column: 1 / -1;
   }
 
   .values {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 0;
   }
 }
 
 @media (max-width: 480px) {
   .values {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
   }
 }
 
@@ -196,8 +221,23 @@
   color: var(--fg);
 }
 
+/* The service's drawing ends the row. Under a pointer it gives way to the arrow. */
+.service__glyph {
+  grid-column: 12;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  width: clamp(2.5rem, 1.6rem + 1.8vw, 3.5rem);
+  transition: transform var(--dur-base) var(--ease), opacity var(--dur-fast) var(--ease-out);
+}
+
+.service__glyph .glyph {
+  width: 100%;
+}
+
 .service__arrow {
   grid-column: 12;
+  grid-row: 1;
   justify-self: end;
   align-self: center;
   width: 1.4rem;
@@ -220,6 +260,11 @@
   .service:hover .service__arrow {
     transform: none;
     opacity: 1;
+  }
+
+  .service:hover .service__glyph {
+    transform: translateX(0.75rem);
+    opacity: 0;
   }
 }
 
@@ -246,6 +291,21 @@
 
   .service__arrow {
     grid-column: 11 / -1;
+    grid-row: auto;
+    transform: none;
+    opacity: 1;
+  }
+
+  /* Narrow: the drawing sits under the number, and the arrow is always shown. */
+  .service__glyph {
+    grid-column: 1 / span 2;
+    grid-row: 2 / span 2;
+    justify-self: start;
+    align-self: start;
+    width: 2.25rem;
+  }
+
+  .service:hover .service__glyph {
     transform: none;
     opacity: 1;
   }
@@ -282,31 +342,70 @@
   padding-inline: var(--gutter);
 }
 
+/* A plate is a screenshot with a few lines under it. The screenshot takes
+   whatever height is left, so the plate fits a short screen as well as a tall one. */
 .plate {
   position: relative;
-  display: flex;
+  display: grid;
   flex: none;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: clamp(1rem, 1.8vw, 1.6rem);
-  width: min(66vw, 62rem);
-  padding: 1rem clamp(2rem, 5vw, 5rem) clamp(1.5rem, 3vw, 2.75rem) clamp(1.5rem, 2.6vw, 2.5rem);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(1rem, 2vw, 1.75rem) var(--gap);
+  width: min(60vw, 60rem);
+  padding: 0.5rem clamp(1.5rem, 3.4vw, 3.5rem) clamp(1.25rem, 2.4vw, 2.25rem);
   border-left: 1px solid var(--rule);
-  opacity: 0.26;
+}
+
+/* A plate that is not the one being looked at steps back: its picture most,
+   its words only as far as they can still be read (4.5 to 1 for the smallest). */
+.plate > * {
   transition: opacity var(--dur-base) var(--ease-out);
 }
 
-.plate.is-active {
-  opacity: 1;
+.js .plate:not(.is-active) > * {
+  opacity: 0.72;
+}
+
+.js .plate:not(.is-active) > :is(.plate__shot, .plate__index) {
+  opacity: 0.3;
+}
+
+.plate__shot {
+  display: flex;
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
+.plate__shot .media__frame {
+  width: 100%;
+  max-height: 100%;
+}
+
+.plate__text {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+.plate__name {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1rem + 3.6vw, 5rem);
+  font-weight: 330;
+  font-variation-settings: 'opsz' 144;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.plate__line {
+  max-width: 38ch;
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .plate__index {
-  position: absolute;
-  top: 0;
-  right: clamp(1.5rem, 4vw, 4rem);
+  align-self: end;
   font-family: var(--font-display);
-  font-size: clamp(6rem, 15vw, 15rem);
+  font-size: clamp(4rem, 9vw, 9rem);
   font-style: italic;
   font-weight: 300;
   font-variation-settings: 'opsz' 144;
@@ -317,45 +416,13 @@
   user-select: none;
 }
 
-.plate__name {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 1rem + 7.4vw, 8.75rem);
-  font-weight: 330;
-  font-variation-settings: 'opsz' 144;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-}
-
-.plate__line {
-  max-width: 30ch;
-  font-size: var(--text-l);
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-}
-
-.plate__facts {
-  display: grid;
-  align-self: stretch;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem var(--gap);
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--rule);
-}
-
-.plate__facts dt {
-  margin-bottom: 0.3rem;
-}
-
-.plate__facts dd {
-  font-size: 0.975rem;
-  line-height: 1.4;
-}
-
 .plate--end {
-  width: min(52vw, 46rem);
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: 2rem;
+  width: min(48vw, 44rem);
 }
 
 .plates__progress {
@@ -392,29 +459,25 @@
   }
 
   .plate {
-    width: min(84vw, 34rem);
-    min-height: 31rem;
-    padding-top: 7rem;
+    grid-template-rows: auto auto;
+    width: min(86vw, 36rem);
+    padding-top: 1.5rem;
     scroll-snap-align: start;
   }
 
   .plate--end {
-    width: min(84vw, 34rem);
-  }
-
-  .plate__facts {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .plate__facts div {
-    display: grid;
-    grid-template-columns: 6.5rem 1fr;
-    align-items: baseline;
+    width: min(86vw, 36rem);
+    min-height: 22rem;
   }
 
   .plates__progress {
     margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .plate__index {
+    display: none;
   }
 }
 

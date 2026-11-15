@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-theme="night" data-page="home">
   <head>
-    <!-- @include head title="Altraware Technology. Rooted at home, engineered for the world." description="A software studio in Dar es Salaam. Fast, mobile-first websites, apps and business systems in Kiswahili and English, with M-Pesa at the core." theme-color="#071022" -->
+    <!-- @include head page="home" theme-color="#071022" -->
   </head>
   <body data-barba="wrapper">
     <!-- @include chrome aria-home=" aria-current=page" -->
@@ -19,90 +19,148 @@
         <div class="hero__aside">
           <p class="lede" data-enter>A software studio in Dar es Salaam. We build fast, mobile-first websites, apps and business systems, in Kiswahili and English, with <span class="nowrap">M-Pesa</span> at the core.</p>
           <div class="hero__actions" data-enter>
-            <a class="btn" href="/contact/">Start your project <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+            <a class="btn" href="/contact/" data-magnetic>Start your project <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
             <a class="link" href="/work/">See the work</a>
           </div>
         </div>
 
         <div class="hero__foot" data-enter>
-          <span class="label">6.7924° S, 39.2083° E</span>
-          <span class="label">Dar es Salaam, Tanzania</span>
+          <span class="label hero__coords">6.7924° S, 39.2083° E</span>
+          <p class="label hero__typed">
+            <span class="sr-only">We build websites, Android and iOS apps, business systems, M-Pesa integrations and Google Business listings.</span>
+            <span aria-hidden="true">We build <span class="typed" data-type-words="websites|Android and iOS apps|business systems|M-Pesa integrations|Google Business listings">websites</span></span>
+          </p>
           <span class="label">Scroll</span>
         </div>
       </section>
 
+      <div class="marquee" data-marquee="70" aria-hidden="true">
+        <div class="marquee__track" data-marquee-track>
+          <span class="marquee__item"><span class="marquee__word" lang="sw">Tovuti</span><span class="label">Websites</span></span>
+          <span class="marquee__item"><span class="marquee__word" lang="sw">Apu</span><span class="label">Apps</span></span>
+          <span class="marquee__item"><span class="marquee__word" lang="sw">Mifumo</span><span class="label">Business systems</span></span>
+          <span class="marquee__item"><span class="marquee__word" lang="sw">Malipo</span><span class="label">Payments</span></span>
+          <span class="marquee__item"><span class="marquee__word" lang="sw">Ramani</span><span class="label">Local search</span></span>
+          <span class="marquee__item"><span class="marquee__word" lang="sw">Msaada</span><span class="label">Support</span></span>
+        </div>
+      </div>
+
       <section class="statement section" data-theme="night" data-stage="home-statement">
-        <p class="label" data-reveal><span class="label__key" lang="sw">Sisi</span> — Who we are</p>
-        <p class="statement__text display-l" data-split>We help organisations move from paper, spreadsheets and scattered tools to <em>reliable digital systems.</em></p>
+        <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Sisi</span> — Who we are</p>
+        <p class="statement__text display-l" data-scrub>We help organisations move from paper, spreadsheets and scattered tools to <em>reliable digital systems.</em></p>
+
+        <figure class="statement__figure media" data-media>
+          <div class="media__frame" style="--ratio: 5 / 4">
+            <img src="/src/images/art/ledger-1264.webp" srcset="/src/images/art/ledger-720.webp 720w, /src/images/art/ledger-1264.webp 1264w" sizes="(min-width: 900px) 42vw, 100vw" width="1264" height="848" alt="An open paper ledger, a stack of receipts and a phone on a dark desk." loading="lazy" decoding="async" data-parallax="8" />
+          </div>
+          <figcaption>From the ledger to the phone</figcaption>
+        </figure>
+
         <ul class="values">
-          <li data-reveal>
+          <li class="glass" data-reveal>
             <h3>Local insight</h3>
             <p>Mobile money, Kiswahili and the realities our clients work in.</p>
           </li>
-          <li data-reveal>
+          <li class="glass" data-reveal>
             <h3>Clear process</h3>
             <p>Fixed packages, defined timelines and written agreements.</p>
           </li>
-          <li data-reveal>
+          <li class="glass" data-reveal>
             <h3>Long-term support</h3>
             <p>Hosting, updates and maintenance after delivery.</p>
           </li>
-          <li data-reveal>
+          <li class="glass" data-reveal>
             <h3>Privacy-minded engineering</h3>
             <p>We collect only the data a system genuinely needs.</p>
           </li>
         </ul>
       </section>
 
-      <section class="services section" id="services" data-theme="day" data-stage="home-services">
+      <section class="section" data-theme="night" data-stage="home-figures">
         <header class="section-head">
-          <p class="label" data-reveal><span class="label__key" lang="sw">Huduma</span> — Services</p>
-          <h2 class="display-l" data-split>What we build</h2>
+          <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Namba</span> — In numbers</p>
+        </header>
+        <ul class="figures">
+          <li class="figure" data-reveal>
+            <p class="figure__value"><span data-count="4">4</span></p>
+            <p class="label">Platforms in use</p>
+            <p class="figure__text">Faida POS, CareTrack, UAUT Connect and ShuleDirect Pro.</p>
+          </li>
+          <li class="figure" data-reveal>
+            <p class="figure__value"><span data-count="5">5</span></p>
+            <p class="label">Kinds of work</p>
+            <p class="figure__text">Websites, apps, business systems, payment integrations and local search.</p>
+          </li>
+          <li class="figure" data-reveal>
+            <p class="figure__value"><span data-count="0.8" data-count-decimals="1">0.8</span><span class="figure__unit">s</span></p>
+            <p class="label">Average checkout</p>
+            <p class="figure__text">A sale on Faida POS takes under 0.8 seconds on average, barcode to receipt.</p>
+          </li>
+          <li class="figure" data-reveal>
+            <p class="figure__value"><span data-count="30">30</span><span class="figure__unit">days</span></p>
+            <p class="label">Close support after launch</p>
+            <p class="figure__text">Every project gets 30 days of close support before a support plan begins.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="services section" id="services" data-theme="day" data-stage="home-services">
+        <header class="section-head section-head--row">
+          <div>
+            <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Huduma</span> — Services</p>
+            <h2 class="display-l" data-split>What we build</h2>
+          </div>
+          <a class="link" href="/services/" data-reveal>All services <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
         </header>
 
         <ol class="service-list">
           <li class="service" data-reveal>
-            <a class="service__link" href="/contact/?need=web-starter">
+            <a class="service__link" href="/services/#websites">
               <span class="service__num label">01</span>
               <h3 class="service__name display-m">Websites <span class="service__sw" lang="sw">Tovuti</span></h3>
               <p class="service__text">Fast, mobile-first sites that are easy to find on Google and Google Maps, and that bring enquiries straight to WhatsApp.</p>
-              <span class="service__price label">From TSh 350,000</span>
+              <span class="service__price label">From TSh {{site.price.starter}}</span>
+              <span class="service__glyph"><!-- @include art/glyph-web --></span>
               <svg class="icon service__arrow" aria-hidden="true"><use href="#i-arrow" /></svg>
             </a>
           </li>
           <li class="service" data-reveal>
-            <a class="service__link" href="/contact/?need=custom-app">
+            <a class="service__link" href="/services/#apps">
               <span class="service__num label">02</span>
               <h3 class="service__name display-m">Apps <span class="service__sw" lang="sw">Apu</span></h3>
               <p class="service__text">Android and iOS apps built with Flutter, shaped around how your team works and able to keep working when the network drops.</p>
-              <span class="service__price label">From TSh 800,000</span>
+              <span class="service__price label">From TSh {{site.price.app}}</span>
+              <span class="service__glyph"><!-- @include art/glyph-app --></span>
               <svg class="icon service__arrow" aria-hidden="true"><use href="#i-arrow" /></svg>
             </a>
           </li>
           <li class="service" data-reveal>
-            <a class="service__link" href="/contact/?need=turnkey-system">
+            <a class="service__link" href="/services/#systems">
               <span class="service__num label">03</span>
               <h3 class="service__name display-m">Business systems <span class="service__sw" lang="sw">Mifumo</span></h3>
               <p class="service__text">Portals, inventory, CRM and cloud databases. Sales, stock, attendance and fees in one place, like Faida POS and CareTrack.</p>
-              <span class="service__price label">From TSh 1,200,000</span>
+              <span class="service__price label">From TSh {{site.price.system}}</span>
+              <span class="service__glyph"><!-- @include art/glyph-system --></span>
               <svg class="icon service__arrow" aria-hidden="true"><use href="#i-arrow" /></svg>
             </a>
           </li>
           <li class="service" data-reveal>
-            <a class="service__link" href="/contact/?need=other&amp;about=Payment+integration">
+            <a class="service__link" href="/services/#payments">
               <span class="service__num label">04</span>
               <h3 class="service__name display-m">Payment integrations <span class="service__sw" lang="sw">Malipo</span></h3>
               <p class="service__text">M-Pesa, Tigo Pesa, Airtel Money and Halopesa. STK push with automatic callback reconciliation.</p>
-              <span class="service__price label">Quoted per project</span>
+              <span class="service__price label">Add-on from TSh {{site.price.mpesa}}</span>
+              <span class="service__glyph"><!-- @include art/glyph-pay --></span>
               <svg class="icon service__arrow" aria-hidden="true"><use href="#i-arrow" /></svg>
             </a>
           </li>
           <li class="service" data-reveal>
-            <a class="service__link" href="/contact/?need=other&amp;about=Local+SEO+and+Google+Business">
+            <a class="service__link" href="/services/#local-search">
               <span class="service__num label">05</span>
               <h3 class="service__name display-m">Local search <span class="service__sw" lang="sw">Ramani</span></h3>
               <p class="service__text">Google Business registration and optimisation, so customers find you on Maps and in search results.</p>
-              <span class="service__price label">Quoted per project</span>
+              <span class="service__price label">With every website</span>
+              <span class="service__glyph"><!-- @include art/glyph-map --></span>
               <svg class="icon service__arrow" aria-hidden="true"><use href="#i-arrow" /></svg>
             </a>
           </li>
@@ -111,67 +169,111 @@
 
       <section class="plates" data-theme="night" data-plates aria-labelledby="plates-title">
         <div class="plates__head">
-          <h2 class="label" id="plates-title"><span class="label__key" lang="sw">Kazi</span> — Platforms</h2>
-          <p class="label" aria-hidden="true"><span data-plates-current>01</span> / 04</p>
+          <h2 class="label" id="plates-title"><span class="label__key" lang="sw">Kazi</span> — Selected work</h2>
+          <p class="label" aria-hidden="true"><span data-plates-current>01</span> / 06</p>
         </div>
 
-        <div class="plates__viewport" data-plates-viewport tabindex="0" role="region" aria-label="Platforms, scroll sideways">
+        <div class="plates__viewport" data-plates-viewport tabindex="0" role="region" aria-label="Selected work, scroll sideways">
           <ul class="plates__track" data-plates-track>
             <li class="plate" data-stage="plate-faida">
-              <span class="plate__index" aria-hidden="true">01</span>
-              <p class="label">Retail · Duka · Supermarket</p>
-              <h3 class="plate__name">Faida POS</h3>
-              <p class="plate__line">Sell anywhere. Work offline. Keep complete control.</p>
-              <dl class="plate__facts">
-                <div><dt class="label">Offline</dt><dd>Keeps selling with no internet</dd></div>
-                <div><dt class="label">Checkout</dt><dd>Under 0.8 seconds on average</dd></div>
-                <div><dt class="label">Money</dt><dd>M-Pesa reconciliation</dd></div>
-              </dl>
-              <a class="link" href="https://faida-hq.vercel.app/" target="_blank" rel="noopener">Open the live demo <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
-            </li>
-
-            <li class="plate" data-stage="plate-caretrack">
-              <span class="plate__index" aria-hidden="true">02</span>
-              <p class="label">Care centres · Clinics · NGOs</p>
-              <h3 class="plate__name">CareTrack</h3>
-              <p class="plate__line">Attendance, health notes and guardian trust.</p>
-              <dl class="plate__facts">
-                <div><dt class="label">Attendance</dt><dd>One tap, with an SMS to guardians</dd></div>
-                <div><dt class="label">Privacy</dt><dd>Encrypted, built around the PDPA 2022</dd></div>
-                <div><dt class="label">Network</dt><dd>Works on weak 2G and 3G</dd></div>
-              </dl>
-              <a class="link" href="https://caretrack-six.vercel.app/dashboard" target="_blank" rel="noopener">Open the live demo <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              <figure class="plate__shot media media--browser">
+                <div class="media__frame">
+                  <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>faida-hq.vercel.app</span></div>
+                  <div class="media__screen"><img src="/src/images/work/faida-1600.webp" srcset="/src/images/work/faida-800.webp 800w, /src/images/work/faida-1600.webp 1600w" sizes="(min-width: 900px) 58vw, 84vw" width="1600" height="897" alt="The Faida POS site: the headline Manage your retail profits with absolute control, beside a sales dashboard." loading="lazy" decoding="async" /></div>
+                </div>
+              </figure>
+              <div class="plate__text">
+                <p class="label">Business system · 2026</p>
+                <h3 class="plate__name">Faida POS</h3>
+                <p class="plate__line">Sell anywhere. Work offline. Keep complete control.</p>
+                <a class="link" href="https://faida-hq.vercel.app/" target="_blank" rel="noopener">Open the live demo <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              </div>
+              <span class="plate__index" aria-hidden="true" data-plate-drift>01</span>
             </li>
 
             <li class="plate" data-stage="plate-uaut">
-              <span class="plate__index" aria-hidden="true">03</span>
-              <p class="label">Higher education · Admissions</p>
-              <h3 class="plate__name">UAUT Connect</h3>
-              <p class="plate__line">The campus and admissions portal of the United African University of Tanzania.</p>
-              <dl class="plate__facts">
-                <div><dt class="label">Apply</dt><dd>Online application workflow</dd></div>
-                <div><dt class="label">Check</dt><dd>Degree and diploma eligibility</dd></div>
-                <div><dt class="label">Campus</dt><dd>News and a referral engine</dd></div>
-              </dl>
-              <a class="link" href="https://www.uautconnect.com/" target="_blank" rel="noopener">Visit the portal <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              <figure class="plate__shot media media--browser">
+                <div class="media__frame">
+                  <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>uautconnect.com</span></div>
+                  <div class="media__screen"><img src="/src/images/work/uaut-connect-1600.webp" srcset="/src/images/work/uaut-connect-800.webp 800w, /src/images/work/uaut-connect-1600.webp 1600w" sizes="(min-width: 900px) 58vw, 84vw" width="1600" height="900" alt="The UAUT Connect portal: the headline Change your future over a photograph of a university event." loading="lazy" decoding="async" /></div>
+                </div>
+              </figure>
+              <div class="plate__text">
+                <p class="label">Education · 2026</p>
+                <h3 class="plate__name">UAUT Connect</h3>
+                <p class="plate__line">The campus and admissions portal of the United African University of Tanzania.</p>
+                <a class="link" href="https://www.uautconnect.com/" target="_blank" rel="noopener">Visit the portal <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              </div>
+              <span class="plate__index" aria-hidden="true" data-plate-drift>02</span>
             </li>
 
-            <li class="plate" data-stage="plate-shule">
-              <span class="plate__index" aria-hidden="true">04</span>
-              <p class="label">Schools · Grading · Fees</p>
-              <h3 class="plate__name">ShuleDirect Pro</h3>
-              <p class="plate__line">School management and grading, aligned with NECTA.</p>
-              <dl class="plate__facts">
-                <div><dt class="label">Assessment</dt><dd>Continuous assessment matrices</dd></div>
-                <div><dt class="label">Reports</dt><dd>Terminal reports, generated</dd></div>
-                <div><dt class="label">Parents</dt><dd>SMS notices and fee tracking</dd></div>
-              </dl>
-              <a class="link" href="/contact/?need=turnkey-system">Ask for a walkthrough <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+            <li class="plate" data-stage="plate-aymi">
+              <figure class="plate__shot media media--browser">
+                <div class="media__frame">
+                  <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>aymiafrica.org</span></div>
+                  <div class="media__screen"><img src="/src/images/work/aymi-1600.webp" srcset="/src/images/work/aymi-800.webp 800w, /src/images/work/aymi-1600.webp 1600w" sizes="(min-width: 900px) 58vw, 84vw" width="1600" height="900" alt="The AYMI Africa site: the headline Beyond our innovation, beside an illustration of young people at work." loading="lazy" decoding="async" /></div>
+                </div>
+              </figure>
+              <div class="plate__text">
+                <p class="label">Non-profit · 2026</p>
+                <h3 class="plate__name">AYMI Africa Hub</h3>
+                <p class="plate__line">A hub for a pan-African youth movement, with its programmes and membership sign-up.</p>
+                <a class="link" href="https://www.aymiafrica.org/" target="_blank" rel="noopener">Visit the site <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              </div>
+              <span class="plate__index" aria-hidden="true" data-plate-drift>03</span>
+            </li>
+
+            <li class="plate" data-stage="plate-volta">
+              <figure class="plate__shot media media--browser">
+                <div class="media__frame">
+                  <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>volta-rentals.vercel.app</span></div>
+                  <div class="media__screen"><img src="/src/images/work/volta-1600.webp" srcset="/src/images/work/volta-800.webp 800w, /src/images/work/volta-1600.webp 1600w" sizes="(min-width: 900px) 58vw, 84vw" width="1600" height="900" alt="The Volta Rentals site: the name in large letters over a dark photograph of a car." loading="lazy" decoding="async" /></div>
+                </div>
+              </figure>
+              <div class="plate__text">
+                <p class="label">Web platform · 2026</p>
+                <h3 class="plate__name">Volta Rentals</h3>
+                <p class="plate__line">A fleet registry, a booking flow and a trip calculator for a car-rental company.</p>
+                <a class="link" href="https://volta-rentals.vercel.app/" target="_blank" rel="noopener">Visit the site <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              </div>
+              <span class="plate__index" aria-hidden="true" data-plate-drift>04</span>
+            </li>
+
+            <li class="plate" data-stage="plate-bongo">
+              <figure class="plate__shot media media--browser">
+                <div class="media__frame">
+                  <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>bongofoodie.vercel.app</span></div>
+                  <div class="media__screen"><img src="/src/images/work/bongo-foodie-1600.webp" srcset="/src/images/work/bongo-foodie-800.webp 800w, /src/images/work/bongo-foodie-1600.webp 1600w" sizes="(min-width: 900px) 58vw, 84vw" width="1600" height="896" alt="The Bongo Foodie site: the headline Authentic Swahili gastronomy, beside pictures of dishes." loading="lazy" decoding="async" /></div>
+                </div>
+              </figure>
+              <div class="plate__text">
+                <p class="label">Food and ordering · 2026</p>
+                <h3 class="plate__name">Bongo Foodie</h3>
+                <p class="plate__line">Swahili dishes to browse by ingredient, price and rating, with a chef assistant to ask.</p>
+                <a class="link" href="https://bongofoodie.vercel.app/" target="_blank" rel="noopener">Visit the site <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              </div>
+              <span class="plate__index" aria-hidden="true" data-plate-drift>05</span>
+            </li>
+
+            <li class="plate" data-stage="plate-audenic">
+              <figure class="plate__shot media media--browser">
+                <div class="media__frame">
+                  <div class="media__bar" aria-hidden="true"><i></i><i></i><i></i><span>audenic.vercel.app</span></div>
+                  <div class="media__screen"><img src="/src/images/work/audenic-1600.webp" srcset="/src/images/work/audenic-800.webp 800w, /src/images/work/audenic-1600.webp 1600w" sizes="(min-width: 900px) 58vw, 84vw" width="1600" height="902" alt="The Audenic site: the headline Sound that lives in the room with you, with a price in shillings." loading="lazy" decoding="async" /></div>
+                </div>
+              </figure>
+              <div class="plate__text">
+                <p class="label">E-commerce · 2026</p>
+                <h3 class="plate__name">Audenic Audio Labs</h3>
+                <p class="plate__line">A shop for studio headphones, with an assistant that answers in Kiswahili and English.</p>
+                <a class="link" href="https://audenic.vercel.app/" target="_blank" rel="noopener">Visit the site <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+              </div>
+              <span class="plate__index" aria-hidden="true" data-plate-drift>06</span>
             </li>
 
             <li class="plate plate--end" data-stage="plate-end">
-              <p class="display-l">All four,<br /><em>in detail.</em></p>
-              <a class="btn" href="/work/">See the work <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+              <p class="display-l">All the work,<br /><em>in detail.</em></p>
+              <a class="btn" href="/work/" data-magnetic>See the work <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
             </li>
           </ul>
         </div>
@@ -182,7 +284,7 @@
       <section class="route section" data-theme="day" data-stage="home-route">
         <div class="route__layout">
           <header class="section-head">
-            <p class="label" data-reveal><span class="label__key" lang="sw">Njia</span> — Process</p>
+            <p class="label" data-reveal><span class="label__key" lang="sw" data-scramble>Njia</span> — Process</p>
             <h2 class="display-l" data-split>How a project runs</h2>
             <p class="section-head__text" data-reveal>Five stops, in order. You get a written scope and a fixed quote before any work starts.</p>
           </header>
@@ -227,7 +329,7 @@
                 <span class="waypoint__dot" aria-hidden="true"></span>
                 <p class="label">05 · Long term</p>
                 <h3 class="display-m">Care and support</h3>
-                <p>Hosting, daily backups, security updates and WhatsApp support, from TSh 99,000 a month.</p>
+                <p>Hosting, daily backups, security updates and WhatsApp support, from TSh {{site.price.tunza}} a month.</p>
                 <ul class="chips"><li>Automated backups</li><li>WhatsApp support</li></ul>
               </li>
             </ol>
@@ -239,8 +341,8 @@
         <p class="label" data-reveal><span class="label__key" lang="sw">Tuongee</span> — Let's talk</p>
         <h2 class="display-xl" data-split>Tell us what <em>you need.</em></h2>
         <div class="cta__actions" data-reveal>
-          <a class="btn" href="/contact/">Start your project <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
-          <a class="link" href="https://wa.me/255792867427" target="_blank" rel="noopener">WhatsApp +255 792 867 427 <svg class="icon" aria-hidden="true"><use href="#i-out" /></svg></a>
+          <a class="btn" href="/contact/" data-magnetic>Start your project <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></a>
+          <!-- @include chatbot-link -->
         </div>
       </section>
 

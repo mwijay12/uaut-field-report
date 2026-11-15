@@ -1,4 +1,4 @@
-// Home page: the pinned row of platforms and the route that draws itself.
+// Home page: the pinned row of selected work and the route that draws itself.
 
 import { animate } from 'animejs';
 import { ScrollTrigger, gsap, reducedMotion } from '../lib/motion.js';
@@ -60,7 +60,7 @@ function mountPlates(root, { stage, media }) {
   media.add(PINNED, () => {
     const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
 
-    gsap.to(track, {
+    const travel = gsap.to(track, {
       x: () => -distance(),
       ease: 'none',
       scrollTrigger: {
@@ -76,6 +76,26 @@ function mountPlates(root, { stage, media }) {
           activate(pick(self.progress * distance()));
         },
       },
+    });
+
+    // Each numeral drifts against the row as its plate crosses the screen,
+    // which gives the row some depth. The screenshots are left whole.
+    gsap.utils.toArray('[data-plate-drift]', track).forEach((numeral) => {
+      gsap.fromTo(
+        numeral,
+        { xPercent: 45 },
+        {
+          xPercent: -45,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: numeral.closest('.plate'),
+            containerAnimation: travel,
+            start: 'left right',
+            end: 'right left',
+            scrub: true,
+          },
+        },
+      );
     });
   });
 

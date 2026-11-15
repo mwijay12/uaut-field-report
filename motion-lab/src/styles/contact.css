@@ -13,6 +13,7 @@
 
 .packages {
   grid-column: 1 / span 7;
+  padding: clamp(1.25rem, 2.6vw, 2.5rem);
 }
 
 .packages legend,
@@ -32,7 +33,7 @@
 }
 
 .package:last-of-type {
-  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.5rem;
 }
 
 .package input {
@@ -118,8 +119,42 @@
   position: sticky;
   top: calc(var(--header-h) + 1.5rem);
   display: grid;
-  gap: 2.5rem;
-  grid-column: 9 / -1;
+  gap: 2rem;
+  grid-column: 8 / -1;
+  padding: clamp(1.25rem, 2.2vw, 2rem);
+}
+
+.brief__side .brief__step {
+  margin-bottom: 0.25rem;
+}
+
+/* An estimate carried over from the pricing page. */
+.attached {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-s);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.attached__range {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+  font-weight: 340;
+  font-variation-settings: 'opsz' 96;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.attached__text {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.attached .link {
+  font-size: var(--text-s);
 }
 
 .fields {
@@ -146,21 +181,20 @@
 .field input,
 .field textarea {
   width: 100%;
-  padding: 0.6rem 0;
-  border: 0;
-  border-bottom: 1px solid var(--muted);
-  border-radius: 0;
-  background: transparent;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--fg) 30%, transparent);
+  border-radius: var(--radius-s);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
   font-size: 1.05rem;
   resize: vertical;
-  transition: border-color var(--dur-fast) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
 }
 
 .field input:focus-visible,
 .field textarea:focus-visible {
   outline: none;
-  border-bottom-color: var(--accent);
-  box-shadow: 0 1px 0 var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
 }
 
 .ticket {
@@ -175,6 +209,24 @@
   overflow-wrap: anywhere;
 }
 
+/* A caret at the end of the message, as if it were still being written. */
+.ticket::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.15em;
+  background: var(--accent);
+  vertical-align: -0.15em;
+  animation: caret 1.05s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket::after {
+    animation: none;
+  }
+}
+
 .brief__actions {
   display: flex;
   flex-wrap: wrap;
@@ -185,6 +237,42 @@
 .brief__note {
   color: var(--muted);
   font-size: var(--text-s);
+}
+
+/* What happened when the button was pressed: a missing field, or a tick that draws itself. */
+.brief__status {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.brief__tick {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brief__status[data-tone='missing'] {
+  color: #b42318;
+}
+
+:root[data-theme='night'] .brief__status[data-tone='missing'] {
+  color: #fda29b;
+}
+
+.brief__status[data-tone='missing'] .brief__tick {
+  display: none;
+}
+
+.field input[aria-invalid='true'] {
+  border-color: #b42318;
 }
 
 @media (max-width: 1000px) {
@@ -215,10 +303,10 @@
 
 /* ---------- Reach ---------- */
 
-/* The email address is the longest value, so its column is the widest. */
+/* Two by two: the two WhatsApp lines side by side, then email and office. */
 .reach__list {
   display: grid;
-  grid-template-columns: 3fr 5fr 4fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 var(--gap);
 }
 

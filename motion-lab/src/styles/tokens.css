@@ -47,6 +47,7 @@
   --navy-700: #10265c;
   --paper: #f7f6f2;
   --violet: #7c3aed;
+  --violet-deep: #5b21b6;
   --gold: #eab308;
 
   /* Night is the default theme. One accent per theme: gold by night, violet by day. */
@@ -76,6 +77,18 @@
   --gap: clamp(1rem, 2vw, 2rem);
   --header-h: 4.5rem;
 
+  /* Corners */
+  --radius-s: 0.75rem;
+  --radius-m: 1.25rem;
+  --radius-l: 1.75rem;
+
+  /* Glass: a frosted panel that keeps text readable over the chart. */
+  --glass-tint: 58%; /* how much of the page colour is in the panel */
+  --glass-blur: 18px;
+  --glass-edge: rgba(247, 246, 242, 0.14);
+  --glass-shine: rgba(255, 255, 255, 0.07);
+  --glass-shadow: rgba(2, 6, 18, 0.6);
+
   /* Motion: three durations and one easing family (GSAP power3). */
   --dur-fast: 0.3s;
   --dur-base: 0.6s;
@@ -100,6 +113,18 @@
   --rule: rgba(10, 23, 53, 0.2);
   --accent: #7c3aed;
   --accent-ink: #ffffff;
+
+  --glass-tint: 64%;
+  --glass-edge: rgba(10, 23, 53, 0.12);
+  --glass-shine: rgba(255, 255, 255, 0.85);
+  --glass-shadow: rgba(10, 23, 53, 0.2);
+}
+
+/* A blur costs more on a phone. A smaller one looks much the same there. */
+@media (pointer: coarse) {
+  :root {
+    --glass-blur: 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
