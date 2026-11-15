@@ -302,6 +302,23 @@ check('the bar is gone after publishing', await page.$eval('.bar', (bar) => bar.
 check('the build is followed until it is live', await until(() => /^Live\./.test(document.querySelector('.banner')?.textContent ?? ''), null, 20000), await text('.banner'));
 await picture('published');
 
+// The message, far down a long page.
+await tab('backgrounds');
+await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+await sleep(250);
+check(
+  'the message stays in view far down a long page',
+  await page.evaluate(() => {
+    const box = document.querySelector('.banner').getBoundingClientRect();
+    return window.scrollY > 600 && box.top >= 0 && box.bottom <= window.innerHeight;
+  }),
+  await page.evaluate(() => `scrolled ${Math.round(window.scrollY)}, banner top ${Math.round(document.querySelector('.banner').getBoundingClientRect().top)}`),
+);
+await picture('published-scrolled');
+await page.click('.banner__close');
+check('the message can be dismissed', await page.$eval('.banner', (banner) => banner.hidden));
+await page.evaluate(() => window.scrollTo(0, 0));
+
 // Someone else publishes while a draft is open here.
 const theirs = stored();
 theirs.prices.kuza = 300000;

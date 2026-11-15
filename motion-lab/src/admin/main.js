@@ -49,7 +49,8 @@ const keep = (storage) => ({
   },
   set(key, value) {
     try {
-      storage.setItem(key, JSON.stringify(value));
+      if (value === null || value === undefined) storage.removeItem(key);
+      else storage.setItem(key, JSON.stringify(value));
     } catch {
       // Storage can be blocked. The admin still works, it just forgets on reload.
     }
@@ -253,7 +254,15 @@ function showShell() {
     ),
   );
 
-  const banner = h('div', { class: 'banner', role: 'status', 'aria-live': 'polite', hidden: true });
+  // The words are the live region. The button beside them is not, so a screen
+  // reader announces the message and not the button.
+  const bannerText = h('p', { class: 'banner__text', role: 'status', 'aria-live': 'polite' });
+  const bannerAction = h('span', { class: 'banner__action' });
+  const banner = h('div', { class: 'banner', hidden: true },
+    bannerText,
+    bannerAction,
+    h('button', { class: 'banner__close', type: 'button', 'aria-label': 'Dismiss this message', onclick: () => notify('') }, icon('close')),
+  );
   const title = h('h1', { class: 'main__title', tabIndex: -1 });
   const text = h('p', { class: 'main__text' });
   const body = h('div', { class: 'main__body' });
@@ -263,7 +272,7 @@ function showShell() {
   const review = h('button', { class: 'btn', type: 'button', onclick: openReview }, 'Review and publish');
   const bar = h('div', { class: 'bar', hidden: true }, count, h('div', { class: 'bar__actions' }, discard, review));
 
-  app.parts = { nav, banner, title, text, body, bar, count, review };
+  app.parts = { nav, banner, bannerText, bannerAction, title, text, body, bar, count, review };
 
   fill(root,
     h('div', { class: 'shell' },
@@ -350,8 +359,9 @@ function syncFields() {
 }
 
 function notify(message, tone = 'info', action = null) {
-  const { banner } = app.parts;
-  fill(banner, h('p', null, message), action);
+  const { banner, bannerText, bannerAction } = app.parts;
+  bannerText.textContent = message;
+  fill(bannerAction, action);
   banner.dataset.tone = tone;
   banner.hidden = !message;
 }

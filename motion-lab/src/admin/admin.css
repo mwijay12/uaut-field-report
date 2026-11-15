@@ -366,17 +366,51 @@ code {
   gap: 1.25rem;
 }
 
+/* What just happened: published, live, failed. It stays in view while the page
+   scrolls, because a publish is often pressed far down a long page. */
 .banner {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 4;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 1rem;
   margin-bottom: 1.5rem;
-  padding: 0.85rem 1.1rem;
+  padding: 0.6rem 0.6rem 0.6rem 1.1rem;
   border: 1px solid var(--line-strong);
   border-left: 3px solid var(--accent);
   border-radius: 0.6rem;
   background: var(--panel);
+  box-shadow: 0 0.75rem 2rem rgba(2, 6, 16, 0.55);
+}
+
+.banner__text {
+  flex: 1 1 16rem;
+}
+
+.banner__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-left: auto;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.banner__close:hover {
+  color: var(--fg);
+  background: rgba(247, 246, 242, 0.07);
+}
+
+.banner__close .icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .banner[hidden] {
