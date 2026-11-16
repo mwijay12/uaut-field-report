@@ -8,8 +8,14 @@ The pages are Home, Work, Services, Pricing (with a live estimator), Studio and 
 A small admin at `/admin/` changes the phone lines, the prices, the section backgrounds, the search
 listing and where briefs are saved, without anyone opening the code.
 
+Studio OS at `/portal/` is the other door: the clients, the jobs in flight, the invoices — printed as
+A4 PDFs with the client's own logo and the total in words — and the mail. The studio signs in with
+Google and sees everything; a client signs in with Google and sees only their own work.
+
 - Live: https://altra-motion-lab.vercel.app
 - Admin: https://altra-motion-lab.vercel.app/admin/ (see [The admin](#the-admin))
+- Studio OS: https://altra-motion-lab.vercel.app/portal/ (see [Studio OS](#studio-os)) — before the
+  keys are added: `admin` / `altra2026`, or **Look at it as a client**
 - Where to find more sites like this to learn from: [docs/premium-web-sources.md](docs/premium-web-sources.md)
 - Rules for an agent working in this folder: [AGENTS.md](AGENTS.md)
 
@@ -449,6 +455,37 @@ note to having both answers, quotes only prices that are in the content file, an
 through its button. Do not add anything the pages do not publish; if a client may not be named, the
 note does not exist.
 
+## Studio OS
+
+`/portal/` is a small application, not a page of the site: a rail, four figures, a board of jobs, the
+clients, the invoices and the mail. It shares the site's fonts, colours and nothing else — no chart,
+no page transitions.
+
+- **Two audiences, one desk.** The studio sees every client. A client sees their own job, its stage,
+  their milestones and their own invoices, and no way to change any of it. What a person may see is
+  decided once, by `role` on the session, and every list on every screen asks the same three
+  questions: `projects()`, `invoices()`, `clients()`.
+- **A password first, Google after.** The gate takes `admin` / `altra2026` (studio) or `client` /
+  `client2026` (a client) and says so on the screen. That is a **preview**: it is checked in the
+  browser and opens that device's copy of four demo records. The moment `VITE_FIREBASE_*` is in the
+  build, **Continue with Google** becomes the real door and the same desks open from Firestore. The
+  passwords are never a security boundary and are not meant to survive Firebase.
+- **The invoice is a page, not a picture.** 210 × 297 mm written in millimetres: the studio's mark,
+  the client's logo, each line with quantity and unit, subtotal, discount, VAT 18%, the total, and
+  the total again **in words**. "Save as PDF" is the browser's own print, with `@media print` leaving
+  nothing on the paper but that page.
+- **The letters are written once.** `src/lib/mail/template.js` returns a string, and both the mail
+  route (`api/welcome.js`, Nodemailer over SMTP) and the preview on the Mail screen use it — so what
+  is on screen is byte for byte what a client receives.
+
+`docs/studio-os.md` is the whole of it: the Firebase console in order, the Firestore rules, the
+`members/{email}` document that gives a client their door, the SMTP keys, and the logo rules.
+
+**Add a key.** Set it in Vercel, redeploy, and press the button it belongs to. Nothing in the code
+changes: `src/portal/config.js` reads the `VITE_*` values, and `src/portal/store.js` opens the
+local desk or Firestore depending on whether there is a config. Settings inside the desk shows what
+this build actually has.
+
 ## Common changes
 
 **Change a phone number, the email or a price.** Use the admin. Or edit `content/site.json` and
@@ -635,6 +672,8 @@ npm run check:brief    # the brief form with the inbox off and with it on
 npm run check:theme    # the three modes: Auto by the hour, a choice that is kept, the switch and the button
 npm run check:stickers # walks every sticker up the screen, at seven screen sizes: none may touch text
 npm run check:chat     # Altra: every note in both languages, and the panel in a browser
+npm run check:portal   # Studio OS: the gate, the desk, an invoice, the two letters, and a client's own view
+npm run check:portal -- --shots   # the same walk, with a picture of each screen in ./shots
 npm i --no-save lighthouse && npm run lighthouse   # SEO, accessibility and best practices, per page and per mode
 ```
 
@@ -715,6 +754,16 @@ The project is linked to this repository and its production branch is `main`. A 
 builds and publishes the site, and that is all the admin's "publish" is: a commit to `main`. A push
 to any other branch builds a preview deployment, which needs a Vercel login to open. The public
 address shows the latest production deployment only.
+
+The plan has a **fixed number of deployments a day**. When it is used up Vercel accepts the push and
+skips the build, without saying so in the pull request: the address then keeps serving the last
+deployment that did build, and it looks as if nothing was ever published. If `main` is ahead of the
+site, open Vercel → the project → Deployments and press **Redeploy** on the newest production row
+(or wait for the quota to reset). Pushing the same commit again is not the fix.
+
+`api/welcome.js` is the only server-side file. It is a Vercel function, and it is what keeps the
+mailbox password off the browser; `npm run dev` and `npm run preview` do not serve it, so the Mail
+screen says so instead of failing silently.
 
 ## Content
 
