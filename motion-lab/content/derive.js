@@ -26,6 +26,13 @@ export function derive(content) {
 
     origin: content.seo.origin,
 
+    // The profiles in the footer. WhatsApp is the person line, so it is not
+    // repeated here: one number, one place in the file.
+    social: {
+      instagram: content.social.instagram,
+      linkedin: content.social.linkedin,
+    },
+
     // Where a brief is saved besides WhatsApp. Off until a project ID is set.
     leads: {
       on: Boolean(content.leads.projectId),

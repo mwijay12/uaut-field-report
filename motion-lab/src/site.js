@@ -5,8 +5,9 @@
 //
 // In HTML, write {{site.person.number}}, {{site.person.whatsapp}},
 // {{site.person.tel}}, {{site.chatbot.number}}, {{site.chatbot.whatsapp}},
-// {{site.email}}, {{site.price.starter}} (350,000) or {{site.amount.starter}}
-// (350000). The build fails on a name that does not exist.
+// {{site.email}}, {{site.social.instagram}}, {{site.price.starter}} (350,000)
+// or {{site.amount.starter}} (350000). The build fails on a name that does not
+// exist.
 
 /* global __SITE__ */
 
@@ -15,7 +16,9 @@
  *   chatbot: { number: string, whatsapp: string, tel: string },
  *   person: { number: string, whatsapp: string, tel: string },
  *   email: string,
+ *   social: { instagram: string, linkedin: string },
  *   prices: Record<string, number>,
+ *   price: Record<string, string>,
  *   leads: { on: boolean, projectId: string },
  * }}
  */

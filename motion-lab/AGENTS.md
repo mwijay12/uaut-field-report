@@ -100,6 +100,23 @@ Facts:
   an image model draws is decoration; the sticker on the site is the SVG that
   `scripts/stickers.mjs` writes, and a picture is never pasted in as a sticker.
 
+The assistant (Altra: `src/partials/chat.html`, `src/lib/chat.js`, `src/lib/chat/`, `src/styles/chat.css`):
+
+- Every note in `src/lib/chat/knowledge.js` restates a fact a page already publishes, in English and
+  in Kiswahili. Do not add a client, a number or a promise that is not on a page: if it cannot be
+  said on the site, it cannot be said by Altra. Prices, phone lines and profiles come from `site`,
+  never typed into a note.
+- A question no note answers gets the fallback, which says so and offers a person on WhatsApp. Never
+  make the matcher guess, and never let the fallback stop offering that link.
+- No key, no provider, no third-party request reaches the browser. `src/lib/chat/provider.js` is the
+  only place a model could be called, it points at a same-origin route, and it returns null while
+  `ENDPOINT` is empty. A key in the client is a key someone else will be using.
+- The panel is a dialog, not a modal: Escape closes it, focus returns to the button, Tab stays
+  inside while it is open, and the page behind stays readable. Move it with transform and opacity
+  only, and with reduced motion show it without a tween.
+- Run `npm run check:chat` after touching a note, the matcher, the panel or its styles. It holds
+  every note to both languages, to the prices in the content file, and to the panel's behaviour.
+
 The admin (`admin/index.html`, `src/admin/`):
 
 - It is served under a Content-Security-Policy (`vercel.json`): no inline scripts, no `style`
@@ -142,6 +159,7 @@ npm run check:admin    # after any change to the admin, the content file's rules
 npm run check:brief    # after any change to the contact page or to saving briefs
 npm run check:theme    # after any change to the theme switch, to content/mode.js or to how a page sets its theme
 npm run check:stickers # after moving or adding a sticker, or changing a heading, a caption, a pane or a layout near one
+npm run check:chat     # after touching a note, the matcher, the panel or its styles
 npm run lighthouse     # after any change to a page: accessibility and best practices must stay at 100, in the dark mode and in the light mode
 ```
 

@@ -17,7 +17,9 @@ import {
   PAGES,
   PRICES,
   SECTIONS,
+  SOCIAL,
   check,
+  cleanProfile,
   expand,
   formatAmount,
   formatPhone,
@@ -237,6 +239,7 @@ async function enter({ token, repo, branch, file }) {
 const TABS = [
   { key: 'overview', name: 'Overview', title: 'Overview', text: 'What is live, and what is waiting to be published.' },
   { key: 'lines', name: 'Lines', title: 'Phone lines and email', text: 'Every page, the footer, the menu and the WhatsApp message read these three.' },
+  { key: 'social', name: 'Social', title: 'Social profiles', text: 'The icons in the footer, and the answer Altra gives when somebody asks where to follow us. The WhatsApp icon uses the person line, so there is nothing to set for it here.' },
   { key: 'prices', name: 'Prices', title: 'Prices', text: 'In Tanzanian shillings, before VAT. The cards, the estimator, the brief form and the page descriptions all follow.' },
   { key: 'backgrounds', name: 'Backgrounds', title: 'Section backgrounds', text: 'Each section shows the moving chart, a soft version of it, or the plain page colour. On a light section, the chart or its soft version puts the small text on glass panes, so the lines do not run through it.' },
   { key: 'search', name: 'Search', title: 'Search engines', text: 'Whether the site may be listed, and what each page says about itself in results and link previews.' },
@@ -525,6 +528,44 @@ const VIEWS = {
           usable ? external(`https://wa.me/${digits}`, `wa.me/${digits}`) : null,
           usable ? '. Open it to check that it reaches the right chat.' : null,
         );
+      }
+    };
+    sync();
+    return { sync };
+  },
+
+  social(body) {
+    const preview = (key) => h('p', { class: 'field__hint', data: { social: key } });
+
+    add(body,
+      panel('Profiles',
+        h('p', { class: 'panel__text' }, 'An icon in the footer of every page opens one of these. Paste the address from the browser: the rest is dropped, because ?hl=en and ?viewAsMember=true say where the visitor came from, not who we are.'),
+        ...SOCIAL.map((item) => [
+          field({
+            path: `social.${item.key}`,
+            label: item.name,
+            hint: item.example,
+            type: 'url',
+            inputmode: 'url',
+            placeholder: item.example,
+            parse: (value) => value.trim(),
+            // On leaving the field the address is shown the way the site will
+            // publish it, so the review lists that and not what was pasted.
+            format: (value) => cleanProfile(value),
+            tidyOnBlur: true,
+          }),
+          preview(item.key),
+        ]),
+      ),
+      panel('WhatsApp',
+        h('p', { class: 'panel__text' }, 'The WhatsApp icon is the person line, so it is set on Lines with the other numbers. Briefs and estimates go to that line, never to the chatbot.'),
+      ),
+    );
+
+    const sync = () => {
+      for (const note of body.querySelectorAll('[data-social]')) {
+        const value = app.draft.social?.[note.dataset.social] ?? '';
+        fill(note, value ? 'The footer will link to ' : 'Empty, so the icon has nowhere to go.', value ? external(value, value.replace(/^https:\/\//, '')) : null, value ? '.' : null);
       }
     };
     sync();

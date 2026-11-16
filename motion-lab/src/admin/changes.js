@@ -1,7 +1,7 @@
 // What differs between the content that is live and the draft in the admin,
 // and how to say it in words.
 
-import { BACKGROUNDS, PAGES, PRICES, SECTIONS, formatAmount } from '../../content/schema.js';
+import { BACKGROUNDS, PAGES, PRICES, SECTIONS, SOCIAL, formatAmount } from '../../content/schema.js';
 
 const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
@@ -21,13 +21,14 @@ export function changes(saved, draft) {
 }
 
 // Which page of the admin a value is edited on.
-const TABS = { contact: 'lines', prices: 'prices', backgrounds: 'backgrounds', seo: 'search', leads: 'leads' };
+const TABS = { contact: 'lines', social: 'social', prices: 'prices', backgrounds: 'backgrounds', seo: 'search', leads: 'leads' };
 export const tabOf = (path) => TABS[path.split('.')[0]] ?? 'overview';
 
 /** "Web Starter", "Home · How a project runs", "Pricing title". */
 export function nameOf(path) {
   const [group, first, second, third] = path.split('.');
   if (group === 'contact') return { chatbot: 'Chatbot line', person: 'Person line', email: 'Email' }[first] ?? path;
+  if (group === 'social') return SOCIAL.find((item) => item.key === first)?.name ?? path;
   if (group === 'prices') return PRICES.find((item) => item.key === first)?.name ?? path;
   if (group === 'backgrounds') {
     const section = SECTIONS.find((item) => item.key === first);

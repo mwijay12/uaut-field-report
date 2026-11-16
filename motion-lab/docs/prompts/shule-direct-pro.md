@@ -326,3 +326,5 @@ allowed.
 - Photographs of the real thing, put through `scripts/images.mjs` or Cloudinary (P7).
 - Prices, phone numbers and the one action, in the content file, not in a page.
 - The GitHub token for the admin, made once and never shared.
+- The assistant, if it should answer before any model key exists: prompt P9 in
+  [agent-prompt-pack.md](../agent-prompt-pack.md).

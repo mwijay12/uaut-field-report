@@ -1,0 +1,42 @@
+<!-- Altra: the assistant that floats over every page. It answers from
+     src/lib/chat/knowledge.js, in the browser, with no key and no request. The
+     words of the conversation itself are written by src/lib/chat.js, because a
+     conversation cannot exist before somebody speaks.
+
+     A dialog, not a modal: the page behind stays readable and scrollable. It is
+     closed by its own button and by Escape, and focus goes back to the button
+     that opened it. -->
+<div class="chat" data-chat>
+  <section class="chat__panel" id="chat-panel" data-chat-panel role="dialog" aria-label="Altra, the Altraware assistant" hidden>
+    <header class="chat__head">
+      <span class="chat__mark" aria-hidden="true"><svg class="icon"><use href="#i-chat" /></svg></span>
+      <p class="chat__who"><strong>Altra</strong><span class="chat__sub">Answers from our own notes</span></p>
+      <div class="chat__lang" role="group" aria-label="Language of the answers">
+        <button class="chat__lang-btn" type="button" data-chat-lang="en" aria-pressed="true">EN</button>
+        <button class="chat__lang-btn" type="button" data-chat-lang="sw" aria-pressed="false" lang="sw">SW</button>
+      </div>
+      <button class="chat__close" type="button" data-chat-close aria-label="Close the assistant">
+        <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+      </button>
+    </header>
+
+    <div class="chat__log" data-chat-log role="log" aria-live="polite" aria-label="Conversation with Altra"></div>
+
+    <form class="chat__compose" data-chat-form>
+      <label class="sr-only" for="chat-input">Your question</label>
+      <input class="chat__input" id="chat-input" name="q" type="text" autocomplete="off" enterkeyhint="send" placeholder="Prices, timelines, what we build…" data-chat-input />
+      <button class="chat__send" type="submit" aria-label="Send the question">
+        <svg class="icon" aria-hidden="true"><use href="#i-send" /></svg>
+      </button>
+    </form>
+
+    <p class="chat__foot">A script, not a person. For a written quote, <a href="{{site.person.whatsapp}}" target="_blank" rel="noopener">WhatsApp {{site.person.number}}</a>.</p>
+  </section>
+
+  <!-- On a narrow screen the label is out and only the mark is left, so the
+       button carries its own name. -->
+  <button class="chat__launch" type="button" data-chat-open aria-label="Ask Altra, the assistant" aria-expanded="false" aria-controls="chat-panel">
+    <svg class="icon" aria-hidden="true"><use href="#i-chat" /></svg>
+    <span class="chat__launch-text">Ask Altra</span>
+  </button>
+</div>

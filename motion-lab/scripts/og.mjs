@@ -40,7 +40,7 @@ await sleep(3500); // the arrival animation
 // closer together here, or the pane under the sentence would run off the edge.
 await page.addStyleTag({
   content: `
-    .nav, .menu-toggle, .mode-switch, .mode-step, .meter, .hero__actions, .hero__foot, .site-header__status { display: none !important; }
+    .nav, .menu-toggle, .mode-switch, .mode-step, .meter, .hero__actions, .hero__foot, .site-header__status, .chat { display: none !important; }
     .hero { gap: 1.25rem !important; padding-top: calc(var(--header-h) + 0.75rem) !important; padding-bottom: 2.25rem !important; }
     .hero .lede { max-width: 30ch !important; }
   `,
