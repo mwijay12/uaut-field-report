@@ -21,7 +21,8 @@ a food shop, a lender or a lodge. `npm run prompts` fills the slots for you: see
    mradi wako.
 2. **Chagua prompt inayolingana na kazi**: P1 ni tovuti nzima, P2 ni sticker moja, P3 ni picha ya
    screen moja yenye stickers, P4 ni kuweka stickers kwenye code na kuzifanya zitembe, P5 ni preview
-   ya link (OG), P6 ni admin + GitHub PAT, P7 ni Firebase → Cloudinary, P8 ni ukaguzi wa mwisho.
+   ya link (OG), P6 ni admin + GitHub PAT, P7 ni Firebase → Cloudinary, P8 ni ukaguzi wa mwisho,
+   P9 ni msaidizi anayeelea kwenye kona (bila API key).
 3. **Paste prompt + brief pamoja.** Usiandike "fanya kama Altra" peke yake: AI haijui files zetu.
    Prompt inaonyesha files gani za kusoma (`README.md`, `AGENTS.md`, `scripts/stickers.mjs`).
 4. **Sticker moja kwa picha moja.** Modeli nyingi za picha hazijui grid; ukiiomba "sheet ya stickers
@@ -485,6 +486,71 @@ not allowed in your report.
 ```
 
 ---
+
+## P9 — The assistant in the corner, before any API key
+
+A floating assistant that answers from a written file of facts, in the browser, with no key, no
+request and no model. This is what the site now has as Altra, and it is the right first version of a
+chatbot: the words are yours, a wrong answer is impossible, and the panel is useful on day one. A
+model can be put behind it later without changing the interface.
+
+```text
+Add a floating assistant to [PROJECT], in the corner of every page, that answers from a file of
+facts we write. Read README.md and AGENTS.md first if they are there; they win over your taste.
+
+BEFORE ANY KEY
+This version calls no model and sends no request. It must be genuinely useful with zero network:
+- src/lib/chat/knowledge.js holds the notes. Each note is one fact, in English and in Kiswahili,
+  with `when` words that recognise the question in both languages.
+- Each note restates only what the site already publishes. Prices, phone lines, email and profiles
+  are read from the content file at runtime, never typed into a note, so they cannot go stale.
+- src/lib/chat/answer.js matches a question to a note: a phrase is worth more than a word, a word
+  matches its plural and its longer forms, and the best note wins.
+- When nothing matches, the fallback says "I do not have a reliable answer for that" and offers a
+  person on WhatsApp and the brief page. A script is not allowed to guess.
+
+THE SEAM FOR A MODEL, LATER
+src/lib/chat/provider.js is the only place a model may be called. It holds an ENDPOINT that is a
+path on our own site (POST /api/chat), refuses anything that is not same origin, times out, and
+returns null on every failure so the notes answer instead. No key, no provider URL and no token in
+anything the browser downloads: the key lives on the server, next to the team's other secrets.
+Nothing in the interface changes when the route appears.
+
+THE PANEL
+- A button in the corner of every page; a panel above it. A dialog, not a modal: the page behind
+  stays readable and scrollable. On a phone it becomes a sheet at the bottom, measured in dvh.
+- Opens from the button, closes on Escape and on its own close button, focus goes into the input on
+  open and back to the button on close, and Tab stays inside while it is open.
+- Header: name, one line saying what it is, a language switch (EN / SW), close. Then the
+  conversation: a log with aria-live="polite", the visitor's questions on the right, answers on the
+  left, and up to four follow-up questions as buttons after each answer.
+- A composer with a text input and a send button, and one honest line: "A script, not a person",
+  with the WhatsApp number of a human.
+- Built from text nodes, never innerHTML of anything a visitor typed.
+- Transform and opacity only; with reduced motion it appears and disappears without a tween. It is
+  not a sticker: it never sits on text, and it hides itself when scripting is off.
+- English and Kiswahili: the switch changes the answers, and a question written in Kiswahili is
+  answered in Kiswahili even when the switch says EN.
+
+THE CHECK, WHICH IS THE POINT
+Write `npm run check:chat` and make it hold the work to these before you say it is done:
+1. every note has an answer in both languages; every button points at a note that exists; every
+   `go` link is absolute or on this site
+2. every price quoted in a note is a price in the content file — read it from there, do not copy it
+3. six questions in each language reach the expected note, and three unknown questions get the
+   fallback with the WhatsApp link, not a guess
+4. in a browser: the panel opens with the cursor in the box, greets with buttons, answers a price
+   question with the real prices, answers a Kiswahili question in Kiswahili, closes on Escape with
+   focus back on the button, fits a 390 px screen, works with reduced motion, and logs nothing
+5. the page requests nothing that is not its own files: count the requests and fail on any other
+   host
+
+Report the output of that check, not an opinion about it.
+```
+
+Where this repo puts it, if you are working in it: `src/partials/chat.html`, `src/lib/chat.js`,
+`src/lib/chat/{knowledge,answer,provider}.js`, `src/styles/chat.css`, mounted once in `src/main.js`
+beside the header, and `scripts/chat-check.mjs` behind `npm run check:chat`.
 
 ## 9. One project at a time: the generator
 

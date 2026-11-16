@@ -81,6 +81,7 @@ content/             the facts, and the rules about them:
   mode.js              dark, mix or light: which mode a visitor gets, and at which hours
 src/partials/        head, header and menu and curtain, footer (shared by every page)
   sticker.html, scribble.html   what wraps a sticker or a hand-drawn line
+  chat.html             Altra: the button in the corner and the panel it opens
   art/                 the line drawings, one SVG per file. sticker-* and scribble-* are
                        written by scripts/stickers.mjs
 src/main.js          entry: chart, scroll, header, Barba transition
@@ -98,6 +99,8 @@ src/lib/             shared behaviour, one file per job:
   stream.js            writes a text out, word by word or letter by letter
   draw.js              data-draw
   stickers.js          the stickers: drift, pop, lean
+  chat.js              Altra: open, close, the conversation, the language
+  chat/                what Altra knows, how a question is matched, where a model would go
   numbers.js           data-count
   media.js             data-media, data-parallax, data-magnetic
   marquee.js           data-marquee
@@ -106,7 +109,7 @@ src/lib/             shared behaviour, one file per job:
   scroll.js, chrome.js, intro.js
 src/pages/           code that only one page needs
 src/admin/           the admin: no framework, and none of the site's motion code
-src/styles/          tokens.css first, then one file per area
+src/styles/          tokens.css first, then one file per area (chat.css included)
 src/images/          WebP pictures, made with scripts/images.mjs
 src/fonts/           self-hosted fonts (SIL OFL 1.1)
 public/og.jpg        the picture a shared link shows, made with scripts/og.mjs
@@ -149,12 +152,14 @@ The names are `leads` and `index` (search engines may list the site). `@if !lead
 | `prices` | Five packages, six add-ons, two support plans, in shillings. | Price cards, the estimator, the brief form, the page descriptions. |
 | `backgrounds` | `effect`, `soft` or `plain` for each section. | The chart behind that section. |
 | `seo` | Whether search engines may list the site, its address, and a title and description per page. | The `<head>` of every page, `robots.txt`, `sitemap.xml`. |
+| `social` | The Instagram and LinkedIn addresses. | The icons in the footer, and Altra's answer when somebody asks where to follow us. |
 | `leads` | The Firebase project of the main site (empty means off), and the address of its inbox. | The brief form on the contact page. |
 
 In HTML:
 
 - `{{site.person.number}}`, `{{site.person.whatsapp}}` (the `wa.me` link), `{{site.person.tel}}`, the
   same three for `site.chatbot`, and `{{site.email}}`.
+- `{{site.social.instagram}}` and `{{site.social.linkedin}}` are the profiles the footer links to.
 - `{{site.price.starter}}` gives `350,000`. `{{site.amount.starter}}` gives `350000`, for `data-count`.
 - `{{site.sample.low}}` and the like: what the estimator shows before anyone touches it.
 
@@ -181,6 +186,7 @@ the build until it says the change is live.
 | --- | --- |
 | Overview | Nothing. Shows what is live and what is waiting to be published. |
 | Lines | The chatbot line, the person line, the email. A local number such as `0712 345 678` becomes `+255 712 345 678`. |
+| Social | The Instagram and LinkedIn addresses. Paste the address from the browser: the tracking query is dropped. |
 | Prices | Every price, with the estimator's answer beside it as you type. |
 | Backgrounds | Chart, soft or plain, section by section. |
 | Search | Whether search engines may list the site, and each page's title and description with a preview of the search result. |
@@ -406,6 +412,43 @@ Motion has three durations and one easing family. They live in `src/lib/motion.j
 in `src/styles/tokens.css`. Import `gsap` from `src/lib/motion.js`, not from `'gsap'`, so the plugins
 are always registered.
 
+## The assistant
+
+Altra is the button in the corner of every page and the panel it opens. It is built once with the
+header and the curtain (`src/lib/chat.js`), outside the Barba container, so a page change does not
+restart the conversation.
+
+What it answers from is the whole of it: `src/lib/chat/knowledge.js`, a list of notes in English and
+Kiswahili. Every note restates a fact the six pages already publish — the studio page, the five
+services, the packages, the questions on the pricing page, the projects on the work page. Prices,
+phone lines, the email and the profiles are read from `content/site.json`, so a price changed in the
+admin is changed here too. `src/lib/chat/answer.js` matches a question against each note's `when`
+words; a phrase counts for more than a word, and a word matches its plural.
+
+Three rules hold the thing together:
+
+- **Nothing is invented.** A question no note answers gets the fallback: "I do not have a reliable
+  answer for that", plus a person on WhatsApp and the brief form. That is the useful reply, and it
+  is the one a script is allowed to give.
+- **No key, no request.** The answer is computed in the browser. `src/lib/chat/provider.js` is where
+  a model would go, and it is empty on purpose: a provider key belongs on the server of the main
+  site, behind a route, never in a file the browser downloads. `npm run check:chat` fails if the
+  page asks for anything that is not its own.
+- **Both languages.** The EN and SW buttons in the panel's header switch the answers. A question
+  written in Kiswahili is answered in Kiswahili even with the switch on EN, because a visitor who
+  writes Kiswahili is asking in Kiswahili.
+
+The panel is a dialog, not a modal: the page behind stays readable. Escape closes it, focus returns
+to the button that opened it, Tab stays inside while it is open, and with reduced motion it appears
+and disappears without a tween. It is decoration over the page and it never covers text: it sits in
+the corner, above the gutter.
+
+**Add a fact.** Add an entry to `knowledge.js` with `when` words in both languages, an `en` and a
+`sw` answer, and `go` links if it should offer a page. Then run `npm run check:chat`: it holds every
+note to having both answers, quotes only prices that are in the content file, and reaches a note
+through its button. Do not add anything the pages do not publish; if a client may not be named, the
+note does not exist.
+
 ## Common changes
 
 **Change a phone number, the email or a price.** Use the admin. Or edit `content/site.json` and
@@ -415,6 +458,7 @@ nothing else. There are two WhatsApp lines, and each has one job:
 | --- | --- | --- |
 | `contact.chatbot` | The WhatsApp chatbot. Replies are automated. | The link beside the main button, the menu, the footer, the contact page. Every link to it says "chatbot". |
 | `contact.person` | A person on the team, on WhatsApp and by phone. | "Send on WhatsApp" on the contact page, and "Talk to a person" in the menu, the footer and the contact page. |
+| `social.instagram`, `social.linkedin` | The profiles we publish as. | The icons in the footer, and the answer Altra gives when somebody asks where to follow us. Not a phone line: change it under Social in the admin. |
 
 The option labels in the estimator form are in `pricing/index.html` and must match the ids in
 `content/estimator.js`. A new price also needs a line in `PRICES` in `content/schema.js`.
@@ -590,10 +634,12 @@ npm run check:admin    # signs in to the admin, edits, publishes, clashes, loads
 npm run check:brief    # the brief form with the inbox off and with it on
 npm run check:theme    # the three modes: Auto by the hour, a choice that is kept, the switch and the button
 npm run check:stickers # walks every sticker up the screen, at seven screen sizes: none may touch text
+npm run check:chat     # Altra: every note in both languages, and the panel in a browser
 npm i --no-save lighthouse && npm run lighthouse   # SEO, accessibility and best practices, per page and per mode
 ```
 
-`check:admin`, `check:theme`, `check:stickers` and `lighthouse` need the preview server running.
+`check:admin`, `check:chat`, `check:theme`, `check:stickers` and `lighthouse` need the preview server
+running.
 `check:brief` builds and serves its own two copies of the site. `check:stickers` takes about ten
 minutes; `-- --page /pricing/` or `-- --width 390` checks one page or one size. `lighthouse` tests
 every page in the dark mode and in the light mode (the mix shows each section in one of those two);
@@ -645,14 +691,14 @@ has not read `AGENTS.md`.
 
 | Situation | What happens |
 | --- | --- |
-| Reduced motion is on | No smooth scroll, no reveals, no intro, no typing or counting, and a short fade in place of the curtain. The chart is drawn once. Drawings, stickers and scribbles are simply there. |
+| Reduced motion is on | No smooth scroll, no reveals, no intro, no typing or counting, and a short fade in place of the curtain. The chart is drawn once. Drawings, stickers and scribbles are simply there, and Altra's panel opens and closes without a tween. |
 | No WebGL 2 | The chart is skipped. Pages keep their background colour. |
 | No `backdrop-filter` | Glass panels become nearly solid. |
 | Reduced transparency is on | Glass panels become solid. |
 | Reduced motion is on, or a screen under 900 px | The selected work on the home page is not pinned. It is a row of cards that is swiped sideways, one card to a swipe, with the next one showing at the edge. Two buttons under the row move it by one card. |
 | No JavaScript | The pages are the mix, and the theme switch is not shown. |
 | Storage is blocked | A chosen mode lasts until the page is closed. After that the clock decides again. |
-| Narrow or short screen | The service cards stop stacking and scroll as a normal list. Rows of sketches swipe sideways. Stickers are smaller and drift half as far, the home page opens with one sticker and not four, and the arrows beside buttons and headings are left out. |
+| Narrow or short screen | The service cards stop stacking and scroll as a normal list. Rows of sketches swipe sideways. Stickers are smaller and drift half as far, the home page opens with one sticker and not four, and the arrows beside buttons and headings are left out. Altra becomes a sheet at the bottom of the screen and its button keeps only its mark. |
 | Software rendering, or a frame rate that stays low | The chart stops animating and redraws only on change. |
 | Slow GPU | Resolution steps down: 1, 0.8, 0.65, 0.5 of the device pixel ratio (capped at 1.75, or 1.5 on touch). |
 | A plain section is on screen | The chart is not drawn at all, which also saves battery. |

@@ -1,0 +1,460 @@
+/* ---------- Altra: the assistant ----------
+   A button in the corner of every page, and the panel it opens. The panel is a
+   dialog, not a modal: it floats over the page, and the page stays usable
+   (src/lib/chat.js). It carries no motion of its own in CSS — the open and the
+   close are two GSAP tweens on transform and opacity only — and with reduced
+   motion it simply appears.
+
+   Both themes are served by the same rules: every colour here is a token, and
+   tokens.css already says what the night and the day look like. */
+
+.chat {
+  position: fixed;
+  right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+  z-index: 35; /* under the curtain (40), over the header (30) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none; /* only the two things in it are clickable */
+}
+
+/* Without scripting there is no conversation to have, so the button is not
+   there to be pressed. With it, the button waits for the arrival like the rest
+   of what moves. */
+html:not(.js) .chat {
+  display: none;
+}
+
+html.js:not(.is-ready) .chat__launch {
+  visibility: hidden;
+}
+
+/* ---------- The button ---------- */
+
+.chat__launch {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem; /* a thumb, not a cursor */
+  padding: 0.65rem 1.15rem 0.65rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--accent-ink) 18%, transparent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--fg) 30%, transparent) inset,
+    0 18px 34px -18px var(--glass-shadow);
+  transition:
+    transform var(--dur-fast) ease,
+    background-color var(--dur-base) linear;
+}
+
+.chat__launch:hover {
+  transform: translateY(-2px);
+}
+
+.chat__launch .icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.chat__launch-text {
+  white-space: nowrap;
+}
+
+/* ---------- The panel ---------- */
+
+.chat__panel {
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.75rem);
+  display: flex;
+  flex-direction: column;
+  width: min(23.5rem, calc(100vw - 2 * var(--gutter)));
+  max-height: min(33rem, 72vh);
+  max-height: min(33rem, 72dvh);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-l);
+  background:
+    radial-gradient(120% 120% at 0% 0%, var(--glass-sheen), transparent 58%),
+    color-mix(in srgb, var(--glass-ground) 97%, transparent);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  box-shadow:
+    inset 0 1px 0 var(--glass-shine),
+    0 2px 5px -2px var(--glass-contact),
+    0 34px 60px -30px var(--glass-shadow);
+}
+
+/* `hidden` has to win over the display above, or a closed panel keeps its place
+   in the layout and steals the corner. */
+.chat__panel[hidden] {
+  display: none;
+}
+
+.chat__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 0.75rem 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chat__mark,
+.chat__avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.chat__mark .icon,
+.chat__avatar .icon {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.chat__who {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.chat__who strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.chat__sub {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat__lang {
+  display: inline-flex;
+  flex: none;
+  gap: 0.15rem;
+  padding: 0.15rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+.chat__lang-btn {
+  min-width: 2.1rem;
+  padding: 0.3rem 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.chat__lang-btn[aria-pressed='true'] {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.chat__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.chat__close .icon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+/* ---------- The conversation ---------- */
+
+.chat__log {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-height: 6rem;
+  padding: 0.9rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.chat__msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.chat__msg--you {
+  flex-direction: row-reverse;
+}
+
+.chat__bubble {
+  max-width: 32ch;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--rule);
+  border-radius: 1.1rem 1.1rem 1.1rem 0.35rem;
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+}
+
+.chat__msg--you .chat__bubble {
+  border-color: transparent;
+  border-radius: 1.1rem 1.1rem 0.35rem 1.1rem;
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.chat__text {
+  margin: 0;
+  font-size: var(--text-s);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.chat__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.55rem 0.45rem 0 0;
+  padding: 0.28rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.chat__link:hover {
+  border-color: var(--accent);
+}
+
+.chat__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-left: 2.45rem;
+}
+
+.chat__chip {
+  padding: 0.34rem 0.6rem;
+  border: 1px dashed color-mix(in srgb, var(--fg) 34%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chat__chip:hover {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+/* Three dots. Not an animation of its own: the note is instant, so these only
+   ever appear while a model is answering (src/lib/chat/provider.js). */
+.chat__dots {
+  display: inline-flex;
+  gap: 0.22rem;
+  padding: 0.1rem 0;
+}
+
+.chat__dots i {
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: chat-dot 1.1s ease-in-out infinite;
+}
+
+.chat__dots i:nth-child(2) {
+  animation-delay: 0.14s;
+}
+
+.chat__dots i:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+@keyframes chat-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* ---------- The box ---------- */
+
+.chat__compose {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.65rem 0.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.chat__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.5rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+}
+
+.chat__input::placeholder {
+  color: var(--muted);
+}
+
+/* The cursor is put in this box on purpose when the panel opens, so the ring it
+   would draw for a keyboard is drawn closer than the page-wide one. */
+.chat__input:focus-visible {
+  outline-offset: 2px;
+}
+
+.chat__send {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+
+.chat__send .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.chat__foot {
+  margin: 0;
+  padding: 0 0.9rem 0.8rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.chat__foot a {
+  color: var(--fg);
+}
+
+/* ---------- A narrow screen: a sheet at the bottom ----------
+   The keyboard takes half a phone, so the panel is measured in dvh and sits on
+   the very bottom edge, with the button tucked away while it is open. */
+
+@media (max-width: 560px) {
+  .chat {
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .chat__panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    max-height: 84dvh;
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+    border-bottom: 0;
+  }
+
+  .chat.is-open .chat__launch {
+    visibility: hidden;
+  }
+
+  .chat__launch-text {
+    display: none;
+  }
+
+  .chat__launch {
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .chat__chips {
+    padding-left: 0;
+  }
+}
+
+/* ---------- Stillness ----------
+   The panel is shown and hidden with two tweens; with reduced motion there are
+   none (src/lib/chat.js), and the dots stop as well. */
+
+html.reduced-motion .chat__launch {
+  transition: none;
+}
+
+html.reduced-motion .chat__dots i {
+  animation: none;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat__launch {
+    transition: none;
+  }
+
+  .chat__dots i {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@media print {
+  .chat {
+    display: none;
+  }
+}

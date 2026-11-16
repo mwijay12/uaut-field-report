@@ -85,6 +85,10 @@
       }
     }
   },
+  "social": {
+    "instagram": "https://www.instagram.com/altrawaretechnology/",
+    "linkedin": "https://www.linkedin.com/company/altraware-technology/"
+  },
   "leads": {
     "projectId": "",
     "inbox": "https://altra.tanzaniareach.com/admin"

@@ -678,6 +678,40 @@
   justify-self: start;
 }
 
+/* Where a visitor can follow us: one pill per line, each with its own mark.
+   The WhatsApp pill is the person line, not the chatbot. */
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.socials__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.34rem 0.7rem 0.34rem 0.55rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color var(--dur-fast) ease;
+}
+
+.socials__link:hover {
+  border-color: var(--accent);
+}
+
+.socials__link .icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
 .site-footer__tagline {
   max-width: 16ch;
   font-family: var(--font-display);

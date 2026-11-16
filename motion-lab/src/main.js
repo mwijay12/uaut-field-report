@@ -13,6 +13,7 @@ import barba from '@barba/core';
 import { Easing, createNullStage, createStage } from './gl/stage.js';
 import { preset } from './gl/presets.js';
 import { createChrome } from './lib/chrome.js';
+import { createChat } from './lib/chat.js';
 import { createCurtain } from './lib/curtain.js';
 import { playIntro } from './lib/intro.js';
 import { EASE, gsap, reducedMotion } from './lib/motion.js';
@@ -55,6 +56,9 @@ if (glMode) window.altraStage = stage; // a handle for poking at the chart from 
 const scroll = createScroll();
 const chrome = createChrome({ scroll });
 const curtain = createCurtain();
+// Altra floats over the page and outlives a page change, so it is built here
+// with the header and not inside a page.
+const chat = createChat();
 
 // One loop for everything: GSAP's ticker drives Lenis and the WebGL draw.
 gsap.ticker.lagSmoothing(0);
@@ -164,6 +168,9 @@ barba.init({
       },
 
       before({ current }) {
+        // The panel is under the curtain, and focus belongs to the page that is
+        // arriving, not to a conversation nobody is looking at.
+        chat.close();
         places.set(placeKey(current.url), window.scrollY);
       },
 

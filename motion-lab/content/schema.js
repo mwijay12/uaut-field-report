@@ -89,6 +89,14 @@ export const LIMITS = {
   price: { most: 1_000_000_000 },
 };
 
+// The profiles a visitor can follow, and the host each one must live on. The
+// footer shows an icon for every one of them, so an empty address is an error
+// and not a default: the row would be a link to nowhere.
+export const SOCIAL = [
+  { key: 'instagram', name: 'Instagram', host: 'instagram.com', example: 'https://www.instagram.com/yourname/' },
+  { key: 'linkedin', name: 'LinkedIn', host: 'linkedin.com', example: 'https://www.linkedin.com/company/yourname/' },
+];
+
 // ---------- Phone numbers ----------
 
 /** The digits of a number, in international form. 0790 942 616 is read as a Tanzanian number. */
@@ -136,6 +144,26 @@ const isHttps = (value) => {
     return false;
   }
 };
+
+/**
+ * A profile address the way these hosts write it: https, www, no tracking query,
+ * a slash at the end. What is pasted from the address bar — ?hl=en,
+ * ?viewAsMember=true — is dropped, because it is about the visitor and not
+ * about us. Anything that does not parse is left alone for check() to report.
+ */
+export function cleanProfile(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return '';
+  try {
+    const url = new URL(/^https?:\/\//i.test(text) ? text : `https://${text}`);
+    if (url.protocol !== 'https:') return text;
+    const host = url.host.replace(/^(www\.|m\.)/i, '').toLowerCase();
+    const path = url.pathname.replace(/\/+$/, '');
+    return `https://www.${host}${path}/`;
+  } catch {
+    return text;
+  }
+}
 
 /**
  * Looks for problems in a content object.
@@ -225,6 +253,23 @@ export function check(content) {
     else if (title) titles.set(title, page.name);
   }
 
+  // Social profiles
+  const social = isObject(content.social) ? content.social : {};
+  for (const { key, name, host, example } of SOCIAL) {
+    const value = typeof social[key] === 'string' ? social[key].trim() : '';
+    const path = `social.${key}`;
+    if (!value) bad(path, `${name}: add the address, or take the icon out of the footer. ${example}`);
+    else if (!isHttps(value)) bad(path, `${name}: write the full address, starting with https:// — ${example}`);
+    else {
+      const url = new URL(value);
+      const server = url.host.replace(/^(www\.|m\.)/i, '').toLowerCase();
+      if (server !== host && !server.endsWith(`.${host}`)) bad(path, `${name}: this is not a ${host} address. ${example}`);
+      else if (url.pathname.replace(/\/+$/, '') === '') hint(path, `${name}: this is the front page of ${host}. Link the profile itself.`);
+      if (url.search || url.hash) hint(path, `${name}: drop the part after the address. It is tracking from your browser, not part of the profile.`);
+      if (value !== cleanProfile(value)) hint(path, `${name}: publish it as ${cleanProfile(value)}.`);
+    }
+  }
+
   // Leads
   const leads = isObject(content.leads) ? content.leads : {};
   if (typeof leads.projectId !== 'string') bad('leads.projectId', 'Leave it empty, or write the Firebase project ID.');
@@ -255,6 +300,9 @@ export function tidy(content) {
     entry.title = String(entry.title ?? '').trim();
     entry.description = String(entry.description ?? '').trim();
   }
+
+  copy.social ??= {};
+  for (const { key } of SOCIAL) copy.social[key] = cleanProfile(copy.social[key]);
 
   copy.leads ??= {};
   copy.leads.projectId = String(copy.leads.projectId ?? '').trim();

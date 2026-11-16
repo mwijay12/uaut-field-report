@@ -240,6 +240,24 @@ check('a local number becomes +255', (await page.$eval('#f-contact-person', (inp
 check('the WhatsApp link is shown', /wa\.me\/255712345678/.test(await text('[data-link="person"]')));
 await picture('lines');
 
+// The two profiles in the footer, one pasted the way a browser gives it.
+await tab('social');
+check('the social tab shows both profiles',
+  /instagram\.com\/altrawaretechnology/.test(await page.$eval('#f-social-instagram', (input) => input.value)) &&
+    /linkedin\.com\/company/.test(await page.$eval('#f-social-linkedin', (input) => input.value)),
+  await page.$eval('#f-social-instagram', (input) => input.value));
+await type('#f-social-instagram', 'https://www.instagram.com/altrawaretechnology/?hl=en');
+await page.keyboard.press('Tab');
+check('a pasted address is tidied on leaving the field',
+  (await page.$eval('#f-social-instagram', (input) => input.value)) === 'https://www.instagram.com/altrawaretechnology/',
+  await page.$eval('#f-social-instagram', (input) => input.value));
+check('the footer link is previewed', /instagram\.com\/altrawaretechnology/.test(await text('[data-social="instagram"]')), await text('[data-social="instagram"]'));
+await type('#f-social-linkedin', 'https://example.com/company');
+check('a profile on the wrong host is refused', /not a linkedin\.com address/.test(await text('#f-social-linkedin-note')), await text('#f-social-linkedin-note'));
+await type('#f-social-linkedin', 'https://www.linkedin.com/company/altraware-technology/');
+await page.keyboard.press('Tab');
+await picture('social');
+
 await tab('backgrounds');
 await page.click('input[name="backgrounds.home-hero"][value="plain"]');
 check('a background can be changed', (await text('.bar__count')) === '3 changes not published', await text('.bar__count'));
