@@ -442,6 +442,7 @@ export default defineConfig({
         contact: resolve(root, 'contact/index.html'),
         notFound: resolve(root, '404.html'),
         admin: resolve(root, 'admin/index.html'),
+        portal: resolve(root, 'portal/index.html'),
       },
     },
   },
